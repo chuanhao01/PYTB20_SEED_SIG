@@ -3,6 +3,15 @@ const https = require("https");
 const fs  = require("fs");
 var app = express();
 
+app.use(function(req,res,next){
+    if(req.secure){
+        next()
+    }
+    else{
+        res.redirect("https://localhost:4444")
+    }
+
+})
 
 app.get("/",(req,res)=>{
     console.log("hi")
@@ -14,4 +23,5 @@ var server  = https.createServer({
     cert: fs.readFileSync("./cert.crt")
 },app);
 
+app.listen(3333);
 server.listen(4444);
