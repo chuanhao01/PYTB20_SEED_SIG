@@ -82,7 +82,7 @@ const usersdb = {
         return new Promise((resolve, reject) => {
             this.pool.query(`
             UPDATE USERS
-            SET nric = ?, dob = ?, fullname = ?, contact_num = ?, email = ?,
+            SET nric = ?, dob = ?, fullname = ?, contact_num = ?, email = ?
             WHERE ((user_id = ?) AND (deleted = 0))
             `, [nric, dob, fullname, contact_num, email, user_id], function(err, data){
                 if(err){
