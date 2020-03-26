@@ -14,13 +14,16 @@ const pool = mysql.createPool({
 // Importing the other db files here
 const usersdb = require('./usersdb');
 const eventsdb = require('./eventsdb');
+const signupsdb = require('./signupsdb');
 usersdb.init(pool);
 eventsdb.init(pool);
+signupsdb.init(pool);
 
 // Main object being exported, you will mainly be accessing the db functions through this object
 const db = {
     users: usersdb,
     events: eventsdb,
+    signups: signupsdb,
 };
 
 module.exports = db;
