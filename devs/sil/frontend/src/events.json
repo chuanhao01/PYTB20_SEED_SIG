@@ -1,0 +1,37 @@
+[
+    {
+        "eventid": 1,
+        "eventName": "event 1",
+        "eventDesc": "Event 1 description",
+        "eventDate": "30 Feb 2021",
+        "eventStatus": 0
+    },
+    {
+        "eventid": 2,
+        "eventName": "event 2",
+        "eventDesc": "Event 2 description",
+        "eventDate": "30 Feb 2022",
+        "eventStatus": 0
+    },
+    {
+        "eventid": 3,
+        "eventName": "event 3",
+        "eventDesc": "Event 3 description",
+        "eventDate": "30 Feb 2023",
+        "eventStatus": 0
+    },
+    {
+        "eventid": 4,
+        "eventName": "event 4",
+        "eventDesc": "Event 4 description",
+        "eventDate": "30 Feb 2024",
+        "eventStatus": 0
+    },
+    {
+        "eventid": 5,
+        "eventName": "event 5",
+        "eventDesc": "Event 5 description",
+        "eventDate": "30 Feb 2025",
+        "eventStatus": 0
+    }
+]

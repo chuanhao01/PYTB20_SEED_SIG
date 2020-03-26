@@ -1,36 +1,16 @@
 <template>
   <div id="app">
     <NavBar id="nav" />
-    <div v-if="alert.message" :class="`alert ${alert.type}`">{{ alert.message }}</div>
-    <router-view class="router-view"></router-view>
+    <router-view class="router-view" />
   </div>
 </template>
 
 <script>
 import NavBar from "@/components/NavBar.vue";
-import { mapState, mapActions } from "vuex";
 
 export default {
-  name: "app",
   components: {
     NavBar: NavBar
-  },
-  computed: {
-    ...mapState({
-      alert: state => state.alert
-    })
-  },
-  methods: {
-    ...mapActions({
-      clearAlert: "alert/clear"
-    })
-  },
-  watch: {
-    $route(to, from) {
-      to, from;
-      // clear alert on location change
-      this.clearAlert();
-    }
   }
 };
 </script>
@@ -82,31 +62,28 @@ body {
   background-color: var(--bg-primary);
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-  // width: 100vw;
-  overflow-x: hidden;
   @include scrollbars(0.5rem, #333, #eaecef);
 }
 
 .router-view {
+  margin: 5rem auto;
   padding: 1rem;
-  // height: 100vh;
 }
 
-// h1 {
-//   font-family: "Muli", sans-serif;
-// }
+h1 {
+  font-family: "Muli", sans-serif;
+}
 
 #nav {
   z-index: 20;
+  height: 5rem;
   width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
   background-color: var(--bg-primary);
   list-style: none;
+  overflow: hidden;
   border-bottom: 1px solid #eaecef;
-  // line-height: 40px;
-}
-
-a {
-  outline: none;
 }
 </style>
