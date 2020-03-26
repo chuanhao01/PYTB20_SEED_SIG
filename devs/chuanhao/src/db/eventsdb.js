@@ -78,7 +78,7 @@ const eventsdb = {
         return new Promise((resolve, reject) => {
             this.pool.query(`
             UPDATE EVENTS
-            SET title = ?, description = ?, event_date = ?, status = ?,
+            SET title = ?, description = ?, event_date = ?, status = ?
             WHERE ((event_id = ?) AND (deleted = 0)) 
             `, [title, description, event_date, status, event_id], function(err, data){
                 if(err){
