@@ -3,6 +3,12 @@ const uuid = require('uuid/v4');
 
 // Main obj getting exported
 const usersdb = {
+    // Setting up the pool property in the object
+    /**
+     *
+     *
+     * @param {mysql_obj_pool} pool
+     */
     init(pool){
         this.pool = pool;
     },
@@ -77,7 +83,7 @@ const usersdb = {
             this.pool.query(`
             UPDATE USERS
             SET nric = ?, dob = ?, fullname = ?, contact_num = ?, email = ?,
-            WHERE user_id = ?
+            WHERE ((user_id = ?) AND (deleted = 0))
             `, [nric, dob, fullname, contact_num, email, user_id], function(err, data){
                 if(err){
                     reject(err);
