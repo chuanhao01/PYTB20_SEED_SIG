@@ -40,7 +40,7 @@ const eventController = {
                                 throw err;
                             }
                         )
-                )
+                );
             })
                 .then(
                     function (allEventData) {
@@ -51,7 +51,7 @@ const eventController = {
                     function (err) {
                         console.log(err);
                     }
-                )
+                );
 
         });
 
@@ -75,7 +75,7 @@ const eventController = {
                                 throw err;
                             }
                         )
-                )
+                );
             })
                 .then(
                     function (eventData) {
@@ -98,7 +98,7 @@ const eventController = {
                                     );
                                     throw err;
                                 }
-                            )
+                            );
                     }
                 )
                 .then(
@@ -110,11 +110,11 @@ const eventController = {
                     function (err) {
                         console.log(err);
                     }
-                )
+                );
 
         });
 
     }
-}
+};
 
 module.exports = eventController;
