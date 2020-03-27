@@ -15,6 +15,9 @@ const APIcontrollers = {
         userController.init(app);
         eventController.init(app);
         signupController.init(app);
+        app.get('/test', function(req, res){
+            res.send('Test recieved');
+        });
     },
 };
 

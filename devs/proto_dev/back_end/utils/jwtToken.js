@@ -20,7 +20,7 @@ module.exports = {
     createToken(user_id){
         return new Promise((resolve, reject) => {
             let initialTime = Date.now();
-            let expiryTime = initialTime + 15 * 60 * 1000; // expiry is set to 15 mins for now
+            let expiryTime = initialTime + 30 * 60 * 1000; // expiry is set to 15 mins for now
             payload.iat = initialTime;
             payload.exp = expiryTime;
             payload.user_id = user_id;
@@ -39,7 +39,7 @@ module.exports = {
      * @param {string} token token received by the user
      * @param {function(Error,string,string)} callback function to call after validating the token
      */
-    validateToken(token){
+    refreshToken(token){
         /**
          * 
          * @param {String} token token of user 
@@ -47,7 +47,7 @@ module.exports = {
          * @returns {string} refreshed token for the user
          */
         async function refreshToken(token, time) {
-            let newExpiry = time + 60 * 60 * 1000;
+            let newExpiry = time + 30 * 60 * 1000;
             token.iat = time;
             token.exp = newExpiry;
             jwt.sign(token, key, { algorithm: 'HS512' }, function (err, token) {
@@ -73,4 +73,16 @@ module.exports = {
             });
         });
     },
+    decodeToken(token){
+        return new Promise((resolve, reject) => {
+            jwt.verify(token, key, { algorithm: 'HS512' }, function (err, decoded) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(decoded.user_id);
+                }
+            });
+        });
+    }
 };
