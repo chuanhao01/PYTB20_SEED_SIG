@@ -1,6 +1,6 @@
 <template>
   <div class="home mx-auto">
-    <h1>Hi, {{ account.user.fullname }}!</h1>
+    <!-- <h1>Hi, {{ account.user.fullname }}!</h1> -->
     <hr />
     <h1>List of Events</h1>
     

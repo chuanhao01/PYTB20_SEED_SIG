@@ -1,5 +1,6 @@
 import { authHeader } from "../_helpers";
-import { userService } from "./user.service";
+// import { userService } from "./user.service";
+import axios from 'axios';
 
 export const eventService = {
   getAllEvents,
@@ -11,24 +12,16 @@ export const eventService = {
 }
 
 function getAllEvents() {
-  const requestOptions = {
-    method: "GET",
-    headers: { "Content-Type": "application/json" }
-  };
-
-  return fetch(`${process.env.VUE_APP_API_URL}/events`, requestOptions).then(
-    handleResponse
-  );
-}
-
-function getEventById(event_id) {
-  const requestOptions = {
-    method: "GET"
-  };
-
-  return fetch(`${process.env.VUE_APP_API_URL}/events/${event_id}`, requestOptions)
-    .then(response => JSON.parse(response.text()))
+  return axios.get("http://localhost:8081/api/events")
+    .then(handleResponse) 
     .catch(e => console.log(e));
+  }
+  
+function getEventById(event_id) {
+  return axios.get(`http://localhost:8081/api/events/${event_id}`)
+    .then(handleResponse) 
+    .catch(e => console.log(e));
+  
 }
 
 function createEvent(event) {
@@ -69,7 +62,7 @@ function deleteEvent(event_id) {
   ).then(handleResponse);
 }
 
-function filterEvents (filter, events) {
+function filterEvents(filter, events) {
   let filteredList = [...events]
 
   // Filter status
@@ -82,22 +75,5 @@ function filterEvents (filter, events) {
 }
 
 function handleResponse(response) {
-  // console.log(response.text() && JSON.parse(response.text()));
-
-  return response.text().then(text => {
-    const data = text && JSON.parse(text);
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        // auto logout if 401 response returned from api
-        userService.logout();
-        location.reload(true);
-      }
-
-      const error = (data && data.message) || response.statusText;
-      return Promise.reject(error);
-    }
-
-    return data;
-  });
+  return response.data;
 }

@@ -1,5 +1,6 @@
 import { authHeader } from "../_helpers";
 import { userService } from "./user.service";
+import axios from 'axios';
 
 export const eventService = {
   getAllEvents,
@@ -11,14 +12,16 @@ export const eventService = {
 }
 
 function getAllEvents() {
-  const requestOptions = {
-    method: "GET",
-    headers: { "Content-Type": "application/json" }
-  };
+  // const requestOptions = {
+  //   method: "GET",
+  //   headers: { "Content-Type": "application/json" }
+  // };
 
-  return fetch(`${process.env.VUE_APP_API_URL}/events`, requestOptions).then(
-    handleResponse
-  );
+  // return fetch(`${process.env.VUE_APP_API_URL}/events`, requestOptions).then(
+  //   handleResponse
+  // );
+
+  return axios.get("http://localhost:8081/api/events").then(handleResponse).catch(e => console.log(e));
 }
 
 function getEventById(event_id) {
@@ -69,7 +72,7 @@ function deleteEvent(event_id) {
   ).then(handleResponse);
 }
 
-function filterEvents (filter, events) {
+function filterEvents(filter, events) {
   let filteredList = [...events]
 
   // Filter status
