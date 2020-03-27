@@ -1,0 +1,24 @@
+#main{
+    height: 100%;
+    padding: 5% 10%;
+    background-color: black;
+    color: white;
+    font-size: 18px;
+}
+#navigation-menu{
+    height: 10%;
+    width:100%;
+}
+.row{
+    height: 100%;
+}
+.right *{
+    margin-bottom: 2%;
+}
+input{
+    border-radius: 8px;
+    padding: 5px;
+}
+.warning{
+    color: #DC143C;
+}
