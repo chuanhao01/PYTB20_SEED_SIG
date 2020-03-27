@@ -48,7 +48,7 @@ const eventController = {
                     }
                 )
                 .catch(
-                    function(err) {
+                    function (err) {
                         console.log(err);
                     }
                 )
@@ -57,20 +57,62 @@ const eventController = {
 
         // API endpoint to view events by id
         app.get("/api/events/:event_id/", function (req, res) {
+
             const event_id = req.params.event_id;
+            console.log(event_id);
             // call the db method to view events by id
-        });
+            new Promise((resolve) => {
+                resolve(
+                    model.events.getEventDataByEventId(event_id)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+                            }
+                        )
+                )
+            })
+                .then(
+                    function (eventData) {
+                        return new Promise((resolve, reject) => {
+                            if (eventData.length == 1) {
+                                resolve(eventData[0]);
+                            } else {
+                                reject("Unexpected event");
 
-        // API endpoint to view current events user has signed up for
-        app.get("/api/events/u/", function (req, res) {
-            // call the db method to view events of user
-        });
+                            }
 
-        // API endpoint to view current events the user HAS NOT signed up for
-        app.get("/api/events/u/", function (req, res) {
-            // call the db method to view events user HAS NOT signed up for
-        });
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+                    }
+                )
+                .then(
+                    function(event) {
+                        res.status(200).send(event);
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
 
+        });
 
     }
 }
