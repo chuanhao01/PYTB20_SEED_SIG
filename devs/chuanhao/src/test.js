@@ -31,32 +31,70 @@ const utils = require('./utils/index');
 //         }
 //     );
 
-var my_event_id;
-db.events.createNewEvent('event1 abd', 'this is the test case', utils.parseTime.convertTimeStamp(Date.now()))
-    .then(
-        function(event_id){
-            my_event_id = event_id;
-            return db.events.getEventDataByEventId(event_id);
-        }
-    )
-    .then(
-        function(event){
-            console.log(event);
-            return event[0].event_id;
-        }
-    )
-    .then(
-        function(event_id){
-            return db.events.updateEventDataByEventId(event_id, 'changed now you dont see me', 'what is the desc', utils.parseTime.convertTimeStamp(Date.now()), 1);
-        }
-    )
-    .then(
-        function(){
-            return db.events.getEventDataByEventId(my_event_id);
-        }
-    )
-    .then(
-        function(event){
-            console.log(event);
-        }
-    );
+// var my_event_id;
+// db.events.createNewEvent('event1 abd', 'this is the test case', utils.parseTime.convertTimeStamp(Date.now()))
+//     .then(
+//         function(event_id){
+//             my_event_id = event_id;
+//             return db.events.getEventDataByEventId(event_id);
+//         }
+//     )
+//     .then(
+//         function(event){
+//             console.log(event);
+//             return event[0].event_id;
+//         }
+//     )
+//     .then(
+//         function(event_id){
+//             return db.events.updateEventDataByEventId(event_id, 'event2', 'what is the desc', utils.parseTime.convertTimeStamp(Date.now()), 1);
+//         }
+//     )
+//     .then(
+//         function(){
+//             return db.events.getEventDataByEventId(my_event_id);
+//         }
+//     )
+//     .then(
+//         function(event){
+//             console.log(event);
+//         }
+//     );
+
+let user_id = 'efc4747d-6d87-4179-b7a1-cea4e689bb7b';
+let event_id = 'eb4b133b-0a29-476f-923e-6bc03c912058';
+let email = 'hello@hello.com';
+
+db.users.checkUserEmail(email)
+.then(
+    function(a){
+        console.log(a);
+    }
+);
+
+// db.signups.checkUserSignUpEvent(event_id, user_id)
+// .then(
+//     function(data){
+//         console.log(data);
+//     }
+// );
+
+// db.signups.deleteUserSignUpForEvent(event_id, user_id)
+// .then(
+//     function(data){
+//         console.log(data);
+//     }
+// );
+
+// db.signups.getEventsUserParticipated(user_id)
+// .then(
+//     function(data){
+//         console.log(data);
+//     }
+// );
+// db.signups.createSignup(event_id, user_id)
+// .then(
+//     function(signup_id){
+//         console.log(signup_id);
+//     }
+// );

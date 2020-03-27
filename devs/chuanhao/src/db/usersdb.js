@@ -96,6 +96,35 @@ const usersdb = {
     },
 
     // Specific database calls
+    // Below here is for logging in
+    /**
+     * Checks if the email already exists in the db
+     * Returns true if emails does exists already, false if email does not exists and err otherwise
+     * @param {email} email
+     * @returns {Promise} [bool / err]
+     */
+    checkUserEmail(email){
+        return new Promise((resolve, reject) => {
+            this.pool.query(`
+            SELECT * FROM USERS
+            WHERE ((email = ?) AND (deleted = 0)) 
+            `, [email], function(err, data){
+                if(err){
+                    reject(err);
+                }
+                if(data.length === 1){
+                    resolve(true);
+                }
+                else if(data.length === 0){
+                    resolve(false);
+                }
+                else{
+                    reject('Duplicate users');
+                }
+            });
+        });
+    },
+    
 };
 
 module.exports = usersdb;
