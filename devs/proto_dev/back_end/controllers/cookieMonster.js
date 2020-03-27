@@ -21,7 +21,6 @@ module.exports = {
         return new Promise((resolve, reject) => {
             let initialTime = Date.now();
             let expiryTime = initialTime + 15 * 60 * 1000; // expiry is set to 15 mins for now
-            payload.iss = "localhost:4040";
             payload.iat = initialTime;
             payload.exp = expiryTime;
             payload.user_id = user_id;
