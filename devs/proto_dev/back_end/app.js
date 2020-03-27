@@ -8,6 +8,10 @@
 const express = require("express");
 const app = express();
 
+// Enable cors
+const cors = require('cors');
+app.use(cors());
+
 // Init middlewares (not custom)
 // Setting up body parser
 const bodyParser = require('body-parser');
