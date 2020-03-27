@@ -1,5 +1,5 @@
 import { authHeader } from "../_helpers";
-// import axios from 'axios';
+import axios from 'axios';
 
 export const userService = {
   login,
@@ -12,25 +12,36 @@ export const userService = {
 };
 
 function login(email) {
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email })
-  };
+  // const requestOptions = {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ email })
+  // };
 
-  return fetch(
-    `${process.env.VUE_APP_API_URL}/users/authenticate`,
-    requestOptions
-  )
-    .then(handleResponse)
-    .then(user => {
-      // login successful if there's a jwt token in the response
-      if (user.token) {
-        // store user details and jwt token in local storage to keep user logged in between page refreshes
-        localStorage.setItem("user", JSON.stringify(user));
-      }
+  // return fetch(
+  //   `${process.env.VUE_APP_API_URL}/users/authenticate`,
+  //   requestOptions
+  // )
+  //   .then(handleResponse)
+  //   .then(user => {
+  //     // login successful if there's a jwt token in the response
+  //     if (user.token) {
+  //       // store user details and jwt token in local storage to keep user logged in between page refreshes
+  //       localStorage.setItem("user", JSON.stringify(user));
+  //     }
 
-      return user;
+  //     return user;
+  //   });
+
+  return axios
+    .post("http://localhost:8081/api/login", { email: email })
+    .then(result => {
+      console.log('login success');
+      return result;
+
+    })
+    .catch(error => {
+      console.error(error);
     });
 }
 
@@ -40,22 +51,33 @@ function logout() {
 }
 
 function register(user) {
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user)
-  };
+  // const requestOptions = {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify(user)
+  // };
 
-  return fetch(
-    `${process.env.VUE_APP_API_URL}/users/register`,
-    requestOptions
-  ).then(handleResponse);
+  // return fetch(
+  //   `${process.env.VUE_APP_API_URL}/users/register`,
+  //   requestOptions
+  // ).then(handleResponse);
+
+  return axios
+    .post("http://localhost:8081/api/users", user)
+    .then(result => {
+      console.log("register success");
+      return result;
+    })
+    .catch(error => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    });
 }
 
 function getAll() {
   const requestOptions = {
-      method: 'GET',
-      headers: authHeader()
+    method: 'GET',
+    headers: authHeader()
   };
 
   return fetch(`${process.env.VUE_APP_API_URL}/users`, requestOptions).then(handleResponse);
