@@ -15,11 +15,19 @@ const signupController = {
         // e.g: app.get ("/api/...", function(req, res) {});
 
         // API endpoint to sign up for an event
-        app.post("/api/event/:event_id/signups/", function (req, res) {
+        app.post("/api/events/:event_id/signups/", function (req, res) {
             // get all of the required fields to sign up for event
 
             // call the db method to add user to database
         });
+
+        // API endpoint to leave an event
+        app.delete("/api/events/event_id/signups/", function(req, res) {
+            // call the db method to "delete" user from event
+        });
+
+        // API endpoint to take attendance
+
     }
 }
 
