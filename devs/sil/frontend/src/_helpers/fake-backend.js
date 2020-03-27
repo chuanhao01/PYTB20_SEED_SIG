@@ -1,9 +1,12 @@
+// @ts-nocheck
 // array in local storage for registered users
 let users = JSON.parse(localStorage.getItem("users")) || [];
+let events = JSON.parse(localStorage.getItem("events")) || [];
+// let events = require("../events.json") || [];
 
 export function configureFakeBackend() {
   let realFetch = window.fetch;
-  window.fetch = function(url, opts) {
+  window.fetch = function (url, opts) {
     return new Promise((resolve, reject) => {
       // wrap in timeout to simulate server api call
       setTimeout(() => {
@@ -139,6 +142,30 @@ export function configureFakeBackend() {
             reject("Unauthorised");
           }
 
+          return;
+        }
+
+        // get events
+        if (url.endsWith("/events") && opts.method === "GET") {
+
+          resolve({ ok: true, text: () => Promise.resolve(JSON.stringify(events)) })
+          return;
+        }
+
+        // get event by id
+        if (url.match(/\/events\/\d+$/) && opts.method === "GET") {
+          
+          // find event by id in events array
+          let urlParts = url.split("/");
+          let id = parseInt(urlParts[urlParts.length - 1]);
+          let matchedEvents = events.filter(event => {
+            return event.event_id === id;
+          });
+          
+          let event = matchedEvents.length ? matchedEvents[0] : null;
+
+          // respond 200 OK with event
+          resolve({ ok: true, text: () => JSON.stringify(event) });
           return;
         }
 

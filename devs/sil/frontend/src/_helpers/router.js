@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import Home from "../views/public/Home.vue";
 
 Vue.use(VueRouter);
 
@@ -14,19 +14,13 @@ const routes = [
     path: "/event/:eventid",
     name: "Event",
     component: () =>
-      import(/* webpackChunkName: "event" */ "../views/Event.vue")
-  },
-  {
-    path: "/user/dashboard",
-    name: "User Dashboard",
-    component: () =>
-      import(/* webpackChunkName: "event" */ "../views/UserDashboard.vue")
+      import(/* webpackChunkName: "event" */ "../views/public/Event.vue")
   },
   {
     path: "/user/:userid",
     name: "User Profile",
     component: () =>
-      import(/* webpackChunkName: "event" */ "../views/Profile.vue")
+      import(/* webpackChunkName: "event" */ "../views/user/Profile.vue")
   },
   {
     path: "/admin/dashboard",
@@ -43,7 +37,7 @@ const routes = [
     // this generates a separate chunk (login.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "login" */ "../views/Login.vue")
+      import(/* webpackChunkName: "login" */ "../views/public/Login.vue")
   },
   {
     path: "/register",
@@ -52,7 +46,7 @@ const routes = [
     // this generates a separate chunk (register.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "register" */ "../views/Register.vue")
+      import(/* webpackChunkName: "register" */ "../views/public/Register.vue")
   },
 
   // otherwise redirect to home

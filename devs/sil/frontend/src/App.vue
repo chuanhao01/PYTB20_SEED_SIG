@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-cloak>
     <NavBar id="nav" />
     <div v-if="alert.message" :class="`alert ${alert.type}`">{{ alert.message }}</div>
     <router-view class="router-view"></router-view>
@@ -75,6 +75,10 @@ export default {
   &::-webkit-scrollbar-track {
     background: $background-color;
   }
+}
+
+[v-cloak] {
+  display: none;
 }
 
 body {

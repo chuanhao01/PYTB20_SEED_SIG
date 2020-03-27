@@ -36,7 +36,7 @@
           <router-link to="/user/dashboard" class="nav-link" active-class="active">Dashboard</router-link>
         </li>
         <li class="nav-item mr-2 font-weight-bold">
-          <router-link :to="'/user/'+ user.id" class="nav-link" active-class="active">Profile</router-link>
+          <router-link :to="'/user/'+ account.user.id" class="nav-link" active-class="active">Profile</router-link>
         </li>
         <li class="nav-item mr-2 font-weight-bold">
           <a class="nav-link" @click="logout">Logout</a>
@@ -51,11 +51,6 @@ import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
   name: "NavBar",
-  data() {
-    return {
-      user: localStorage.getItem('user')
-    };
-  },
   computed: {
     ...mapState({
       account: state => state.account
@@ -99,7 +94,7 @@ a {
 
 @media only screen and (max-width: 600px) {
   .navbar-brand {
-    font-size: 24px !important;
+    font-size: 20px !important;
     width: 70%;
     display: flex;
     align-items: center;

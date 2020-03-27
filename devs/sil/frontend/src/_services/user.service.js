@@ -4,9 +4,9 @@ export const userService = {
   login,
   logout,
   register,
+  getAll,
   update,
   delete: _delete,
-  joinEvent,
 };
 
 function login(email) {
@@ -50,6 +50,14 @@ function register(user) {
   ).then(handleResponse);
 }
 
+function getAll() {
+  const requestOptions = {
+      method: 'GET',
+      headers: authHeader()
+  };
+
+  return fetch(`${process.env.VUE_APP_API_URL}/users`, requestOptions).then(handleResponse);
+}
 
 // function getById(id) {
 //   const requestOptions = {
@@ -85,30 +93,6 @@ function _delete(id) {
 
   return fetch(
     `${process.env.VUE_APP_API_URL}/users/${id}`,
-    requestOptions
-  ).then(handleResponse);
-}
-
-// function getAllEvents() {
-//   const requestOptions = {
-//     method: "GET",
-//     headers: authHeader()
-//   };
-
-//   return fetch(`${process.env.VUE_APP_API_URL}/events`, requestOptions).then(
-//     handleResponse
-//   );
-// }
-
-function joinEvent(user, event) {
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user, event)
-  };
-
-  return fetch(
-    `${process.env.VUE_APP_API_URL}/event/:eventid`,
     requestOptions
   ).then(handleResponse);
 }
