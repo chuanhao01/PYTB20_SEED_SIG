@@ -10,7 +10,7 @@ const parseTime = {
     /**
      *
      *
-     * @param {Date} js_date
+     * @param {String} js_date
      * @returns {string} [is in timestamp format YYYY-MM-DD hh:mm:ss]
      */
     convertTimeStamp(js_date){
