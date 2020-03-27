@@ -1,30 +1,32 @@
+/**
+ * File: app.js
+ * --------------
+ * File for the main express app
+ */
+
+// Init express app
 const express = require("express");
-const cookieParser = require("cookie-parser");
-const welcomeController = require("./controllers/welcomeController");
 const app = express();
-const https = require("https");
-const fs = require("fs");
 
+// Init middlewares (not custom)
+// Setting up body parser
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
-// check whether user is connecting through http. If so redirect them to https
-app.use((req,res,next)=>{
-    if(req.secure){
-        next();
-    }
-    else{
-        res.redirect("https://localhost:4444");
-    }
+// Setting up cookie parser
+const cookieParser = require('cookie-parser');
+const COOKIE_SECRET = process.env.COOKIE_SECRET;
+app.use(cookieParser(COOKIE_SECRET));
 
+// Init custom middlewares
+
+// Init the API controllers
+const controllers = require("./controllers/index.js");
+controllers.init(app);
+
+// Set the app to listen on port 8081
+const PORT = 8081;
+app.listen(PORT, function () {
+    console.log(`Back-End Server listening at port ${PORT}`);
 });
-app.use(express.static("./assets"));
-app.use(cookieParser());
-welcomeController(app);
-app.listen("4040"); // listen for ppl connecting through http
-
-// Create https server with the cert and key
-var server  = https.createServer({
-    // certificate
-    key: fs.readFileSync("./key.key"),
-    cert: fs.readFileSync("./cert.crt")
-},app);
-server.listen(4444); // https @ port 4444
