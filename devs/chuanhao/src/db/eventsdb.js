@@ -90,6 +90,27 @@ const eventsdb = {
             });
         });
     },
+    // Specific API 
+    /**
+     * Get all the events
+     *
+     * @returns {Promise} [arr of evnts]
+     */
+    getAllEvents(){
+        return new Promise((resolve, reject) => {
+            this.pool.query(`
+            SELECT * FROM EVENTS 
+            WHERE deleted = 0
+            `, function(err, data){
+                if(err){
+                    reject(err);
+                }
+                else{
+                    resolve(data);
+                }
+            });
+        });
+    },
 };
 
 module.exports = eventsdb;

@@ -1,8 +1,9 @@
 const db = require('./db/index');
 const utils = require('./utils/index');
+const validator = require('validator');
 
 // var my_user_id;
-// db.users.createNewUser('t0123456i', utils.parseTime.convertTimeStamp(Date.now()), 'bob the builder', '+65 12345678', 'bobthebuilder@yeswecan.com')
+// db.users.createNewUser('t0123456i', utils.parseTime.convertTimeStamp('1965-1-1'), 'bob the builder', '+65 12345678', 'bobthebuilder@yeswecan.com')
 //     .then(
 //         function(user_id){
 //             my_user_id = user_id;
@@ -61,16 +62,16 @@ const utils = require('./utils/index');
 //         }
 //     );
 
-let user_id = 'efc4747d-6d87-4179-b7a1-cea4e689bb7b';
-let event_id = 'eb4b133b-0a29-476f-923e-6bc03c912058';
-let email = 'hello@hello.com';
+// let user_id = 'efc4747d-6d87-4179-b7a1-cea4e689bb7b';
+// let event_id = 'eb4b133b-0a29-476f-923e-6bc03c912058';
+// let email = 'hello@hello.com';
 
-db.users.checkUserEmail(email)
-.then(
-    function(a){
-        console.log(a);
-    }
-);
+// db.users.checkUserEmail(email)
+// .then(
+//     function(a){
+//         console.log(a);
+//     }
+// );
 
 // db.signups.checkUserSignUpEvent(event_id, user_id)
 // .then(
@@ -98,3 +99,6 @@ db.users.checkUserEmail(email)
 //         console.log(signup_id);
 //     }
 // );
+
+// let date = '2019-02';
+// console.log(utils.parseTime.convertTimeStamp(date));

@@ -20,10 +20,10 @@ eventsdb.init(pool);
 signupsdb.init(pool);
 
 // Main object being exported, you will mainly be accessing the db functions through this object
-const db = {
+const dataAccess = {
     users: usersdb,
     events: eventsdb,
     signups: signupsdb,
 };
 
-module.exports = db;
+module.exports = dataAccess;
