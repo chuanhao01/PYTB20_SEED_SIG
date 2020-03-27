@@ -5,12 +5,14 @@
  */
 
 // Import custom middlewares required
-// ...
+const userAuth = require('./userAuth');
+const pathAuth = require('./pathAuth');
 
 // custom middlewares object
 const customMiddlewares = {
     init(app) {
-        // app.use(...);
+        app.use(userAuth);
+        app.use(pathAuth);
     },
 };
 
