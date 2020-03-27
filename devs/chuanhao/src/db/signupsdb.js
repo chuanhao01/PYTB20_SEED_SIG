@@ -88,6 +88,7 @@ const signupsdb = {
     },
 
     // Specific API calls
+    // Getting events by user sign up status
     /**
      * Get the events the user has not signup for
      *
@@ -115,6 +116,7 @@ const signupsdb = {
     /**
      * Gets the events the user has signed up for
      * For this, we are getting status = 0
+     * 
      * @param {String} user_id
      * @returns {Promise} [arr of events]
      */
@@ -138,6 +140,7 @@ const signupsdb = {
     /**
      * Gets the events the user has already participated in
      * For this, in the SIGNUPS table, status = 1
+     * 
      * @param {String} user_id
      * @returns {Promise} [arr of events]
      */
@@ -157,7 +160,93 @@ const signupsdb = {
                 }
             });
         });
-    }
+    },
+    /**
+     * Checks if the user has signed up for the event or participated in the event before
+     * True is user has signed up or participated in the event
+     * False if the user has not signed or participated in the event
+     * 
+     * @param {String} event_id
+     * @param {String} user_id
+     * @returns {Promise}
+     */
+    checkUserSignUpParticipatedEvent(event_id, user_id){
+        return new Promise((resolve, reject) => {
+            this.pool.query(`
+            SELECT * FROM SIGNUPS
+            WHERE ((event_id = ?) AND (user_id = ?) AND (deleted = 0))
+            `, [event_id, user_id], function(err, data){
+                if(err){
+                    reject(err);
+                }
+                if(data.length === 1){
+                    resolve(true);
+                }
+                else if(data.length === 0){
+                    resolve(false);
+                }
+                else{
+                    reject('Multiple events signed up or participated in');
+                }
+            });
+        });
+    },
+    /**
+     * Check if the user has signed up for the event
+     * True if the user has signed up for the event
+     * False if the user has not signed up for the event
+     *
+     * @param {String} event_id
+     * @param {String} user_id
+     * @returns {Promise} [bool / err]
+     */
+    checkUserSignUpEvent(event_id, user_id){
+        return new Promise((resolve, reject) => {
+            this.pool.query(`
+            SELECT * FROM SIGNUPS
+            WHERE ((event_id = ?) AND (user_id = ?) AND (deleted = 0) AND (status = 0))
+            `, [event_id, user_id], function(err, data){
+                if(err){
+                    reject(err);
+                }
+                if(data.length === 1){
+                    resolve(true);
+                }
+                else if(data.length === 0){
+                    resolve(false);
+                }
+                else{
+                    reject('Multiple events signed up for');
+                }
+            });
+        });
+    },
+
+    // Backing out of signing up for the events
+    /**
+     * Delete/User backs out of signing up for an event
+     *
+     * @param {String} event_id
+     * @param {String} user_id
+     * @returns {Promise} [mysql data]
+     */
+    deleteUserSignUpForEvent(event_id, user_id){
+        return new Promise((resolve, reject) => {
+            this.pool.query(`
+            UPDATE SIGNUPS
+            SET deleted = 1
+            WHERE ((event_id = ?) AND (user_id = ?) AND (status = 0)) 
+            `, [event_id, user_id], function(err, data){
+                if(err){
+                    reject(err);
+                }
+                else{
+                    resolve(data);
+                }
+            });
+        });
+    },
+    
 };
 
 module.exports = signupsdb;
