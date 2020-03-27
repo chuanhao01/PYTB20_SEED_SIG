@@ -36,6 +36,11 @@ const eventController = {
         app.get("/api/events/u/", function(req, res) {
             // call the db method to view events of user
         });
+
+        // API endpoint to view current events the user HAS NOT signed up for
+        app.get("/api/events/u/", function(req, res) {
+            // call the db method to view events user HAS NOT signed up for
+        });
         
 
     }
