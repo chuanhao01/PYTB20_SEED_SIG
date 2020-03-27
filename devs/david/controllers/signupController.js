@@ -43,7 +43,7 @@ const signupController = {
             })
                 .then(
                     function (signup_id) {
-                        res.status(200).send(
+                        res.status(201).send(
                             {
                                 "signup_id": signup_id
                             }
@@ -58,8 +58,40 @@ const signupController = {
         });
 
         // API endpoint to leave an event
-        app.delete("/api/events/event_id/signups/", function (req, res) {
+        app.delete("/api/events/:event_id/signups/", function (req, res) {
+            // get all of the required fields to sign up for event
+            const event_id = req.params.event_id;
+
+            const user_id = req.cookies.token;
+
             // call the db method to "delete" user from event
+            new Promise((resolve) => {
+                resolve(
+                    model.signups.deleteUserSignUpForEvent(event_id, user_id)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+
+                            }
+                        )
+                )
+            })
+                .then(
+                    function (signup_id) {
+                        res.status(204).send();
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
         });
 
         // API endpoint to view current events user has signed up for
