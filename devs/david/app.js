@@ -27,8 +27,8 @@ app.use(cookieParser(COOKIE_SECRET));
 const controllers = require("./controllers/index.js");
 controllers.init(app);
 
-// Set the app to listen on port 8080
-const PORT = 8080;
+// Set the app to listen on port 8081
+const PORT = 8081;
 app.listen(PORT, function () {
     console.log(`Back-End Server listening at port ${PORT}`);
 });

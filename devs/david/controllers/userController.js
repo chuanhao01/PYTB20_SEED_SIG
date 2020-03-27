@@ -31,13 +31,23 @@ const userController = {
             // email of user
             const email = req.body.email;
 
+            // REMEMBER TO MAKE ALL STRINGS TO LOWERCASE
+
+            console.log(nric, dob, fullname, contact_num, email);
+
             // call the db method to add user to database
+            res.status(200).send({
+                "id": 1
+            });
 
         });
 
         // API endpoint to view all users
         app.get("/api/users/", function(req, res) {
             // call the db method to view all users in database
+            res.status(200).send({
+                "users": "all"
+            });
         });
 
         // API endpoint to view user by id
@@ -46,6 +56,9 @@ const userController = {
             const user_id = req.params.user_id;
 
             // call the db method to view user by id in database
+            res.status(200).send({
+                "user_id": user_id
+            });
         });
 
         // API endpoint to view users (participants) of a specific event
@@ -54,6 +67,9 @@ const userController = {
             const event_id = req.params.event_id;
 
             // call the db method to get all users of the specified event
+            res.status(200).send({
+                "event_id": event_id
+            });
             
         });
     }
