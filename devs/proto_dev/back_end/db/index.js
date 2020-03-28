@@ -9,6 +9,7 @@ const pool = mysql.createPool({
     user: process.env.MYSQLUSER,
     password: process.env.MYSQLPASSWORD,
     database: 'PYTB_SEED_SIG',
+    insecureAuth: true,
 });
 
 // Importing the other db files here
