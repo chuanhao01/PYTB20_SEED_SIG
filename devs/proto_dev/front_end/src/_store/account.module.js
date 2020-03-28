@@ -14,7 +14,6 @@ const actions = {
     userService.login(email).then(
       user => {
         commit("loginSuccess", user);
-        router.push("/");
       },
       error => {
         commit("loginFailure", error);

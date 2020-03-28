@@ -12,6 +12,7 @@ export const userService = {
 };
 
 function login(email) {
+  // console.log(email)
   return axios
     .post("http://localhost:8081/api/login", { email: email })
     .then(result => {
