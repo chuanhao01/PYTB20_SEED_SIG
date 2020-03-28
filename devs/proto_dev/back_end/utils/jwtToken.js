@@ -4,8 +4,6 @@ const path = require("path");
 const key = fs.readFileSync(path.resolve(__dirname + "/../creds/jwt/key.txt"));
 
 const payload = {
-    iss: this.iss,
-    sub: this.sub,
     user: this.username,
     iat: this.iat,
     exp: this.exp
@@ -40,30 +38,27 @@ module.exports = {
      * @param {function(Error,string,string)} callback function to call after validating the token
      */
     refreshToken(token){
-        /**
-         * 
-         * @param {String} token token of user 
-         * @param {Number} time current time
-         * @returns {string} refreshed token for the user
-         */
-        async function refreshToken(token, time) {
-            let newExpiry = time + 30 * 60 * 1000;
-            token.iat = time;
-            token.exp = newExpiry;
-            jwt.sign(token, key, { algorithm: 'HS512' }, function (err, token) {
-                return token;
-            });
-        }
         return new Promise((resolve, reject) => {
-            jwt.verify(token, key, { algorithm: 'HS512' }, async function (err, decoded) {
+            jwt.verify(token, key, { algorithm: 'HS512' }, function (err, decoded) {
                 if (err) {
                     reject(err);
                 }
                 else {
                     let currentTime = Date.now();
                     if ((currentTime - decoded.iat) / (decoded.exp - decoded.iat) > 0.5) {
-                        let newToken = await refreshToken(decoded, currentTime);
-                        resolve(newToken);
+                        // If the token is about halfway through, get new_payload then sign it
+                        const new_payload = decoded;
+                        new_payload.iat = currentTime;
+                        new_payload.exp = currentTime + 30 * 60 * 1000;
+                        jwt.sign(new_payload, key, { algorithm: 'HS512' }, function(err, new_token){
+                            if(err){
+                                reject(err);
+                            }
+                            else{
+                                // New token is generated
+                                resolve(new_token);
+                            }
+                        });
                     }
                     else {
                         resolve(token);
