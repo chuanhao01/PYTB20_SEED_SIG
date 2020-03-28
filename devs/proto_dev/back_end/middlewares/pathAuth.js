@@ -18,8 +18,7 @@ function pathAuth(req, res, next){
     else{
         if(req.user === undefined || req.user === null){
             // If they are going to other paths and they are not logged in
-            res.status(403);
-            res.redirect('/');
+            res.status(403).send();
         }
         else{
             next();
