@@ -4,6 +4,7 @@
 const utils = require('../utils/index');
 const model = require('../db/index');
 
+// Middleware function here
 function userAuth(req, res, next){
     const token = req.cookies.token;
     if(token){

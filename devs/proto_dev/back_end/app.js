@@ -10,7 +10,9 @@ const app = express();
 
 // Enable cors
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+    credentials: true,
+}));
 
 // Init middlewares (not custom)
 // Setting up body parser
