@@ -22,7 +22,7 @@
 
     <div class="collapse navbar-collapse" id="navbarToggle">
       <!-- navbar if not logged in -->
-      <ul v-if="!isLoggedIn" class="navbar-nav ml-auto mr-5 mt-2 mt-lg-0">
+      <ul v-if="isLoggedIn === undefined || isLoggedIn === false" class="navbar-nav ml-auto mr-5 mt-2 mt-lg-0">
         <li class="nav-item mr-2 font-weight-bold">
           <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
         </li>

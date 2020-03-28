@@ -3,6 +3,7 @@ import { router } from "../_helpers";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
+
 const state = user
   ? { status: { loggedin: true }, user }
   : { status: {}, user: null };
@@ -52,7 +53,7 @@ const mutations = {
     state.user = user;
   },
   loginSuccess(state, user) {
-    state.status = { loggedin: true };
+    // state.status = { loggedin: true };
     state.user = user;
   },
   loginFailure(state) {
