@@ -12,16 +12,16 @@ export const eventService = {
 }
 
 function getAllEvents() {
-  return axios.get("http://localhost:8081/api/events")
-    .then(handleResponse) 
+  return axios.get("http://localhost:8081/api/events", { withCredentials: true })
+    .then(handleResponse)
     .catch(e => console.log(e));
-  }
-  
+}
+
 function getEventById(event_id) {
   return axios.get(`http://localhost:8081/api/events/${event_id}`)
-    .then(handleResponse) 
+    .then(handleResponse)
     .catch(e => console.log(e));
-  
+
 }
 
 function createEvent(event) {

@@ -17,7 +17,6 @@ function login(email) {
     .then(result => {
       console.log('login success');
       return result;
-
     })
     .catch(error => {
       console.error(error);

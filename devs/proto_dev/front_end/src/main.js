@@ -20,12 +20,10 @@ extend("required", {
 Vue.component("ValidationObserver", ValidationObserver);
 Vue.component("ValidationProvider", ValidationProvider);
 
-import { configureFakeBackend } from "./_helpers";
-configureFakeBackend();
 
 Vue.config.productionTip = false;
 
-axios.defaults.baseUrl = "http://localhost:8080";
+axios.defaults.baseUrl = "http://localhost:8081";
 
 new Vue({
   router,
