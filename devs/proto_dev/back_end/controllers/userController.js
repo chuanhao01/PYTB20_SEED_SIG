@@ -173,7 +173,7 @@ const userController = {
         });
 
         // API endpoint to login using email
-        app.get("/api/login", function(req, res){
+        app.post("/api/login", function(req, res){
             const email = req.body.email.toLowerCase();
             return new Promise((resolve) => {
                 resolve(
