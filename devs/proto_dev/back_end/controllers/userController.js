@@ -146,7 +146,7 @@ const userController = {
             return new Promise((resolve) => {
                 // Checks the token
                 resolve(
-                    utils.jwtToken.validateToken(token)
+                    utils.jwtToken.refreshToken(token)
                         .catch(
                             function(err){
                                 console.log(err);
@@ -161,8 +161,8 @@ const userController = {
                     function(new_token){
                         // Token was valid and new_token was generated
                         // redirect her alsoasdadasdasdasdasdasdadasdasdasda
-                        // res.status(302).cookie("token", new_token, { httpOnly: true }).redirect("http://");
-                        res.status(302).cookie("token", new_token, { httpOnly: true }).send();
+                        res.status(302).cookie("token", new_token, { httpOnly: true }).redirect("http://localhost:8080");
+                        // res.status(302).cookie("token", new_token, { httpOnly: true }).send();
                     }
                 )
                 .catch(
@@ -173,7 +173,7 @@ const userController = {
         });
 
         // API endpoint to login using email
-        app.get("/api/login", function(req, res){
+        app.post("/api/login", function(req, res){
             const email = req.body.email.toLowerCase();
             return new Promise((resolve) => {
                 resolve(
@@ -234,9 +234,9 @@ const userController = {
                     }
                 )
                 .then(
-                    function(user_id){
+                    function(user){
                         // We got the user_id by email, parse cause mysql gives in arr
-                        user_id = user_id[0];
+                        const user_id = user[0].user_id;
                         // Send the email with link here
                         return utils.jwtToken.createToken(user_id)
                             .catch(
