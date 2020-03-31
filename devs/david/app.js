@@ -8,6 +8,12 @@
 const express = require("express");
 const app = express();
 
+// Enable cors
+const cors = require('cors');
+app.use(cors({
+    credentials: true,
+}));
+
 // Init middlewares (not custom)
 // Setting up body parser
 const bodyParser = require('body-parser');
@@ -20,8 +26,9 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET;
 app.use(cookieParser(COOKIE_SECRET));
 
 // Init custom middlewares
-// const customMiddlewares = require("./middlewares/index.js");
-// customMiddlewares.init(app);
+// const middlewares = require('./middlewares/index');
+const middlewares = require("../../main/client_back_end/middlewares/index");
+middlewares.init(app);
 
 // Init the API controllers
 const controllers = require("./controllers/index.js");
