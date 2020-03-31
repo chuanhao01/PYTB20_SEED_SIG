@@ -19,14 +19,14 @@ const eventController = {
         // e.g: app.get ("/api/...", function(req, res) {});
 
         // API endpoint to create new event
-        app.post("/api/events/", function (req, res) {
+        app.post("/api/events", function (req, res) {
             // get all of the required fields to add new event
 
             // call the db method to add user to database
         });
 
         // API endpoint to view all events
-        app.get("/api/events/", function (req, res) {
+        app.get("/api/events", function (req, res) {
             // call the db method to view all events in database
             new Promise((resolve) => {
                 resolve(
@@ -58,7 +58,7 @@ const eventController = {
         });
 
         // API endpoint to view events by id
-        app.get("/api/events/:event_id/", function (req, res) {
+        app.get("/api/events/:event_id", function (req, res) {
 
             const event_id = req.params.event_id;
             console.log(event_id);

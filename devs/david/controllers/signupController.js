@@ -19,7 +19,7 @@ const signupController = {
         // e.g: app.get ("/api/...", function(req, res) {});
 
         // API endpoint to sign up for an event
-        app.post("/api/events/:event_id/signups/", function (req, res) {
+        app.post("/api/events/:event_id/signups", function (req, res) {
             // get all of the required fields to sign up for event
             const event_id = req.params.event_id;
 
@@ -60,7 +60,7 @@ const signupController = {
         });
 
         // API endpoint to leave an event
-        app.delete("/api/events/:event_id/signups/", function (req, res) {
+        app.delete("/api/events/:event_id/signups", function (req, res) {
             // get all of the required fields to sign up for event
             const event_id = req.params.event_id;
 
@@ -97,13 +97,13 @@ const signupController = {
         });
 
         // API endpoint to view current events user has signed up for
-        app.get("/api/events/u/", function (req, res) {
+        app.get("/api/events/u", function (req, res) {
             // call the db method to view events of user
             // model.signups.getEventsUserSignUp()
         });
 
         // API endpoint to view current events the user HAS NOT signed up for
-        app.get("/api/events/u/", function (req, res) {
+        app.get("/api/events/u", function (req, res) {
             // call the db method to view events user HAS NOT signed up for
         });
 

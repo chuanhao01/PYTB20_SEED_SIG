@@ -19,7 +19,7 @@ const userController = {
         // e.g: app.get ("/api/...", function(req, res) {});
 
         // API endpoint to create new account
-        app.post("/api/users/", function (req, res) {
+        app.post("/api/users", function (req, res) {
             // nric of user
             const nric = req.body.nric.toLowerCase();
 
@@ -285,7 +285,7 @@ const userController = {
         });
 
         // API endpoint to view all users
-        app.get("/api/users/", function (req, res) {
+        app.get("/api/users", function (req, res) {
             // call the db method to view all users in database
             res.status(200).send({
                 "users": "all"
@@ -293,7 +293,7 @@ const userController = {
         });
 
         // API endpoint to view user by id
-        app.get("/api/users/:user_id/", function (req, res) {
+        app.get("/api/users/:user_id", function (req, res) {
             // user id
             const user_id = req.params.user_id;
 
@@ -304,7 +304,7 @@ const userController = {
         });
 
         // API endpoint to view users (participants) of a specific event
-        app.get("/api/events/:event_id/users/", function (req, res) {
+        app.get("/api/events/:event_id/users", function (req, res) {
             // event id
             const event_id = req.params.event_id;
 
