@@ -5,10 +5,12 @@
  */
 
 // Import libraries that are required
-const utils = require("../../chuanhao/src/utils/index.js");
+// const utils = require("../utils/index");
+const utils = require("../../../main/client_back_end/utils/index");
 
 // Import the model needed for CRUD of DB
-const model = require("../../chuanhao/src/db/index.js");
+// const model = require("../db/index");
+const model = require("../../../main/client_back_end/db/index");
 
 // event controller object
 const eventController = {
@@ -40,7 +42,7 @@ const eventController = {
                                 throw err;
                             }
                         )
-                )
+                );
             })
                 .then(
                     function (allEventData) {
@@ -51,7 +53,7 @@ const eventController = {
                     function (err) {
                         console.log(err);
                     }
-                )
+                );
 
         });
 
@@ -75,7 +77,7 @@ const eventController = {
                                 throw err;
                             }
                         )
-                )
+                );
             })
                 .then(
                     function (eventData) {
@@ -98,7 +100,7 @@ const eventController = {
                                     );
                                     throw err;
                                 }
-                            )
+                            );
                     }
                 )
                 .then(
@@ -110,11 +112,11 @@ const eventController = {
                     function (err) {
                         console.log(err);
                     }
-                )
+                );
 
         });
 
     }
-}
+};
 
 module.exports = eventController;

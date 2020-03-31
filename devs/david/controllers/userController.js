@@ -5,10 +5,12 @@
  */
 
 // Import libraries that are required
-const utils = require("../../chuanhao/src/utils/index.js");
+// const utils = require("../utils/index");
+const utils = require("../../../main/client_back_end/utils/index");
 
 // Import the model needed for CRUD of DB
-const model = require("../../chuanhao/src/db/index.js");
+// const model = require("../db/index");
+const model = require("../../../main/client_back_end/db/index");
 
 // user controller object
 const userController = {
@@ -74,7 +76,7 @@ const userController = {
                                     );
                                     throw err;
                                 }
-                            )
+                            );
                     }
                 )
                 .then(
@@ -90,26 +92,196 @@ const userController = {
                                     );
                                     throw err;
                                 }
-
-                            )
+                            );
+                    }
+                )
+                .then(
+                    function(user_id){
+                        // Generates the token based on the id
+                        return utils.jwtToken.createToken(user_id)
+                            .catch(
+                                function(err){
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function(jwt_token){
+                        // Send the token to the email with a link
+                        return utils.email.send(email, `http://localhost:8081/api/login/${jwt_token}`)
+                            .catch(
+                                function(err){
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                }
+                            );
                     }
                 )
                 .then (
-                    function(user_id) {
-                        res.status(200).send(
-                            {
-                                "user_id": user_id
-                            }
-                        )
+                    function() {
+                        res.status(200).send();
                     }
                 )
                 .catch (
                     function(err) {
                         console.log(err);
                     }
+                );
+
+
+        });
+
+        // API endpoint to login and create the cookie and redirect
+        app.get("/api/login/:token", function(req, res){
+            // this is to mainly set up the cookie in the browser
+            const token = req.params.token;
+            return new Promise((resolve) => {
+                // Checks the token
+                resolve(
+                    utils.jwtToken.refreshToken(token)
+                        .catch(
+                            function(err){
+                                console.log(err);
+                                // Add in redirect PLEASE HEREREREREEREREREREERERERERERERERE
+                                // res.status(500).redirect('');
+                                res.status(500).send();
+                            }
+                        )
+                );
+            })
+                .then(
+                    function(new_token){
+                        // Token was valid and new_token was generated
+                        // redirect her alsoasdadasdasdasdasdasdadasdasdasda
+                        res.status(302).cookie("token", new_token, { httpOnly: true }).redirect("http://localhost:8080");
+                        // res.status(302).cookie("token", new_token, { httpOnly: true }).send();
+                    }
                 )
+                .catch(
+                    function(err){
+                        console.log(err);
+                    }
+                );
+        });
 
-
+        // API endpoint to login using email
+        app.post("/api/login", function(req, res){
+            const email = req.body.email.toLowerCase();
+            return new Promise((resolve) => {
+                resolve(
+                    model.users.checkUserEmail(email)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+                            }
+                        )
+                );
+            })
+                .then(
+                    function(emailExists){
+                        // Logic flow based on if email exists
+                        return new Promise((resolve, reject) => {
+                            if(emailExists){
+                                // email exists and the user can login
+                                resolve(true);
+                            }
+                            else{
+                                reject('User email does not exists');
+                            }
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function(){
+                        // Get the user_id by email
+                        return model.users.getUserIdByEmail(email)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function(user){
+                        // We got the user_id by email, parse cause mysql gives in arr
+                        const user_id = user[0].user_id;
+                        // Send the email with link here
+                        return utils.jwtToken.createToken(user_id)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function(token){
+                        // Token generation is successful
+                        return utils.email.send(email, `http://localhost:8081/api/login/${token}`)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function(){
+                        // Successful in sending the emails
+                        res.status(200).send();
+                    }
+                )
+                .catch(
+                    function(err){
+                        console.log(err);
+                    }
+                );
         });
 
         // API endpoint to view all users

@@ -5,10 +5,12 @@
  */
 
 // Import libraries that are required
-const utils = require("../../chuanhao/src/utils/index.js");
+// const utils = require("../utils/index");
+const utils = require("../../../main/client_back_end/utils/index");
 
 // Import the model needed for CRUD of DB
-const model = require("../../chuanhao/src/db/index.js");
+// const model = require("../db/index");
+const model = require("../../../main/client_back_end/db/index");
 
 // signup controller object
 const signupController = {
@@ -21,7 +23,7 @@ const signupController = {
             // get all of the required fields to sign up for event
             const event_id = req.params.event_id;
 
-            const user_id = req.cookies.token;
+            const user_id = req.user.user_id;
 
             // call the db method to sign user up for event
             new Promise((resolve) => {
@@ -39,7 +41,7 @@ const signupController = {
 
                             }
                         )
-                )
+                );
             })
                 .then(
                     function (signup_id) {
@@ -54,7 +56,7 @@ const signupController = {
                     function (err) {
                         console.log(err);
                     }
-                )
+                );
         });
 
         // API endpoint to leave an event
@@ -62,7 +64,7 @@ const signupController = {
             // get all of the required fields to sign up for event
             const event_id = req.params.event_id;
 
-            const user_id = req.cookies.token;
+            const user_id = req.user.user_id;
 
             // call the db method to "delete" user from event
             new Promise((resolve) => {
@@ -80,7 +82,7 @@ const signupController = {
 
                             }
                         )
-                )
+                );
             })
                 .then(
                     function (signup_id) {
@@ -91,7 +93,7 @@ const signupController = {
                     function (err) {
                         console.log(err);
                     }
-                )
+                );
         });
 
         // API endpoint to view current events user has signed up for
@@ -108,6 +110,6 @@ const signupController = {
         // API endpoint to take attendance
 
     }
-}
+};
 
 module.exports = signupController;
