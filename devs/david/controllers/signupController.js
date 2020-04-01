@@ -97,9 +97,38 @@ const signupController = {
         });
 
         // API endpoint to view current events user has signed up for
-        app.get("/api/events/u", function (req, res) {
+        app.get("/api/events/signed_up/u", function (req, res) {
+            // user id
+            const user_id = req.user.user_id;
+
             // call the db method to view events of user
-            // model.signups.getEventsUserSignUp()
+            return new Promise((resolve) => {
+                resolve(
+                    model.signups.getEventsUserSignUp(user_id)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+
+                            }
+                        )
+                )
+            })
+            .then(
+                function(events) {
+                    res.status(200).send(events);
+                }
+            )
+            .catch(
+                function(err) {
+                    console.log(err);
+                }
+            )
         });
 
         // API endpoint to view current events the user HAS NOT signed up for

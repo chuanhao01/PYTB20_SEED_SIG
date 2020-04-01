@@ -51,7 +51,7 @@ const eventController = {
             })
                 .then(
                     function (event_id) {
-                        res.status(200).send(
+                        res.status(201).send(
                             {
                                 "event_id": event_id
                             }
