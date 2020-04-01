@@ -96,11 +96,11 @@ const userController = {
                     }
                 )
                 .then(
-                    function(user_id){
+                    function (user_id) {
                         // Generates the token based on the id
                         return utils.jwtToken.createToken(user_id)
                             .catch(
-                                function(err){
+                                function (err) {
                                     console.log(err);
                                     res.status(500).send(
                                         {
@@ -112,11 +112,11 @@ const userController = {
                     }
                 )
                 .then(
-                    function(jwt_token){
+                    function (jwt_token) {
                         // Send the token to the email with a link
                         return utils.email.send(email, `http://localhost:8081/api/login/${jwt_token}`)
                             .catch(
-                                function(err){
+                                function (err) {
                                     console.log(err);
                                     res.status(500).send(
                                         {
@@ -127,13 +127,13 @@ const userController = {
                             );
                     }
                 )
-                .then (
-                    function() {
+                .then(
+                    function () {
                         res.status(200).send();
                     }
                 )
-                .catch (
-                    function(err) {
+                .catch(
+                    function (err) {
                         console.log(err);
                     }
                 );
@@ -142,7 +142,7 @@ const userController = {
         });
 
         // API endpoint to login and create the cookie and redirect
-        app.get("/api/login/:token", function(req, res){
+        app.get("/api/login/:token", function (req, res) {
             // this is to mainly set up the cookie in the browser
             const token = req.params.token;
             return new Promise((resolve) => {
@@ -150,7 +150,7 @@ const userController = {
                 resolve(
                     utils.jwtToken.refreshToken(token)
                         .catch(
-                            function(err){
+                            function (err) {
                                 console.log(err);
                                 // Add in redirect PLEASE HEREREREREEREREREREERERERERERERERE
                                 // res.status(500).redirect('');
@@ -160,7 +160,7 @@ const userController = {
                 );
             })
                 .then(
-                    function(new_token){
+                    function (new_token) {
                         // Token was valid and new_token was generated
                         // redirect her alsoasdadasdasdasdasdasdadasdasdasda
                         res.status(302).cookie("token", new_token, { httpOnly: true }).redirect("http://localhost:8080");
@@ -168,14 +168,14 @@ const userController = {
                     }
                 )
                 .catch(
-                    function(err){
+                    function (err) {
                         console.log(err);
                     }
                 );
         });
 
         // API endpoint to login using email
-        app.post("/api/login", function(req, res){
+        app.post("/api/login", function (req, res) {
             const email = req.body.email.toLowerCase();
             return new Promise((resolve) => {
                 resolve(
@@ -194,14 +194,14 @@ const userController = {
                 );
             })
                 .then(
-                    function(emailExists){
+                    function (emailExists) {
                         // Logic flow based on if email exists
                         return new Promise((resolve, reject) => {
-                            if(emailExists){
+                            if (emailExists) {
                                 // email exists and the user can login
                                 resolve(true);
                             }
-                            else{
+                            else {
                                 reject('User email does not exists');
                             }
                         })
@@ -219,7 +219,7 @@ const userController = {
                     }
                 )
                 .then(
-                    function(){
+                    function () {
                         // Get the user_id by email
                         return model.users.getUserIdByEmail(email)
                             .catch(
@@ -236,7 +236,7 @@ const userController = {
                     }
                 )
                 .then(
-                    function(user){
+                    function (user) {
                         // We got the user_id by email, parse cause mysql gives in arr
                         const user_id = user[0].user_id;
                         // Send the email with link here
@@ -255,7 +255,7 @@ const userController = {
                     }
                 )
                 .then(
-                    function(token){
+                    function (token) {
                         // Token generation is successful
                         return utils.email.send(email, `http://localhost:8081/api/login/${token}`)
                             .catch(
@@ -272,13 +272,13 @@ const userController = {
                     }
                 )
                 .then(
-                    function(){
+                    function () {
                         // Successful in sending the emails
                         res.status(200).send();
                     }
                 )
                 .catch(
-                    function(err){
+                    function (err) {
                         console.log(err);
                     }
                 );
@@ -298,9 +298,57 @@ const userController = {
             const user_id = req.params.user_id;
 
             // call the db method to view user by id in database
-            res.status(200).send({
-                "user_id": user_id
-            });
+            return new Promise((resolve) => {
+                resolve(
+                    model.users.getUserDataByUserId(user_id)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+                            }
+                        )
+                )
+            })
+                .then(
+                    function (userData) {
+                        return new Promise((resolve, reject) => {
+                            if (userData.length == 1) {
+                                resolve(userData[0]);
+                            } else {
+                                reject("Unexpected user");
+
+                            }
+
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function (user) {
+                        // if request successful, send the user data
+                        res.status(200).send(user);
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
         });
 
         // API endpoint to view users (participants) of a specific event
