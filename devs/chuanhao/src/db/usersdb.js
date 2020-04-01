@@ -29,10 +29,10 @@ const usersdb = {
             const user_id = uuid();
             this.pool.query(`
             INSERT INTO USERS
-            (nric, dob, fullname, contact_num, email, user_id, deleted)
+            (nric, dob, fullname, contact_num, email, PDPA, user_id, deleted)
             values
-            (?, ?, ?, ?, ?, ?, ?)
-            `, [nric, dob, fullname, contact_num, email, user_id, 0], function(err, data){
+            (?, ?, ?, ?, ?, ?, ?, ?)
+            `, [nric, dob, fullname, contact_num, email, 1, user_id, 0], function(err, data){
                 if(err){
                     reject(err);
                 }
@@ -76,15 +76,16 @@ const usersdb = {
      * @param {string} fullname
      * @param {string} contact_num
      * @param {string} email
+     * @param {String} PDAP
      * @returns {promise} [mysql data]
      */
-    updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email){
+    updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email, PDPA){
         return new Promise((resolve, reject) => {
             this.pool.query(`
             UPDATE USERS
-            SET nric = ?, dob = ?, fullname = ?, contact_num = ?, email = ?
+            SET nric = ?, dob = ?, fullname = ?, contact_num = ?, email = ?, PDPA = ?
             WHERE ((user_id = ?) AND (deleted = 0))
-            `, [nric, dob, fullname, contact_num, email, user_id], function(err, data){
+            `, [nric, dob, fullname, contact_num, email, PDPA, user_id], function(err, data){
                 if(err){
                     reject(err);
                 }
