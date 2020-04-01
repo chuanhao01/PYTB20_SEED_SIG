@@ -119,21 +119,51 @@ const signupController = {
                         )
                 )
             })
-            .then(
-                function(events) {
-                    res.status(200).send(events);
-                }
-            )
-            .catch(
-                function(err) {
-                    console.log(err);
-                }
-            )
+                .then(
+                    function (events) {
+                        res.status(200).send(events);
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
         });
 
         // API endpoint to view current events the user HAS NOT signed up for
-        app.get("/api/events/u", function (req, res) {
+        app.get("/api/events/not_signed_up/u", function (req, res) {
+            // user id
+            const user_id = req.user.user_id;
+
             // call the db method to view events user HAS NOT signed up for
+            return new Promise((resolve) => {
+                resolve(
+                    model.signups.getEventsUserHasNotSignUp(user_id)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+
+                            }
+                        )
+                )
+            })
+                .then(
+                    function (events) {
+                        res.status(200).send(events);
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
         });
 
         // API endpoint to take attendance
