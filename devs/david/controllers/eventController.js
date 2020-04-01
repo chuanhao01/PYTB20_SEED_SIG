@@ -22,7 +22,47 @@ const eventController = {
         app.post("/api/events", function (req, res) {
             // get all of the required fields to add new event
 
+            // title of event
+            const title = req.body.title.toLowerCase();
+
+            // description of event
+            const description = req.body.description.toLowerCase();
+
+            // date of event (date format)
+            const event_date = utils.parseTime.convertTimeStamp(req.body.event_date);
+
             // call the db method to add user to database
+            return new Promise((resolve) => {
+                resolve(
+                    model.events.createNewEvent(title, description, event_date)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+                            }
+                        )
+
+                )
+            })
+                .then(
+                    function (event_id) {
+                        res.status(200).send(
+                            {
+                                "event_id": event_id
+                            }
+                        );
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
         });
 
         // API endpoint to view all events
@@ -104,7 +144,7 @@ const eventController = {
                     }
                 )
                 .then(
-                    function(event) {
+                    function (event) {
                         res.status(200).send(event);
                     }
                 )
