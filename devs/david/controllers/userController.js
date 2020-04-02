@@ -36,9 +36,12 @@ const userController = {
             // email of user
             const email = req.body.email.toLowerCase();
 
+            // PDPA
+            const PDPA = parseInt(req.body.PDPA);
+
             // REMEMBER TO MAKE ALL STRINGS TO LOWERCASE
 
-            console.log(nric, dob, fullname, contact_num, email);
+            console.log(nric, dob, fullname, contact_num, email, PDPA);
 
             // call the db method to add user to database
             new Promise((resolve) => {
@@ -82,7 +85,7 @@ const userController = {
                 )
                 .then(
                     function () {
-                        return model.users.createNewUser(nric, dob, fullname, contact_num, email)
+                        return model.users.createNewUser(nric, dob, fullname, contact_num, email, PDPA)
                             .catch(
                                 function (err) {
                                     console.log(err);
@@ -358,7 +361,7 @@ const userController = {
 
         // API endpoint to update user by id
         app.put("/api/users/u", function (req, res) {
-            // user id (NEED TO CHECK IF USER ID IS EXISTENT)
+            // user id
             const user_id = req.user.user_id;
 
             // nric of user
@@ -376,9 +379,13 @@ const userController = {
             // email of user
             const email = req.body.email.toLowerCase();
 
+            // PDPA
+            const PDPA = parseInt(req.body.PDPA);
+
             return new Promise((resolve) => {
                 resolve(
-                    model.users.updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email)
+                    // need to check if user exist before we can be certain to update user profile
+                    model.users.checkIfUserExistsByUserId(user_id)
                         .catch(
                             function (err) {
                                 console.log(err);
@@ -393,12 +400,51 @@ const userController = {
                 )
             })
                 .then(
+                    function (userExists) {
+                        return new Promise((resolve, reject) => {
+                            if (userExists) {
+                                resolve(true);
+                            } else {
+                                reject("User does not exist");
+                            }
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+                    }
+                )
+                .then(
+                    function () {
+                        return model.users.updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email, PDPA)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+                    }
+
+                )
+                .then(
                     function () {
                         res.status(204).send();
                     }
                 )
                 .catch(
-                    function(err) {
+                    function (err) {
                         console.log(err);
                     }
                 )
