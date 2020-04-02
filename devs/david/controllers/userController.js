@@ -364,7 +364,7 @@ const userController = {
         });
 
         // API endpoint to update user by id
-        app.put("/api/users/:user_id", function (req, res) {
+        app.put("/api/users/u", function (req, res) {
             // user id
             const user_id = req.user.user_id;
 
