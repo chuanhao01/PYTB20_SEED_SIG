@@ -22,9 +22,10 @@ const usersdb = {
      * @param {string} fullname
      * @param {string} contact_num
      * @param {string} email
+     * @param {int} PDPA 
      * @returns {promise} [user_id]
      */
-    createNewUser(nric, dob, fullname, contact_num, email){
+    createNewUser(nric, dob, fullname, contact_num, email, PDPA){
         return new Promise((resolve, reject) => {
             const user_id = uuid();
             this.pool.query(`
@@ -32,7 +33,7 @@ const usersdb = {
             (nric, dob, fullname, contact_num, email, PDPA, user_id, deleted)
             values
             (?, ?, ?, ?, ?, ?, ?, ?)
-            `, [nric, dob, fullname, contact_num, email, 1, user_id, 0], function(err, data){
+            `, [nric, dob, fullname, contact_num, email, PDPA, user_id, 0], function(err, data){
                 if(err){
                     reject(err);
                 }
@@ -76,7 +77,7 @@ const usersdb = {
      * @param {string} fullname
      * @param {string} contact_num
      * @param {string} email
-     * @param {String} PDAP
+     * @param {int} PDAP
      * @returns {promise} [mysql data]
      */
     updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email, PDPA){
