@@ -129,7 +129,7 @@ const userController = {
                 )
                 .then(
                     function () {
-                        res.status(200).send();
+                        res.status(201).send();
                     }
                 )
                 .catch(
@@ -282,14 +282,6 @@ const userController = {
                         console.log(err);
                     }
                 );
-        });
-
-        // API endpoint to view all users
-        app.get("/api/users", function (req, res) {
-            // call the db method to view all users in database
-            res.status(200).send({
-                "users": "all"
-            });
         });
 
         // API endpoint to view user by id
