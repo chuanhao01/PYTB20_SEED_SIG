@@ -360,6 +360,9 @@ const userController = {
         });
 
         // API endpoint to update user by id
+        /**
+         * @todo Need to remove checking if user exists (only needed for admin part)
+         */
         app.put("/api/users/u", function (req, res) {
             // user id
             const user_id = req.user.user_id;

@@ -18,6 +18,29 @@ const signupController = {
     init(app) {
         // place all the endpoints here...
         // e.g: app.get ("/api/...", function(req, res) {});
+        /**
+         * @todo 
+         * model.signups.createSignup
+         * Need to check if event exists first
+         * Need to check if event is open
+         * Need to check if user HAS NOT signed up for event
+         * Then create signup
+         * 
+         * model.signups.deleteUserSignUpForEvent
+         * Need to check if event exists first
+         * Need to check if event is open
+         * Need to check if user HAS signed up for event
+         * Then leave signup
+         * 
+         * model.signups.getAllSignUpsForEventByEventId
+         * Need to check if event exists first
+         * 
+         * model.signups.getSignupInfoBySignupId
+         * Need to check if signup exists first
+         * 
+         * model.signups.updateSignupDataBySignupId
+         * Need to check if signup exists first
+         */
 
         // API endpoint to sign up for an event
         app.post("/api/events/:event_id/signups", function (req, res) {
