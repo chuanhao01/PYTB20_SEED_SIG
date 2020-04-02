@@ -10,7 +10,8 @@ const utils = require("../../../main/client_back_end/utils/index");
 
 // Import the model needed for CRUD of DB
 // const model = require("../db/index");
-const model = require("../../../main/client_back_end/db/index");
+// const model = require("../../../main/client_back_end/db/index");
+const model = require("../../chuanhao/src/db/index");
 
 // event controller object
 const eventController = {
