@@ -10,7 +10,8 @@ const utils = require("../../../main/client_back_end/utils/index");
 
 // Import the model needed for CRUD of DB
 // const model = require("../db/index");
-const model = require("../../../main/client_back_end/db/index");
+// const model = require("../../../main/client_back_end/db/index");
+const model = require("../../chuanhao/src/db/index");
 
 // user controller object
 const userController = {
@@ -285,9 +286,9 @@ const userController = {
         });
 
         // API endpoint to view user by id
-        app.get("/api/users/:user_id", function (req, res) {
+        app.get("/api/users/u", function (req, res) {
             // user id
-            const user_id = req.params.user_id;
+            const user_id = req.user.user_id;
 
             // call the db method to view user by id in database
             return new Promise((resolve) => {
@@ -343,7 +344,7 @@ const userController = {
                 )
         });
 
-        // API endpoint to view users (participants) of a specific event
+        // API endpoint to view users (participants) of a specific event (SHIFT THIS TO SIGNUP CONTROLLER)
         app.get("/api/events/:event_id/users", function (req, res) {
             // event id
             const event_id = req.params.event_id;
@@ -357,7 +358,7 @@ const userController = {
 
         // API endpoint to update user by id
         app.put("/api/users/u", function (req, res) {
-            // user id
+            // user id (NEED TO CHECK IF USER ID IS EXISTENT)
             const user_id = req.user.user_id;
 
             // nric of user
