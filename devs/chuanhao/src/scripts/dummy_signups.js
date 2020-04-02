@@ -9,7 +9,9 @@ let user1 = 'f26fec43-9c2f-4724-bac1-6aff1dd2cc02',
 let event1 = '33e335ec-6611-4f0d-9f84-75c09963a35f',
     event2 = 'a1d9a30f-a22c-4bd3-8721-3de379f8831c';
 
-db.signups.createSignup(event1, user1);
-db.signups.createSignup(event1, user2);
-db.signups.createSignup(event1, user3);
-db.signups.createSignup(event2, user4);
+// db.signups.createSignup(event1, user1);
+// db.signups.createSignup(event1, user2);
+// db.signups.createSignup(event1, user3);
+// db.signups.createSignup(event2, user4);
+
+// db.signups.deleteUserSignUpForEvent(event1, user1);
