@@ -156,6 +156,52 @@ const eventController = {
 
         });
 
+        // API endpoint to to update an event
+        app.put("/api/events/:event_id", function (req, res) {
+            // event id
+            const event_id = req.params.event_id;
+
+            // title of event
+            const title = req.body.title.toLowerCase();
+
+            // description of event
+            const description = req.body.description.toLowerCase();
+
+            // date of event (date format)
+            const event_date = utils.parseTime.convertTimeStamp(req.body.event_date);
+
+            // status of the event
+            const status = req.body.status;
+
+            return new Promise((resolve) => {
+                resolve(
+                    model.events.updateEventDataByEventId(event_id, title, description, event_date, status)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+                            }
+                        )
+                )
+            })
+                .then(
+                    function () {
+                        res.status(204).send();
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
+
+        });
+
     }
 };
 
