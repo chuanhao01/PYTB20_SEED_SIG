@@ -362,6 +362,54 @@ const userController = {
             });
 
         });
+
+        // API endpoint to update user by id
+        app.put("/api/users/:user_id", function (req, res) {
+            // user id
+            const user_id = req.user.user_id;
+
+            // nric of user
+            const nric = req.body.nric.toLowerCase();
+
+            // date of birth of user (date format)
+            const dob = utils.parseTime.convertTimeStamp(req.body.dob);
+
+            // fullname of user
+            const fullname = req.body.fullname.toLowerCase();
+
+            // contact number of user
+            const contact_num = req.body.contact_num;
+
+            // email of user
+            const email = req.body.email.toLowerCase();
+
+            return new Promise((resolve) => {
+                resolve(
+                    model.users.updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+                            }
+                        )
+                )
+            })
+                .then(
+                    function () {
+                        res.status(204).send();
+                    }
+                )
+                .catch(
+                    function(err) {
+                        console.log(err);
+                    }
+                )
+        });
     }
 }
 
