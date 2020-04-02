@@ -15,3 +15,6 @@ let event1 = '33e335ec-6611-4f0d-9f84-75c09963a35f',
 // db.signups.createSignup(event2, user4);
 
 // db.signups.deleteUserSignUpForEvent(event1, user1);
+// db.signups.deleteUserSignUpForEvent(event2, user4);
+
+db.events.closeEventAndSignups(event2);
