@@ -247,6 +247,83 @@ const eventsdb = {
             });
         });
     },
+
+    // Closing events for signups
+    /**
+     * Returns the bool on if an event with the event id exists
+     * true for event existsing
+     * false for event not existing 
+     *
+     * @param {String} event_id
+     * @returns {Promise} [bool]
+     */
+    checkIfEventExist(event_id){
+        return new Promise((resolve, reject) => {
+            this.pool.query(`
+            SELECT * FROM EVENTS
+            WHERE ((event_id = ?) AND (deleted = 0))
+            `, [event_id], function(err, data){
+                // err handled
+                if(err){
+                    reject(err);
+                }
+                if(data.length == 1){
+                    // Event exists
+                    resolve(true);
+                }
+                else{
+                    // Any other length is false
+                    reject('Event does not exists');
+                }
+            });
+        });
+    },
+
+    /**
+     * Closes an event, think of it as you can no longer signup for this event and all the signups are confirmed
+     * It does this by closing the event then the signups tagged to the event
+     * Controller side needs to check if the event exists in the first place
+     * Note: If either query fails, only one error is seen by the controller
+     *
+     * @param {String} event_id
+     * @returns {Promise} [mysql data]
+     */
+    closeEventAndSignups(event_id){
+        // Setting the event status to 1 first
+        return new Promise((resolve, reject) => {
+            this.pool.query(`
+            UPDATE EVENTS
+            SET status = 1
+            WHERE ((event_id = ?) AND (deleted = 0)) 
+            `, [event_id], function(err, data){
+                if(err){
+                    reject(err);
+                }
+                else{
+                    resolve(data);
+                }
+            });
+        })
+        .then(
+            function(data){
+                // Setting the signups for the event status to 1
+                return new Promise((resolve, reject) => {
+                    this.pool.query(`
+                    UPDATE SIGNUPS
+                    SET status = 1
+                    WHERE ((event_id = ?) AND (deleted = 0))
+                    `, [event_id], function(err, data){
+                        if(err){
+                            reject(err);
+                        }
+                        else{
+                            resolve(data);
+                        }
+                    });
+                });
+            }
+        );
+    }
 };
 
 module.exports = eventsdb;
