@@ -100,12 +100,19 @@ let event_id = '0ccd156b-7cef-4e4e-9302-ebffb3a1b08b';
 //     }
 // );
 
-db.signups.getEventsUserSignUp(user_id)
-.then(
-    function(data){
-        console.log(data);
-    }
-);
+// db.signups.getEventsUserSignUp(user_id)
+// .then(
+//     function(data){
+//         console.log(data);
+//     }
+// );
 
 // let date = '2019-02';
 // console.log(utils.parseTime.convertTimeStamp(date));
+
+// let event1 = '33e335ec-6611-4f0d-9f84-75c09963a35f';
+// let event2 = 'a1d9a30f-a22c-4bd3-8721-3de379f8831c';
+// db.events.checkEventIsOpen(event1).then(check => console.log(check));
+
+// let user1 = 'f26fec43-9c2f-4724-bac1-6aff1dd2cc02';
+// db.users.checkIfUserExistsByUserId(user1).then(check => console.log(check));
