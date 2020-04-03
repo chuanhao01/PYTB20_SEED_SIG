@@ -179,10 +179,10 @@ const signupController = {
 
             const user_id = req.user.user_id;
 
-            // call the db method to "delete" user from event
             new Promise((resolve) => {
+                // Need to check if event is open
                 resolve(
-                    model.signups.deleteUserSignUpForEvent(event_id, user_id)
+                    model.events.checkEventIsOpen(event_id)
                         .catch(
                             function (err) {
                                 console.log(err);
@@ -194,19 +194,111 @@ const signupController = {
                                 throw err;
 
                             }
+
                         )
-                );
+
+                )
             })
+
                 .then(
-                    function (signup_id) {
+                    function (eventIsOpen) {
+                        return new Promise((resolve, reject) => {
+                            if (eventIsOpen) {
+                                resolve(true);
+                            } else {
+                                reject("Event is not open");
+                            }
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+
+                                }
+
+                            )
+                    }
+
+                )
+                .then(
+                    // Need to check if user HAS signed up for event
+                    function () {
+                        return model.events.checkUserSignUpEvent(event_id, user_id)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+
+                                }
+
+                            )
+                    }
+                )
+                .then(
+                    function (userSignedUp) {
+                        return new Promise((resolve, reject) => {
+                            if (userSignedUp) {
+                                resolve(true);
+                            } else {
+                                reject("User has not signed up for event");
+                            }
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+
+                                }
+
+                            )
+                    }
+                )
+                .then(
+                    // call the db method to "delete" user from event only if user signed up
+                    function () {
+                        return model.signups.deleteUserSignUpForEvent(event_id, user_id)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+
+                                }
+                            )
+                    }
+
+                )
+                .then(
+                    function () {
                         res.status(204).send();
                     }
+
                 )
                 .catch(
                     function (err) {
                         console.log(err);
                     }
                 );
+
         });
 
         // API endpoint to view current events user has signed up for
