@@ -34,10 +34,8 @@ const signupController = {
          * Need to check if event exists first
          * 
          * model.signups.getSignupInfoBySignupId
-         * Need to check if signup exists first
          * 
          * model.signups.updateSignupDataBySignupId
-         * Need to check if signup exists first
          */
 
         // API endpoint to sign up for an event
@@ -301,7 +299,7 @@ const signupController = {
 
         });
 
-        // API endpoint to get all signups for an event
+        // API endpoint to get all signups for an event (ADMIN)
         app.get("/api/events/:event_id/signups", function (req, res) {
             // get all of the required fields to sign up for event
             const event_id = req.params.event_id;
@@ -379,6 +377,63 @@ const signupController = {
                     }
                 );
 
+        });
+
+        // API endpoint to get signup info by signup id
+        app.get("/api/signups/:signup_id", function (req, res) {
+            // signup id
+            const signup_id = req.params.signup_id;
+            return new Promise((resolve) => {
+                resolve(
+                    model.signups.getSignupInfoBySignupId(signup_id)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+
+                            }
+                        )
+                )
+            })
+                .then(
+                    function (signup) {
+                        return new Promise((resolve, reject) => {
+                            if (signup.length == 1) {
+                                resolve(signup[0]);
+                            } else {
+                                reject("Unexpected signup");
+
+                            }
+
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function(signup) {
+                        res.status(200).send(signup);
+                    }
+                )
+                .catch(
+                    function(err) {
+                        console.log(err);
+                    }
+                )
         });
 
     }
