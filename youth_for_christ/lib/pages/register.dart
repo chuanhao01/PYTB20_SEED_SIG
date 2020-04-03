@@ -11,14 +11,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  final _form = GlobalKey<FormState>();
-  DateTime bday;
-  TextEditingController _nric = TextEditingController();
-  TextEditingController _date = TextEditingController();
-  TextEditingController _fullName = TextEditingController();
-  TextEditingController _phonenumber = TextEditingController();
-  TextEditingController _email = TextEditingController();
-  SecureStorage _storage = new SecureStorage();
 
   Future<DateTime> selectDate(BuildContext context) async {
     final DateTime bday = await showDatePicker(
@@ -38,6 +30,14 @@ void initState() {
   }
   @override
   Widget build(BuildContext context) {
+    GlobalKey<FormState> _form = GlobalKey<FormState>();
+    DateTime bday;
+    TextEditingController _nric = TextEditingController();
+    TextEditingController _date = TextEditingController();
+    TextEditingController _fullName = TextEditingController();
+    TextEditingController _phonenumber = TextEditingController();
+    TextEditingController _email = TextEditingController();
+    SecureStorage _storage = new SecureStorage();
     return Scaffold(
         body: Center(
             child: SingleChildScrollView(
