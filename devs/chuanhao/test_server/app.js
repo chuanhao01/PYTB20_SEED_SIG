@@ -20,8 +20,8 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET;
 app.use(cookieParser(COOKIE_SECRET));
 
 // Init custom middlewares
-// const middlewares = require('./middlewares/index');
-// middlewares.init(app);
+const middlewares = require('./middlewares/index');
+middlewares.init(app);
 
 // Init the API controllers
 const controllers = require("./controllers/index.js");
