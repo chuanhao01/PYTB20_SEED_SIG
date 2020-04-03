@@ -360,9 +360,6 @@ const userController = {
         });
 
         // API endpoint to update user by id
-        /**
-         * @todo Need to remove checking if user exists (only needed for admin part)
-         */
         app.put("/api/users/u", function (req, res) {
             // user id
             const user_id = req.user.user_id;
@@ -387,8 +384,7 @@ const userController = {
 
             return new Promise((resolve) => {
                 resolve(
-                    // need to check if user exist before we can be certain to update user profile
-                    model.users.checkIfUserExistsByUserId(user_id)
+                    model.users.updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email, PDPA)
                         .catch(
                             function (err) {
                                 console.log(err);
@@ -400,47 +396,9 @@ const userController = {
                                 throw err;
                             }
                         )
-                )
-            })
-                .then(
-                    function (userExists) {
-                        return new Promise((resolve, reject) => {
-                            if (userExists) {
-                                resolve(true);
-                            } else {
-                                reject("User does not exist");
-                            }
-                        })
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            )
-                    }
-                )
-                .then(
-                    function () {
-                        return model.users.updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email, PDPA)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            )
-                    }
 
                 )
+            })
                 .then(
                     function () {
                         res.status(204).send();
