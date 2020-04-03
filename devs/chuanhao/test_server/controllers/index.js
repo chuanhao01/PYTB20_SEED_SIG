@@ -5,6 +5,7 @@
  */
 
 // Importing all the API controllers
+const userController = require('./userController');
 
 // Main API controllers object
 const APIcontrollers = {
@@ -29,6 +30,7 @@ const APIcontrollers = {
         app.get('/test', function(req, res){
             res.send('Test recieved');
         });
+        userController.init(app);
     },
 };
 
