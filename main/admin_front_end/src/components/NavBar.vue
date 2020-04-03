@@ -1,49 +1,52 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-white">
-    <router-link to="/" id="logo" class="navbar-brand">
+  <!-- <nav class="navbar navbar-expand-lg navbar-light bg-white"> -->
+    <!--<router-link to="/" id="logo" class="navbar-brand">
       <div class="org-name">
         <span>
           <strong>SINGAPORE</strong> YOUTH
           <strong>FOR</strong> CHRIST
         </span>
+    </div>-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <button type="button" id="sidebarCollapse" class="btn btn-info">
+          <i class="fas fa-align-left"></i>
+          <span>Toggle Sidebar</span>
+        </button>
       </div>
-    </router-link>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarToggle"
-      aria-controls="navbarToggle"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    </nav>
 
-    <div class="collapse navbar-collapse" id="navbarToggle">
-      <!-- navbar if not logged in -->
-      <ul v-if="isLoggedIn === undefined || isLoggedIn === false" class="navbar-nav ml-auto mr-5 mt-2 mt-lg-0">
+    <!-- <div class="collapse navbar-collapse" id="navbarToggle"> -->
+    <!-- navbar if not logged in -->
+    <!--  <ul
+        v-if="isLoggedIn === undefined || isLoggedIn === false"
+        class="navbar-nav ml-auto mr-5 mt-2 mt-lg-0"
+      >
         <li class="nav-item mr-2 font-weight-bold">
           <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
         </li>
         <li class="nav-item mr-2 font-weight-bold">
           <router-link to="/register" class="nav-link" active-class="active">Register</router-link>
         </li>
-      </ul>
-      <!-- navbar if logged in -->
-      <ul v-else class="navbar-nav ml-auto mr-5 mt-2 mt-lg-0">
-        <!-- <li class="nav-item mr-2 font-weight-bold">
+    </ul>-->
+    <!-- navbar if logged in -->
+    <!-- <ul v-else class="navbar-nav ml-auto mr-5 mt-2 mt-lg-0"> -->
+    <!-- <li class="nav-item mr-2 font-weight-bold">
           <router-link :to="'/user/' + account.user.id + '/activity'" class="nav-link" active-class="active">Activity</router-link>
-        </li> -->
-        <li class="nav-item mr-2 font-weight-bold">
-          <router-link :to="'/user/'+ account.user.id" class="nav-link" active-class="active">Profile</router-link>
+    </li>-->
+    <!-- <li class="nav-item mr-2 font-weight-bold">
+          <router-link
+            :to="'/user/'+ account.user.id"
+            class="nav-link"
+            active-class="active"
+          >Profile</router-link>
         </li>
         <li class="nav-item mr-2 font-weight-bold">
           <a class="nav-link" @click="logout">Logout</a>
         </li>
       </ul>
-    </div>
-  </nav>
+    </div>-->
+  <!-- </nav> -->
 </template>
 
 <script>
@@ -51,9 +54,7 @@ import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
   name: "NavBar",
-  created () {
-    
-  },
+  created() {},
   computed: {
     ...mapState({
       account: state => state.account
