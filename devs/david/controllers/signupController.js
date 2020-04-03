@@ -301,6 +301,86 @@ const signupController = {
 
         });
 
+        // API endpoint to get all signups for an event
+        app.get("/api/events/:event_id/signups", function (req, res) {
+            // get all of the required fields to sign up for event
+            const event_id = req.params.event_id;
+
+            new Promise((resolve) => {
+                // Need to check if event exists
+                resolve(
+                    model.events.checkIfEventExist(event_id)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+
+                            }
+                        )
+                )
+            })
+                .then(
+                    function (eventExists) {
+                        new Promise((resolve, reject) => {
+                            // if event exists, resolve
+                            // if not, reject
+                            if (eventExists) {
+                                resolve(true);
+                            } else {
+                                reject("Event does not exists");
+                            }
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+
+                                }
+                            )
+                    }
+                )
+                .then(
+                    function () {
+                        return model.signups.getAllSignUpsForEventByEventId(event_id)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+
+                                }
+                            )
+                    }
+
+                )
+                .then(
+                    function (signups) {
+                        res.status(200).send(signups);
+                    }
+
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                );
+
+        });
+
     }
 };
 
