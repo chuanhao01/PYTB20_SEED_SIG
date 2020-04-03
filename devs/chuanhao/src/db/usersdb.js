@@ -147,7 +147,35 @@ const usersdb = {
                 }
             });
         });
-    }
+    },
+
+    // For editing user's data
+    /**
+     * Checks if the user exists by user id
+     * True if the user exists
+     * False otherwise
+     *
+     * @param {String} user_id
+     * @returns {Promise} [bool]
+     */
+    checkIfUserExistsByUserId(user_id){
+        return new Promise((resolve, reject) => {
+            this.pool.query(`
+            SELECT * FROM USERS
+            WHERE ((user_id = ?) AND (deleted = 0)) 
+            `, [user_id], function(err, data){
+                if(err){
+                    reject(err);
+                }
+                if(data.length == 1){
+                    resolve(true);
+                }
+                else{
+                    resolve(false);
+                }
+            });
+        });
+    },
 };
 
 module.exports = usersdb;
