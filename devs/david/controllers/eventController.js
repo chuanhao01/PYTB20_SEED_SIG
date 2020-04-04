@@ -27,7 +27,7 @@ const eventController = {
          * model.events.checkUserSignUpParticipatedEvent
          * 
          * 
-         * model.events.closeEventAndSignups
+         * model.events.closeEventAndSignups (DONE)
          * Check if event is open
          * 
          * model.events.createNewEvent(DONE)
@@ -418,6 +418,82 @@ const eventController = {
                         console.log(err);
                     }
                 )
+        });
+
+        // API endpoint for closing event
+        app.post("/api/events/:event_id", function (req, res) {
+            // event id
+            const event_id = req.params.event_id;
+            // need to check if event is open
+            new Promise((resolve) => {
+                resolve(
+                    model.events.checkEventIsOpen(event_id)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+
+                            }
+                        )
+                )
+            })
+                // if event is open, resolve
+                // if not, reject
+                .then(
+                    function (eventIsOpen) {
+                        return new Promise((resolve, reject) => {
+                            if (eventIsOpen) {
+                                resolve(true);
+                            } else {
+                                reject("Event is already close");
+                            }
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+                    }
+                )
+                .then(
+                    function () {
+                        return model.events.closeEventAndSignups(event_id)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+
+                    }
+                )
+                .then(
+                    function () {
+                        res.status(204).send();
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
+
         });
     }
 };
