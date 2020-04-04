@@ -1,0 +1,2 @@
+export MYSQLUSER="mysq user here"
+export MYSQLPASSWORD="mysql user password here"
