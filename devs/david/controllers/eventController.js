@@ -34,7 +34,7 @@ const eventController = {
          * 
          * model.events.getAllEvents(DONE)
          * 
-         * model.events.getEventDataByEventId
+         * model.events.getEventDataByEventId (DONE)
          * Check if event exists
          * Check if it only returns one event
          * 
@@ -126,15 +126,14 @@ const eventController = {
 
         });
 
-        // API endpoint to view events by id
+        // API endpoint to view events by id (ADMIN + USER)
         app.get("/api/events/:event_id", function (req, res) {
 
             const event_id = req.params.event_id;
-            console.log(event_id);
-            // call the db method to view events by id
+            // check if the event exists first
             new Promise((resolve) => {
                 resolve(
-                    model.events.getEventDataByEventId(event_id)
+                    model.events.checkIfEventExist(event_id)
                         .catch(
                             function (err) {
                                 console.log(err);
@@ -146,8 +145,50 @@ const eventController = {
                                 throw err;
                             }
                         )
-                );
+                )
             })
+                // if event exists, resolve
+                // if not, reject
+                .then(
+                    function (eventExists) {
+                        return new Promise((resolve, reject) => {
+                            if (eventExists) {
+                                resolve(true);
+                            } else {
+                                reject("Event does not exists");
+                            }
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+                    }
+                )
+                // if event exists, call the db method to view events by id
+                .then(
+                    function () {
+                        return model.events.getEventDataByEventId(event_id)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+
+                    }
+                )
                 .then(
                     function (eventData) {
                         return new Promise((resolve, reject) => {
