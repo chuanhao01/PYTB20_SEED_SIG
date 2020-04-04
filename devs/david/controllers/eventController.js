@@ -40,7 +40,7 @@ const eventController = {
          * 
          * model.events.getEventsUserHasNotSignUp (DONE)
          * 
-         * model.events.getEventsUserParticipated
+         * model.events.getEventsUserParticipated (DONE)
          * 
          * model.events.getEventsUserSignUp (DONE)
          * 
@@ -385,6 +385,40 @@ const eventController = {
                 )
         });
 
+        // API endpoint to view events user has participated in
+        app.get("/api/events/participated/u", function (req, res) {
+            // user id
+            const user_id = req.user.user_id;
+
+            // call the db method to view events user has participated in
+            return new Promise((resolve) => {
+                resolve(
+                    model.events.getEventsUserParticipated(user_id)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+
+                            }
+                        )
+                )
+            })
+                .then(
+                    function (events) {
+                        res.status(200).send(events);
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
+        });
     }
 };
 
