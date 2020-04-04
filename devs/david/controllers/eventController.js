@@ -42,7 +42,7 @@ const eventController = {
          * 
          * model.events.getEventsUserParticipated
          * 
-         * model.events.getEventsUserSignUp
+         * model.events.getEventsUserSignUp (DONE)
          * 
          * model.events.updateEventDataByEventId (DONE)
          * Check if event exists
@@ -323,7 +323,7 @@ const eventController = {
             // call the db method to view events of user
             return new Promise((resolve) => {
                 resolve(
-                    model.signups.getEventsUserSignUp(user_id)
+                    model.events.getEventsUserSignUp(user_id)
                         .catch(
                             function (err) {
                                 console.log(err);
