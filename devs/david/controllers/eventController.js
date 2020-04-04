@@ -44,7 +44,7 @@ const eventController = {
          * 
          * model.events.getEventsUserSignUp
          * 
-         * model.events.updateEventDataByEventId
+         * model.events.updateEventDataByEventId (DONE)
          * Check if event exists
          */
         // API endpoint to create new event (ADMIN)
@@ -241,11 +241,13 @@ const eventController = {
             const event_date = utils.parseTime.convertTimeStamp(req.body.event_date);
 
             // status of the event
-            const status = req.body.status;
+            const status = parseInt(req.body.status);
 
+            // check if the event exists first, 
+            // then update event
             return new Promise((resolve) => {
                 resolve(
-                    model.events.updateEventDataByEventId(event_id, title, description, event_date, status)
+                    model.events.checkIfEventExist(event_id)
                         .catch(
                             function (err) {
                                 console.log(err);
@@ -259,6 +261,47 @@ const eventController = {
                         )
                 )
             })
+                // if event exists, resolve
+                // if not, reject
+                .then(
+                    function (eventExists) {
+                        return new Promise((resolve, reject) => {
+                            if (eventExists) {
+                                resolve(true);
+                            } else {
+                                reject("Event does not exists");
+                            }
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+                    }
+                )
+                .then(
+                    function () {
+                        return model.events.updateEventDataByEventId(event_id, title, description, event_date, status)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+
+                    }
+                )
                 .then(
                     function () {
                         res.status(204).send();
