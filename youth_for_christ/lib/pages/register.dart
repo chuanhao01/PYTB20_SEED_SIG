@@ -11,23 +11,22 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
   Future<DateTime> selectDate(BuildContext context) async {
     final DateTime bday = await showDatePicker(
         context: context,
         initialDate: DateTime(DateTime.now().year, DateTime.now().month),
         firstDate: DateTime(1901, 1),
         lastDate: DateTime(DateTime.now().year, DateTime.now().month));
-    _date.text = DateFormat.yMd("en-SG").format(bday).toString();
     return bday;
   }
-  pressed(FormState key){
-}
-@override
-void initState() {
+
+  pressed(FormState key) {}
+  @override
+  void initState() {
     // TODO: implement initState
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     GlobalKey<FormState> _form = GlobalKey<FormState>();
@@ -37,16 +36,18 @@ void initState() {
     TextEditingController _fullName = TextEditingController();
     TextEditingController _phonenumber = TextEditingController();
     TextEditingController _email = TextEditingController();
+    _date.text = DateFormat.yMd("en-SG").format(bday).toString();
     SecureStorage _storage = new SecureStorage();
+
     return Scaffold(
         body: Center(
             child: SingleChildScrollView(
-              child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
               Text(
                 "SINGAPORE ",
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 38),
@@ -55,11 +56,11 @@ void initState() {
                 "YOUTH",
                 style: TextStyle(fontWeight: FontWeight.w300, fontSize: 38),
               ),
-          ],
-        ),
-        Container(
-          margin: EdgeInsets.fromLTRB(0, 0, 0, 35),
-          child: Row(
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(0, 0, 0, 35),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
@@ -71,9 +72,9 @@ void initState() {
                   style: TextStyle(fontWeight: FontWeight.w300, fontSize: 38),
                 ),
               ],
+            ),
           ),
-        ),
-        Form(
+          Form(
               key: _form,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +87,7 @@ void initState() {
                       decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0)),
-              labelText: "NRIC:"),
+                          labelText: "NRIC:"),
                       validator: (value) {
                         if (value.isEmpty) {
                           return "Please fill in this field!";
@@ -108,7 +109,8 @@ void initState() {
                     margin: EdgeInsets.fromLTRB(0, 0, 0, 35),
                     width: 350,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 16),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -127,13 +129,14 @@ void initState() {
                           ),
                           IconButton(
                               onPressed: () async {
-                                try{
+                                try {
                                   initializeDateFormatting();
                                   bday = await selectDate(context);
-                                }catch (e){
+                                } catch (e) {
                                   bday = DateTime.now();
                                   _date.text = bday.toString().substring(0, 11);
-                                };
+                                }
+                                ;
                               },
                               icon: Icon(
                                 Icons.arrow_drop_down,
@@ -164,13 +167,13 @@ void initState() {
                     margin: EdgeInsets.fromLTRB(0, 0, 0, 35),
                     width: 350,
                     decoration: BoxDecoration(
-                      border: Border.all(
+                        border: Border.all(
                           color: Colors.grey[500],
-                      ),
-                      borderRadius: BorderRadius.circular(8.0)
-                    ),
+                        ),
+                        borderRadius: BorderRadius.circular(8.0)),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 0.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 0.0),
                       child: InternationalPhoneNumberInput(
                         initialCountry2LetterCode: "SG",
                         textFieldController: _phonenumber,
@@ -203,39 +206,43 @@ void initState() {
                       },
                     ),
                   ),
-              Container(
-                height: 40.0,
-                width: 150.0,
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  Container(
+                    height: 40.0,
+                    width: 150.0,
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      color: Colors.blueAccent,
+                      onPressed: () {
+                        if (_form.currentState.validate()) {
+                          List<String> everything = [
+                            _nric.text,
+                            _date.text,
+                            _fullName.text,
+                            _phonenumber.text,
+                            _email.text
+                          ];
+                          Map<String, String> details = {};
+                          int i = 0;
+                          _storage.personal.forEach((element) {
+                            details[element] = everything[i];
+                            i++;
+                          });
+                          _storage.edit(details);
+                          Navigator.pushReplacementNamed(context, "/events");
+                        }
+                      },
+                      child: Text(
+                        "Sign up!",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
                   ),
-                  color: Colors.blueAccent,
-                  onPressed: (){
-                    if(_form.currentState.validate()){
-                      List<String> everything = [_nric.text,_date.text,_fullName.text,_phonenumber.text,_email.text];
-                      Map<String, String> details = {};
-                      int i = 0;
-                      _storage.personal.forEach((element) {
-                        details[element] = everything[i];
-                        i++;
-                      });
-                      _storage.edit(
-                        details
-                      );
-                      Navigator.pushReplacementNamed(context, "/events");
-                    }
-                  },
-                  child: Text(
-                    "Sign up!",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                ),
-              ),
                 ],
               )),
-      ],
-    ),
-            )));
+        ],
+      ),
+    )));
   }
 }
