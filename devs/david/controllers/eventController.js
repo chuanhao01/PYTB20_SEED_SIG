@@ -18,8 +18,36 @@ const eventController = {
     init(app) {
         // place all the endpoints here...
         // e.g: app.get ("/api/...", function(req, res) {});
-
-        // API endpoint to create new event
+        /**
+         * @todo 
+         * 
+         * model.events.checkEventIsOpen
+         * model.events.checkIfEventExist
+         * model.events.checkUserSignUpEvent
+         * model.events.checkUserSignUpParticipatedEvent
+         * 
+         * 
+         * model.events.closeEventAndSignups
+         * Check if event is open
+         * 
+         * model.events.createNewEvent(DONE)
+         * 
+         * model.events.getAllEvents(DONE)
+         * 
+         * model.events.getEventDataByEventId
+         * Check if event exists
+         * Check if it only returns one event
+         * 
+         * model.events.getEventsUserHasNotSignUp
+         * 
+         * model.events.getEventsUserParticipated
+         * 
+         * model.events.getEventsUserSignUp
+         * 
+         * model.events.updateEventDataByEventId
+         * Check if event exists
+         */
+        // API endpoint to create new event (ADMIN)
         app.post("/api/events", function (req, res) {
             // get all of the required fields to add new event
 
@@ -32,7 +60,7 @@ const eventController = {
             // date of event (date format)
             const event_date = utils.parseTime.convertTimeStamp(req.body.event_date);
 
-            // call the db method to add user to database
+            // call the db method to create event
             return new Promise((resolve) => {
                 resolve(
                     model.events.createNewEvent(title, description, event_date)
@@ -66,7 +94,7 @@ const eventController = {
                 )
         });
 
-        // API endpoint to view all events
+        // API endpoint to view all events (ADMIN + USER)
         app.get("/api/events", function (req, res) {
             // call the db method to view all events in database
             new Promise((resolve) => {
