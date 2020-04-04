@@ -425,17 +425,53 @@ const signupController = {
                     }
                 )
                 .then(
-                    function(signup) {
+                    function (signup) {
                         res.status(200).send(signup);
                     }
                 )
                 .catch(
-                    function(err) {
+                    function (err) {
                         console.log(err);
                     }
                 )
         });
 
+        // API endpoint to update signup info by signup id (ADMIN)
+        app.put("/api/signups/:signup_id", function (req, res) {
+            // signup id
+            const signup_id = req.params.signup_id;
+
+            // status
+            const status = parseInt(req.body.status);
+
+            return new Promise((resolve) => {
+                resolve(
+                    model.signups.updateSignupDataBySignupId(signup_id, status)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+
+                            }
+                        )
+                )
+            })
+                .then(
+                    function () {
+                        res.status(204).send();
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
+        });
     }
 };
 
