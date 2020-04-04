@@ -38,7 +38,7 @@ const eventController = {
          * Check if event exists
          * Check if it only returns one event
          * 
-         * model.events.getEventsUserHasNotSignUp
+         * model.events.getEventsUserHasNotSignUp (DONE)
          * 
          * model.events.getEventsUserParticipated
          * 
@@ -358,7 +358,7 @@ const eventController = {
             // call the db method to view events user HAS NOT signed up for
             return new Promise((resolve) => {
                 resolve(
-                    model.signups.getEventsUserHasNotSignUp(user_id)
+                    model.events.getEventsUserHasNotSignUp(user_id)
                         .catch(
                             function (err) {
                                 console.log(err);
