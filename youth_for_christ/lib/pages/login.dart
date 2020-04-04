@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
+import 'package:youthforchrist/services/storage.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -10,7 +11,9 @@ class _LoginState extends State<Login> {
   RegExp regex = new RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
       caseSensitive: false, multiLine: false);
   final  _email = GlobalKey<FormState>();
+  TextEditingController _mail = TextEditingController();
   bool disableButton = true;
+  SecureStorage _storage = new SecureStorage();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,9 +61,10 @@ class _LoginState extends State<Login> {
                       margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
                       width: 350,
                       child: TextFormField(
+                        controller: _mail,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)), labelText: "Email:"),
-                        validator: (value) {
+                        validator: (value){
                           _email.currentState.reset();
                           if (value.isEmpty) {
                             return "Please fill in this field!";
@@ -79,9 +83,28 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         color: Colors.blueAccent,
-                        onPressed: () {
+                        onPressed: ()async {
+                          String username = _mail.text;
                           if(_email.currentState.validate()) {
-                            Navigator.pushReplacementNamed(context, "/events");
+                            Map<String, String> details = await _storage.getDetails();
+                            if(details["email"] == username){
+                              Navigator.pushReplacementNamed(context, "/events",arguments: details);
+                            }
+                            else{
+                              showDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                child: AlertDialog(
+                                    title: Text("Warning"),
+                                    content: Text("Wrong email!"),
+                                    actions: <Widget>[
+                                    FlatButton(
+                                      onPressed: (){Navigator.of(context,rootNavigator: true).pop("dialog");},
+                                      child: Text("Ok"),
+                                )
+                              ]));
+                            }
+
                           }
                         },
                         child: Text(

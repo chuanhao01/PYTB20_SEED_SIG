@@ -3,9 +3,13 @@ import "package:flutter_secure_storage/flutter_secure_storage.dart";
 class SecureStorage extends FlutterSecureStorage{
   final List<String> personal = ["nric","bday","full name","phone number","email"];
   Map <String, String> details = {};
+  String detail;
 
-  Future<void> getDetails() async{
-      this.details = await this.readAll();
+  Future<String> get(String what){
+    return this.read(key: what);
+  }
+  Future<Map<String,String>> getDetails(){
+      return this.readAll();
   }
   void edit(Map<String, String> details)async{
     await details.forEach((key, value) {

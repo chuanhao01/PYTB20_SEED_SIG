@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import "package:flutter/material.dart";
+import 'package:youthforchrist/services/storage.dart';
 import "package:youthforchrist/widgets/eventCard.dart";
 import 'package:intl/date_symbol_data_local.dart';
 class Events extends StatefulWidget {
@@ -17,20 +20,96 @@ class _EventsState extends State<Events> {
     EventCard(title: "item 1",date: new DateTime(2020,DateTime.september,9), description: garbage,location: "Fort Canning Park",attended: false,),
     EventCard(title: "item 1",date: new DateTime(2020,DateTime.september,9), description: garbage,location: "Malaysia",attended: true,),
   ];
+  SecureStorage _storage  = new SecureStorage();
+  Map<String, String> username = {};
   @override
-  void initState() {
+  void initState(){
     // TODO: implement initState
     super.initState();
     initializeDateFormatting();
+
+
   }
   @override
   Widget build(BuildContext context) {
+    username = username.isNotEmpty
+        ? username
+        : ModalRoute.of(context).settings.arguments;
     return  Scaffold(
       appBar: AppBar(
         title: Text("Events"),
         backgroundColor: Colors.blueAccent[700],
       ),
-      drawer: Drawer(),
+      drawer: Drawer(
+        elevation: 15.0,
+        child: ListView(
+          padding: EdgeInsets.all(0),
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color:Colors.blueAccent[700],
+              ),
+              child: Align(
+                  alignment: FractionalOffset.bottomLeft,
+                  child: Text(
+                      username["full name"],
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white
+                      ),
+                  )),
+            ),
+            ListTile(
+              onTap: ()async{
+                Map<String, String> details = await _storage.getDetails();
+                Navigator.pushNamed(context, "/profile",arguments: details);
+              },
+              leading: Icon(
+                Icons.account_circle
+              ),
+              title: Text("My Profile")
+
+            ),
+            ListTile(
+              enabled: false,
+                leading: Icon(
+                    Icons.event
+                ),
+                title: Text(
+                    "Events",
+                  style: TextStyle(
+                    color: Colors.blueAccent[700],
+                    fontWeight: FontWeight.bold
+                  )
+                ),
+
+            ),
+            Container(
+              decoration:  BoxDecoration(
+                border: Border(top:BorderSide(color: Colors.grey[300]))
+              ),
+              alignment: Alignment.bottomLeft,
+              child: ListTile(
+                onTap: ()async{
+                  String details = await _storage.get("settings");
+                  Navigator.pushNamed(context, "/profile",arguments: details);
+                },
+                leading: Icon(
+                    Icons.settings
+                ),
+                title: Text(
+                    "Events",
+                    style: TextStyle(
+                        color: Colors.blueAccent[700],
+                        fontWeight: FontWeight.bold
+                    )
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
       body:ListView.builder(
         itemCount: events.length,
         itemBuilder: (context,index){

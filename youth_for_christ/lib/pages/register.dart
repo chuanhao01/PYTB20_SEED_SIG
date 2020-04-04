@@ -25,12 +25,13 @@ class _RegisterState extends State<Register> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    initializeDateFormatting();
   }
 
   @override
   Widget build(BuildContext context) {
     GlobalKey<FormState> _form = GlobalKey<FormState>();
-    DateTime bday;
+    DateTime bday = DateTime.now();
     TextEditingController _nric = TextEditingController();
     TextEditingController _date = TextEditingController();
     TextEditingController _fullName = TextEditingController();
@@ -132,6 +133,7 @@ class _RegisterState extends State<Register> {
                                 try {
                                   initializeDateFormatting();
                                   bday = await selectDate(context);
+                                  _date.text = DateFormat.yMd("en-SG").format(bday).toString();
                                 } catch (e) {
                                   bday = DateTime.now();
                                   _date.text = bday.toString().substring(0, 11);
@@ -189,6 +191,7 @@ class _RegisterState extends State<Register> {
                     margin: EdgeInsets.fromLTRB(0, 0, 0, 35),
                     width: 350,
                     child: TextFormField(
+                      controller: _email,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0)),
@@ -230,7 +233,7 @@ class _RegisterState extends State<Register> {
                             i++;
                           });
                           _storage.edit(details);
-                          Navigator.pushReplacementNamed(context, "/events");
+                          Navigator.pushReplacementNamed(context, "/login");
                         }
                       },
                       child: Text(
