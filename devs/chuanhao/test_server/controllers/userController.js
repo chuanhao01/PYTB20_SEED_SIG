@@ -142,76 +142,6 @@ const userController = {
                 );
         });
 
-        // API endpoint to login and create the cookie and redirect
-        // If it fails, redirects to logout
-        app.get("/api/refresh_token/:refresh_token", function(req, res){
-            // this is to mainly set up the cookie in the browser
-            const refresh_token = req.params.refresh_token;
-            return new Promise((resolve) => {
-                // Checks get the refresh_token data from the db, also checks if the refresh token exists
-                resolve(
-                    model.accounts.getUserByRefreshToken(refresh_token)
-                        .catch(
-                            function(err){
-                                console.log(err);
-                                res.status(500).redirect('/api/logout');
-                                throw err;
-                            }
-                        )
-                );
-            })
-                .then(
-                    function(refresh_data){
-                        // Checking if the refresh_token is correct
-                        return new Promise((resolve, reject) => {
-                            if(refresh_data.length == 1){
-                                // The user with the refresh token exists
-                                resolve(refresh_data[0]);
-                            }
-                            else{
-                                reject('Refresh token is not valid');
-                            }
-                        })
-                            .catch(
-                                function(err){
-                                    console.log(err);
-                                    res.status(500).redirect('/api/logout');
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function(user){
-                        return utils.jwtToken.createAccessToken(user.user_id)
-                            .catch(
-                                function(err){
-                                    console.log(err);
-                                    res.status(500).redirect('/api/logout');
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function(access_token){
-                        // Token was valid and new_token was generated
-                        // redirect her alsoasdadasdasdasdasdasdadasdasdasda
-                        // res.status(302).cookie("token", new_token, { httpOnly: true }).redirect("http://localhost:8080");
-                        res
-                        .status(302)
-                        .cookie("access_token", access_token, { httpOnly: true })
-                        .cookie('refresh_token', refresh_token, { httpOnly: true })
-                        .send();
-                    }
-                )
-                .catch(
-                    function(err){
-                        console.log(err);
-                    }
-                );
-        });
-
         // API endpoint to login using email
         app.post("/api/login", function(req, res){
             const email = req.body.email.toLowerCase();
@@ -286,6 +216,77 @@ const userController = {
                     }
                 );
         });
+
+        // API endpoint to login and create the cookie and redirect
+        // If it fails, redirects to logout
+        app.get("/api/refresh_token/:refresh_token", function(req, res){
+            // this is to mainly set up the cookie in the browser
+            const refresh_token = req.params.refresh_token;
+            return new Promise((resolve) => {
+                // Checks get the refresh_token data from the db, also checks if the refresh token exists
+                resolve(
+                    model.accounts.getUserByRefreshToken(refresh_token)
+                        .catch(
+                            function(err){
+                                console.log(err);
+                                res.status(500).redirect('/api/logout');
+                                throw err;
+                            }
+                        )
+                );
+            })
+                .then(
+                    function(refresh_data){
+                        // Checking if the refresh_token is correct
+                        return new Promise((resolve, reject) => {
+                            if(refresh_data.length == 1){
+                                // The user with the refresh token exists
+                                resolve(refresh_data[0]);
+                            }
+                            else{
+                                reject('Refresh token is not valid');
+                            }
+                        })
+                            .catch(
+                                function(err){
+                                    console.log(err);
+                                    res.status(500).redirect('/api/logout');
+                                    throw err;
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function(user){
+                        return utils.jwtToken.createAccessToken(user.user_id)
+                            .catch(
+                                function(err){
+                                    console.log(err);
+                                    res.status(500).redirect('/api/logout');
+                                    throw err;
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function(access_token){
+                        // Token was valid and new_token was generated
+                        // redirect her alsoasdadasdasdasdasdasdadasdasdasda
+                        // res.status(302).cookie("token", new_token, { httpOnly: true }).redirect("http://localhost:8080");
+                        res
+                        .status(302)
+                        .cookie("access_token", access_token, { httpOnly: true })
+                        .cookie('refresh_token', refresh_token, { httpOnly: true })
+                        .send();
+                    }
+                )
+                .catch(
+                    function(err){
+                        console.log(err);
+                    }
+                );
+        });
+        
 
         // API endpoint to view all users
         app.get("/api/users/", function (req, res) {
