@@ -125,6 +125,7 @@ const userController = {
                                             "Error": "Internal Server Error"
                                         }
                                     );
+                                    throw err;
                                 }
                             );
                     }
@@ -142,6 +143,7 @@ const userController = {
         });
 
         // API endpoint to login and create the cookie and redirect
+        // If it fails, redirects to logout
         app.get("/api/refresh_token/:refresh_token", function(req, res){
             // this is to mainly set up the cookie in the browser
             const refresh_token = req.params.refresh_token;
@@ -152,11 +154,7 @@ const userController = {
                         .catch(
                             function(err){
                                 console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
-                                    }
-                                );
+                                res.status(500).redirect('/api/logout');
                                 throw err;
                             }
                         )
@@ -164,6 +162,7 @@ const userController = {
             })
                 .then(
                     function(refresh_data){
+                        // Checking if the refresh_token is correct
                         return new Promise((resolve, reject) => {
                             if(refresh_data.length == 1){
                                 // The user with the refresh token exists
@@ -176,11 +175,7 @@ const userController = {
                             .catch(
                                 function(err){
                                     console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
+                                    res.status(500).redirect('/api/logout');
                                     throw err;
                                 }
                             );
@@ -192,11 +187,7 @@ const userController = {
                             .catch(
                                 function(err){
                                     console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
+                                    res.status(500).redirect('/api/logout');
                                     throw err;
                                 }
                             );
@@ -226,34 +217,35 @@ const userController = {
             const email = req.body.email.toLowerCase();
             return new Promise((resolve) => {
                 resolve(
-                    model.users.checkUserEmail(email)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
-                                    }
-                                );
-                                throw err;
-                            }
-                        )
+                    // Checking the email if it has a refresh token and at the same time getting it
+                    model.accounts.getRefreshTokenByUserEmail(email)
+                    .catch(
+                        function(err){
+                            console.log(err);
+                            res.status(500).send(
+                                {
+                                    "Error": "Internal Server Error"
+                                }
+                            );
+                            throw err;
+                        }
+                    )
                 );
             })
                 .then(
-                    function(emailExists){
-                        // Logic flow based on if email exists
+                    function(refresh_token_data){
                         return new Promise((resolve, reject) => {
-                            if(emailExists){
-                                // email exists and the user can login
-                                resolve(true);
+                            if(refresh_token_data.length == 1){
+                                // There is only one user there exists with the email and it has a refresh token
+                                resolve(refresh_token_data[0].refresh_token);
                             }
                             else{
-                                reject('User email does not exists');
+                                // If the refresh_token does not exists or somehow 2 datapoints are returned
+                                reject('Email refresh token error');
                             }
                         })
                             .catch(
-                                function (err) {
+                                function(err){
                                     console.log(err);
                                     res.status(500).send(
                                         {
@@ -266,45 +258,9 @@ const userController = {
                     }
                 )
                 .then(
-                    function(){
-                        // Get the user_id by email
-                        return model.users.getUserIdByEmail(email)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function(user){
-                        // We got the user_id by email, parse cause mysql gives in arr
-                        const user_id = user[0].user_id;
-                        // Send the email with link here
-                        return utils.jwtToken.createToken(user_id)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function(token){
+                    function(refresh_token){
                         // Token generation is successful
-                        return utils.email.send(email, `http://localhost:8081/api/login/${token}`)
+                        return utils.email.send(email, `http://localhost:8081/api/refresh_token/${refresh_token}`)
                             .catch(
                                 function (err) {
                                     console.log(err);
