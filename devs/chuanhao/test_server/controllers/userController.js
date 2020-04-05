@@ -286,7 +286,14 @@ const userController = {
                     }
                 );
         });
-        
+
+        // Adding in logout endpotin
+        app.get('/api/logout', function(req, res){
+            res
+            .clearCookie('access_token')
+            .clearCookie('refresh_token')
+            .send();
+        });
 
         // API endpoint to view all users
         app.get("/api/users/", function (req, res) {
