@@ -116,3 +116,4 @@ let event_id = '0ccd156b-7cef-4e4e-9302-ebffb3a1b08b';
 
 // let user1 = 'f26fec43-9c2f-4724-bac1-6aff1dd2cc02';
 // db.users.checkIfUserExistsByUserId(user1).then(check => console.log(check));
+// db.signups.getAllSignUpsForEventByEventId(event1).then(data => console.log(data));
