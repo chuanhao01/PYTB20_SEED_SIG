@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import "package:flutter/material.dart";
 import 'package:youthforchrist/services/storage.dart';
 import "package:youthforchrist/widgets/eventCard.dart";
@@ -93,17 +91,13 @@ class _EventsState extends State<Events> {
               child: ListTile(
                 onTap: ()async{
                   String details = await _storage.get("settings");
-                  Navigator.pushNamed(context, "/profile",arguments: details);
+                  Navigator.pushNamed(context, "/settings",arguments: details);
                 },
                 leading: Icon(
                     Icons.settings
                 ),
                 title: Text(
-                    "Events",
-                    style: TextStyle(
-                        color: Colors.blueAccent[700],
-                        fontWeight: FontWeight.bold
-                    )
+                    "Settings",
                 ),
               ),
             )

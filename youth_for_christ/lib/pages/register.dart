@@ -244,6 +244,7 @@ class _RegisterState extends State<Register> {
                   ),
                 ],
               )),
+          Hyperlinks(text: "Have an account already?",hyperlink: "Login!",page: "login",),
         ],
       ),
     )));

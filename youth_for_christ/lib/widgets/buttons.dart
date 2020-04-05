@@ -28,6 +28,7 @@ class Hyperlinks extends StatelessWidget {
   String text;
   String hyperlink;
   String page;
+  Hyperlinks({this.text,this.hyperlink,this.page});
   @override
   Widget build(BuildContext context) {
     return Container(

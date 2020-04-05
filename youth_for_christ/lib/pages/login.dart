@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
 import 'package:youthforchrist/services/storage.dart';
+import 'package:youthforchrist/widgets/buttons.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -119,28 +120,7 @@ class _LoginState extends State<Login> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "Don't have an account yet? ",
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacementNamed(context, "/register");
-                      },
-                      child: Text(
-                        "Sign up!",
-                        style: TextStyle(
-                            color: Colors.blueAccent,
-                            decoration: TextDecoration.underline),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              Hyperlinks(text: "Don't have an account yet?",hyperlink: "Sign up!",page: "register",),
             ])));
   }
 }
