@@ -6,17 +6,8 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-
-
   @override
   Widget build(BuildContext context) {
-    Map<String, String> data = ModalRoute.of(context).settings.arguments;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("My Profile"),
-        backgroundColor: Colors.blueAccent[700],
-      ),
-
-    );
+    return Scaffold();
   }
 }
