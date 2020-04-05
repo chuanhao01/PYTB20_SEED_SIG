@@ -513,6 +513,103 @@ const userController = {
                     }
                 )
         });
+
+        // API endpoint to update user by id (ADMIN)
+        app.put("/api/users/:user_id", function (req, res) {
+            // user id
+            const user_id = req.user.user_id;
+
+            // nric of user
+            const nric = req.body.nric.toLowerCase();
+
+            // date of birth of user (date format)
+            const dob = utils.parseTime.convertTimeStamp(req.body.dob);
+
+            // fullname of user
+            const fullname = req.body.fullname.toLowerCase();
+
+            // contact number of user
+            const contact_num = req.body.contact_num;
+
+            // email of user
+            const email = req.body.email.toLowerCase();
+
+            // PDPA
+            const PDPA = parseInt(req.body.PDPA);
+
+            // need to check if user exists first
+            return new Promise((resolve) => {
+                resolve(
+                    model.users.checkIfUserExistsByUserId(user_id)
+                        .catch(
+                            function (err) {
+                                console.log(err);
+                                res.status(500).send(
+                                    {
+                                        "Error": "Internal Server Error"
+                                    }
+                                );
+                                throw err;
+
+                            }
+                        )
+                )
+            })
+                // if user exists, resolve
+                // if not, reject
+                .then(
+                    function (userExists) {
+                        return new Promise((resolve, reject) => {
+                            if (userExists) {
+                                resolve(true);
+                            } else {
+                                reject("User does not exist");
+                            }
+                        })
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+
+                                }
+                            )
+                    }
+                )
+                // call the db method to update user by id in database
+                .then(
+                    function () {
+                        return model.users.updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email, PDPA)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+
+
+                    }
+                )
+                .then(
+                    function () {
+                        res.status(204).send();
+                    }
+                )
+                .catch(
+                    function (err) {
+                        console.log(err);
+                    }
+                )
+        });
     }
 }
 
