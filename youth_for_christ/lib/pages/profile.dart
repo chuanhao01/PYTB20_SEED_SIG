@@ -9,9 +9,11 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     Map<String, String> data = ModalRoute.of(context).settings.arguments;
+    List<String> keys = data.keys.toList();
+    keys.remove("full name");
     return Scaffold(
       appBar: AppBar(
-        title: Text("Events"),
+        title: Text("My Profile"),
         backgroundColor: Colors.blueAccent[700],
       ),
         drawer: Drawer(
@@ -77,7 +79,25 @@ class _ProfileState extends State<Profile> {
             ],
           ),
         ),
-        body: Formy(profile: true,initialValue: data,),
+        body: Center(
+            child: Column(
+              children: <Widget>[
+                Text(data["full name"]),
+                Divider(),
+                Column(
+                  children: <Widget>[
+                    ListView.builder(itemCount:keys.length,shrinkWrap: true,itemBuilder: (context,index){
+                      String key  =  data.keys.elementAt(index);
+                      return ListTile(
+                        title: Text(key),
+                        subtitle: Text(data[key]),
+                      );
+                    }),
+                  ],
+                ),
+              ],
+            )
+        ),
     );
   }
 }
