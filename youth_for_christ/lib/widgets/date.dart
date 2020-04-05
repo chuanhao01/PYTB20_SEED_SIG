@@ -5,7 +5,9 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 class DateOrPhone extends StatefulWidget {
   TextEditingController  controller;
   bool phone;
-  DateOrPhone({this.controller,this.phone});
+  String initialValue;
+  DateOrPhone({this.controller,this.phone,this.initialValue});
+
   @override
   _DateOrPhoneState createState() => _DateOrPhoneState();
 }
@@ -23,6 +25,9 @@ class _DateOrPhoneState extends State<DateOrPhone> {
   }
   @override
   Widget build(BuildContext context) {
+    if(widget.initialValue !=""){
+      widget.controller.text = widget.initialValue;
+    }
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey[500]),

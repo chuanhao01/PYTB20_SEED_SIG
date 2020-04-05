@@ -1,11 +1,11 @@
 import "package:flutter/material.dart";
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class TextForm extends StatefulWidget {
   String label;
+  String initialValue;
   Function validator;
   TextEditingController controller;
-  TextForm({this.label, this.validator, this.controller});
+  TextForm({this.label, this.validator, this.controller,this.initialValue});
   @override
   _TextFormState createState() => _TextFormState();
 }
@@ -13,6 +13,9 @@ class TextForm extends StatefulWidget {
 class _TextFormState extends State<TextForm> {
   @override
   Widget build(BuildContext context) {
+    if(widget.initialValue != ""){
+      widget.controller.text = widget.initialValue;
+    }
     return Container(
       margin: EdgeInsets.fromLTRB(0, 0, 0, 35),
       width: 350,

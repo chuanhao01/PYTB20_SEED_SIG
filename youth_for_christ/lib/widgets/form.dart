@@ -1,16 +1,17 @@
 import "package:flutter/material.dart";
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import "package:youthforchrist/services/storage.dart";
 import "package:youthforchrist/widgets/textfield.dart";
 import "package:youthforchrist/widgets/date.dart";
+import "package:youthforchrist/services/storage.dart";
 
 class Formy extends StatefulWidget {
   DateTime bday;
-  Formy({this.bday});
+  bool profile;
+  Map<String, String> initialValue;
+  Formy({this.bday,this.profile,this.initialValue});
   @override
-  _FormyState createState() => _FormyState(bday: bday);
+  _FormyState createState() => _FormyState();
 }
 
 class _FormyState extends State<Formy> {
@@ -51,8 +52,6 @@ class _FormyState extends State<Formy> {
     }
 
   }
-
-  _FormyState({this.bday});
   @override
   void initState() {
     // TODO: implement initState
@@ -62,7 +61,6 @@ class _FormyState extends State<Formy> {
   @override
   Widget build(BuildContext context) {
     SecureStorage _storage = new SecureStorage();
-    _date.text = DateFormat.yMd("en-SG").format(bday).toString();
     return Form(
         key: _form,
         child: Column(
@@ -72,15 +70,17 @@ class _FormyState extends State<Formy> {
               label: "NRIC: ",
               validator: validator(true,false),
               controller: _nric,
+              initialValue: widget.profile? widget.initialValue["nric"]:"",
             ),
-            DateOrPhone(controller: _date,phone: false,),
+            DateOrPhone(controller: _date,phone: false,initialValue: widget.profile? widget.initialValue["bday"]: DateFormat.yMd("en-SG").format(DateTime.now()).toString(),),
             TextForm(
               label: "Full name: ",
               validator: validator(false, false),
               controller: _fullName,
+              initialValue: widget.profile? widget.initialValue["full name"]:"",
             ),
-            DateOrPhone(controller: _phonenumber, phone: true,),
-            TextForm(label: "Email: ", validator: validator(false, true),controller: _email,),
+            DateOrPhone(controller: _phonenumber, phone: true,initialValue: widget.profile? widget.initialValue["phone number"]:"",),
+            TextForm(label: "Email: ", validator: validator(false, true),controller: _email,initialValue: widget.profile? widget.initialValue["email"]:"",),
             Container(
               height: 40.0,
               width: 150.0,

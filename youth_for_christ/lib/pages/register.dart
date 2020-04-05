@@ -54,7 +54,7 @@ class _RegisterState extends State<Register> {
                 ],
               ),
             ),
-            Formy(bday: DateTime.now(),),
+            Formy(bday: DateTime.now(),profile: false),
             Hyperlinks(text: "Have an account already?",hyperlink: "Login!",page: "login",),
           ],
         ),
