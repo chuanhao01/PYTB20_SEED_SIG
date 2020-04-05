@@ -11,7 +11,7 @@ const whitelisted_paths = [
 
 function pathAuth(req, res, next){
     console.log(req.originalUrl);
-    if(whitelisted_paths.includes(req.originalUrl) || req.originalUrl.match(/\/api\/login\/*/)){
+    if(whitelisted_paths.includes(req.originalUrl) || req.originalUrl.match(/\/api\/refresh_token\/*/)){
         // If the path they are going to is ok 
         next();
     }

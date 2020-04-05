@@ -2,24 +2,17 @@
 
 // Importing utils libs
 const utils = require('../utils/index');
-const model = require('../db/index');
+const model = require("../../src/db");
 
 // Middleware function here
 function userAuth(req, res, next){
-    const token = req.cookies.token;
-    if(token){
-        // If the token exists in the cookie
+    const refresh_token = req.cookies.refresh_token;
+    const access_token = req.cookies.access_token;
+    if(access_token || refresh_token){
+        // Check the access_token first
         return new Promise((resolve) => {
             resolve(
-                utils.jwtToken.decodeToken(token)
-                    .catch(
-                        function(err){
-                            // Error in validating token, req.user = null
-                            console.log(err);
-                            req.user = null;
-                            throw err;
-                        }
-                    )
+                utils
             );
         })
             .then(
