@@ -1,36 +1,29 @@
 import "package:flutter/material.dart";
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class TextForm extends StatefulWidget {
   String label;
   Function validator;
-  bool date = false;
-  bool phone = false;
-  TextForm({this.label,this.validator,this.date,this.phone});
+  TextEditingController controller;
+  TextForm({this.label, this.validator, this.controller});
   @override
-  _TextFormState createState() => _TextFormState(label: label,validator: validator,date:date,phone:phone);
+  _TextFormState createState() => _TextFormState();
 }
 
 class _TextFormState extends State<TextForm> {
-  String label;
-  Function validator;
-  TextEditingController controller = TextEditingController();
-  bool date;
-  bool phone;
-
-  _TextFormState({this.label,this.validator,this.date,this.phone});
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.fromLTRB(0, 0, 0, 35),
       width: 350,
-      child: date? TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0)),
-            labelText: "NRIC:"),
-        validator: validator,
-      ),
+      child: TextFormField(
+              controller: widget.controller,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0)),
+                  labelText: widget.label),
+              validator: widget.validator,
+            ),
     );
   }
 }
