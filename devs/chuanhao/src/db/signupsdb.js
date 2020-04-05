@@ -123,8 +123,10 @@ const signupsdb = {
     getAllSignUpsForEventByEventId(event_id){
         return new Promise((resolve, reject) => {
             this.pool.query(`
-            SELECT * FROM SIGNUPS
-            WHERE ((event_id = ?) AND (deleted = 0)) 
+            SELECT s.user_id, s.signup_id, s.status, s.time_created, s.last_modified, u.fullname, u.dob, u.nric
+            FROM SIGNUPS s
+            LEFT JOIN USERS u ON s.user_id = u.user_id
+            WHERE ((s.event_id = ?) AND (s.deleted = 0))
             `, [event_id], function(err, data){
                 if(err){
                     reject(err);

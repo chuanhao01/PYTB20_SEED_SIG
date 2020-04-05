@@ -31,7 +31,7 @@ const usersdb = {
             this.pool.query(`
             INSERT INTO USERS
             (nric, dob, fullname, contact_num, email, PDPA, user_id, deleted)
-            values
+            VALUES
             (?, ?, ?, ?, ?, ?, ?, ?)
             `, [nric, dob, fullname, contact_num, email, PDPA, user_id, 0], function(err, data){
                 if(err){
