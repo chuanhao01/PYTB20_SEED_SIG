@@ -55,6 +55,7 @@ const accountsdb = {
     },
     /**
      * Model to get the user tagged to the refresh token
+     * Mainly to check if the refresh token is correct
      * No user is returned, reject the refresh token
      * Done on controller side
      *
@@ -75,7 +76,31 @@ const accountsdb = {
                 }
             });
         });
-    }
+    },
+    /**
+     * Gets the user's refresh token by email, email should be unique at this point
+     * Mainly for the login api, when a user tries logging in by email
+     * API controller needs to check output so as to control the errors
+     *
+     * @param {String} email
+     * @returns {Promise} [arr of refresh_token]
+     */
+    getRefreshTokenByUserEmail(email){
+        return new Promise((resolve, reject) => {
+            this.pool.query(`
+            SELECT r.refresh_token, r.user_id
+            FROM REFRESH_TOKENS r LEFT JOIN USERS u ON r.user_id = u.user_id
+            WHERE ((r.deleted = 0) AND (u.email = ?));
+            `, [email], function(err, data){
+                if(err){
+                    reject(err);
+                }
+                else{
+                    resolve(data);
+                }
+            });
+        });
+    },
 };
 
 module.exports = accountsdb;
