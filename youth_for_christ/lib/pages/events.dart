@@ -30,10 +30,9 @@ class _EventsState extends State<Events> {
       EventCard(title: "item 6",date: new DateTime(2020,DateTime.september,9), description: garbage,location: "Fort Canning Park",attended: false,),
       EventCard(title: "item 7",date: new DateTime(2020,DateTime.september,9), description: garbage,location: "Malaysia",attended: true,),
     ];
-//    username = username != null
-//        ? username
-//        : ModalRoute.of(context).settings.arguments;
-    username = {"full name":"testing"};
+    username = username != null
+        ? username
+        : ModalRoute.of(context).settings.arguments;
     return  Scaffold(
       appBar: AppBar(
         title: Text("Events"),
