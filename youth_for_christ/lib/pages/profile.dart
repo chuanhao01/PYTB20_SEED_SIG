@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "package:youthforchrist/widgets/form.dart";
 class Profile extends StatefulWidget {
   @override
   _ProfileState createState() => _ProfileState();
@@ -11,7 +10,6 @@ class _ProfileState extends State<Profile> {
     Map<String, String> data = ModalRoute.of(context).settings.arguments;
     print(data);
     List<String> keys = data.keys.toList();
-    keys.remove("full name");
     return Scaffold(
       appBar: AppBar(
         title: Text("My Profile"),
@@ -20,7 +18,7 @@ class _ProfileState extends State<Profile> {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: (){
-              Navigator.pushNamed(context, "/edit",arguments: data);
+              Navigator.pushReplacementNamed(context, "/edit",arguments: data);
             },
           )
         ],
@@ -91,19 +89,13 @@ class _ProfileState extends State<Profile> {
         body: Center(
             child: Column(
               children: <Widget>[
-                Text(data["full name"]),
-                Divider(),
-                Column(
-                  children: <Widget>[
-                    ListView.builder(itemCount:keys.length,shrinkWrap: true,itemBuilder: (context,index){
-                      String key  =  data.keys.elementAt(index);
-                      return ListTile(
-                        title: Text(key),
-                        subtitle: Text(data[key]),
-                      );
-                    }),
-                  ],
-                ),
+                ListView.builder(itemCount:keys.length,shrinkWrap: true,itemBuilder: (context,index){
+                  String key  =  data.keys.elementAt(index);
+                  return ListTile(
+                    title: Text(key),
+                    subtitle: Text(data[key]),
+                  );
+                }),
               ],
             )
         ),

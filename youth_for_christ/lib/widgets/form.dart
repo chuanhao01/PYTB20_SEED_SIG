@@ -24,7 +24,7 @@ class _FormyState extends State<Formy> {
   GlobalKey<FormState> _form = GlobalKey<FormState>();
   SecureStorage _storage = new SecureStorage();
 
-  register(){
+  register()async{
     if (_form.currentState.validate()) {
       _email.text = widget.profile? widget.initialValue["email"]: _email.text;
       List<String> everything = [
@@ -42,7 +42,8 @@ class _FormyState extends State<Formy> {
       });
       _storage.edit(details);
       if (widget.profile){
-        Navigator.pop(context);
+        Map<String, String> details = await _storage.getDetails();
+        Navigator.pushReplacementNamed(context, "/profile",arguments: details);
       }
       else{
         Navigator.pushReplacementNamed(context, "/login");
@@ -105,7 +106,7 @@ class _FormyState extends State<Formy> {
               initialValue: widget.profile? widget.initialValue["full name"]:"",
             ),
             DateOrPhone(controller: _phonenumber, phone: true,initialValue: widget.profile? widget.initialValue["phone number"]:"",),
-            widget.profile? null:TextForm(label: "Email: ", validator: validator(false, true),controller: _email,initialValue: widget.profile? widget.initialValue["email"]:"",),
+            widget.profile? SizedBox():TextForm(label: "Email: ", validator: validator(false, true),controller: _email,initialValue: widget.profile? widget.initialValue["email"]:"",),
             widget.profile? PrimaryButton(onPressed: register,text: "Save Changes",disabled: false,):PrimaryButton(onPressed: register,text: "Sign Up!",disabled: false,),
 
           ],

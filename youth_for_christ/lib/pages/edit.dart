@@ -9,14 +9,20 @@ class Edit extends StatefulWidget {
 class _EditState extends State<Edit> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blueAccent[700],
-        title: Text("Edit Profile"),
-      ),
-      body: Center(
-        child: Formy(profile:true,initialValue: ModalRoute.of(context).settings.arguments,),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blueAccent[700],
+          title: Text("Edit Profile"),
+        ),
+        body: Center(
+          child: Formy(profile:true,initialValue: ModalRoute.of(context).settings.arguments,),
+        ),
       ),
     );
+  }
+  Future<bool> _onBackPressed(){
+    Navigator.pushReplacementNamed(context, "/profile",arguments:ModalRoute.of(context).settings.arguments );
   }
 }
