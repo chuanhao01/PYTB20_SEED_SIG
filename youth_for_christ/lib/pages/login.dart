@@ -16,6 +16,32 @@ class _LoginState extends State<Login> {
   bool disableButton = true;
   SecureStorage _storage = new SecureStorage();
   @override
+
+  login()async{
+    String username = _mail.text;
+    if(_email.currentState.validate()) {
+      Map<String, String> details = await _storage.getDetails();
+      if(details["email"] == username){
+        Navigator.pushReplacementNamed(context, "/events",arguments: details);
+      }
+      else{
+        showDialog(
+            context: context,
+            barrierDismissible: true,
+            child: AlertDialog(
+                title: Text("Warning"),
+                content: Text("Wrong email!"),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: (){Navigator.of(context,rootNavigator: true).pop("dialog");},
+                    child: Text("Ok"),
+                  )
+                ]));
+      }
+
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
@@ -76,47 +102,7 @@ class _LoginState extends State<Login> {
                         },
                       ),
                     ),
-                    Container(
-                      height: 40.0,
-                      width: 150.0,
-                      child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        color: Colors.blueAccent,
-                        onPressed: ()async {
-                          String username = _mail.text;
-                          if(_email.currentState.validate()) {
-                            Map<String, String> details = await _storage.getDetails();
-                            if(details["email"] == username){
-                              Navigator.pushReplacementNamed(context, "/events",arguments: details);
-                            }
-                            else{
-                              showDialog(
-                                context: context,
-                                barrierDismissible: true,
-                                child: AlertDialog(
-                                    title: Text("Warning"),
-                                    content: Text("Wrong email!"),
-                                    actions: <Widget>[
-                                    FlatButton(
-                                      onPressed: (){Navigator.of(context,rootNavigator: true).pop("dialog");},
-                                      child: Text("Ok"),
-                                )
-                              ]));
-                            }
-
-                          }
-                        },
-                        child: Text(
-                          "Login",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18
-                          ),
-                        ),
-                      ),
-                    )
+                    PrimaryButton(onPressed: login,text:"Login"),
                   ],
                 ),
               ),

@@ -9,12 +9,21 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     Map<String, String> data = ModalRoute.of(context).settings.arguments;
+    print(data);
     List<String> keys = data.keys.toList();
     keys.remove("full name");
     return Scaffold(
       appBar: AppBar(
         title: Text("My Profile"),
         backgroundColor: Colors.blueAccent[700],
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: (){
+              Navigator.pushNamed(context, "/edit",arguments: data);
+            },
+          )
+        ],
       ),
         drawer: Drawer(
           elevation: 15.0,

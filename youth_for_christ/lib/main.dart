@@ -6,6 +6,7 @@ import "package:youthforchrist/pages/events.dart";
 import "package:youthforchrist/pages/register.dart";
 import "package:youthforchrist/pages/description.dart";
 import "package:youthforchrist/pages/profile.dart";
+import "package:youthforchrist/pages/edit.dart";
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -17,6 +18,7 @@ void main() {
     "/description": (context) => Description(),
     "/events": (context) => Events(),
     "/register":(context) => Register(),
-    "/profile": (context) => Profile()
+    "/profile": (context) => Profile(),
+    "/edit": (context)=> Edit(),
   }));
 }

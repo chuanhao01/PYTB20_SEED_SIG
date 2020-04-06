@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
 import 'package:intl/intl.dart';
 import "package:youthforchrist/services/storage.dart";
+import 'package:youthforchrist/widgets/buttons.dart';
 import "package:youthforchrist/widgets/textfield.dart";
 import "package:youthforchrist/widgets/date.dart";
-import "package:youthforchrist/services/storage.dart";
 
 class Formy extends StatefulWidget {
   DateTime bday;
@@ -22,9 +22,34 @@ class _FormyState extends State<Formy> {
   TextEditingController _phonenumber = TextEditingController();
   TextEditingController _email = TextEditingController();
   GlobalKey<FormState> _form = GlobalKey<FormState>();
+  SecureStorage _storage = new SecureStorage();
 
+  register(){
+    if (_form.currentState.validate()) {
+      _email.text = widget.profile? widget.initialValue["email"]: _email.text;
+      List<String> everything = [
+        _nric.text,
+        _date.text,
+        _fullName.text,
+        _phonenumber.text,
+        _email.text
+      ];
+      Map<String, String> details = {};
+      int i = 0;
+      _storage.personal.forEach((element) {
+        details[element] = everything[i];
+        i++;
+      });
+      _storage.edit(details);
+      if (widget.profile){
+        Navigator.pop(context);
+      }
+      else{
+        Navigator.pushReplacementNamed(context, "/login");
+      }
 
-
+    }
+  }
   Function validator (bool nric,bool email) {
     if (nric){
       return (value){
@@ -52,6 +77,7 @@ class _FormyState extends State<Formy> {
     }
 
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -60,7 +86,6 @@ class _FormyState extends State<Formy> {
 
   @override
   Widget build(BuildContext context) {
-    SecureStorage _storage = new SecureStorage();
     return Form(
         key: _form,
         child: Column(
@@ -80,40 +105,9 @@ class _FormyState extends State<Formy> {
               initialValue: widget.profile? widget.initialValue["full name"]:"",
             ),
             DateOrPhone(controller: _phonenumber, phone: true,initialValue: widget.profile? widget.initialValue["phone number"]:"",),
-            TextForm(label: "Email: ", validator: validator(false, true),controller: _email,initialValue: widget.profile? widget.initialValue["email"]:"",),
-            Container(
-              height: 40.0,
-              width: 150.0,
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                color: Colors.blueAccent,
-                onPressed: () {
-                  if (_form.currentState.validate()) {
-                    List<String> everything = [
-                      _nric.text,
-                      _date.text,
-                      _fullName.text,
-                      _phonenumber.text,
-                      _email.text
-                    ];
-                    Map<String, String> details = {};
-                    int i = 0;
-                    _storage.personal.forEach((element) {
-                      details[element] = everything[i];
-                      i++;
-                    });
-                    _storage.edit(details);
-                    Navigator.pushReplacementNamed(context, "/login");
-                  }
-                },
-                child: Text(
-                  "Sign up!",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ),
-            ),
+            widget.profile? SizedBox():TextForm(label: "Email: ", validator: validator(false, true),controller: _email,initialValue: widget.profile? widget.initialValue["email"]:"",),
+            widget.profile? PrimaryButton(onPressed: register,text: "Save Changes",):PrimaryButton(onPressed: register,text: "Sign Up!",),
+
           ],
         ));
   }
