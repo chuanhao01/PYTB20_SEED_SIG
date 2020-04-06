@@ -102,7 +102,7 @@ class _LoginState extends State<Login> {
                         },
                       ),
                     ),
-                    PrimaryButton(onPressed: login,text:"Login"),
+                    PrimaryButton(onPressed: login,text:"Login",disabled: false,),
                   ],
                 ),
               ),

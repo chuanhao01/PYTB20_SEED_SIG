@@ -105,8 +105,8 @@ class _FormyState extends State<Formy> {
               initialValue: widget.profile? widget.initialValue["full name"]:"",
             ),
             DateOrPhone(controller: _phonenumber, phone: true,initialValue: widget.profile? widget.initialValue["phone number"]:"",),
-            widget.profile? SizedBox():TextForm(label: "Email: ", validator: validator(false, true),controller: _email,initialValue: widget.profile? widget.initialValue["email"]:"",),
-            widget.profile? PrimaryButton(onPressed: register,text: "Save Changes",):PrimaryButton(onPressed: register,text: "Sign Up!",),
+            widget.profile? null:TextForm(label: "Email: ", validator: validator(false, true),controller: _email,initialValue: widget.profile? widget.initialValue["email"]:"",),
+            widget.profile? PrimaryButton(onPressed: register,text: "Save Changes",disabled: false,):PrimaryButton(onPressed: register,text: "Sign Up!",disabled: false,),
 
           ],
         ));

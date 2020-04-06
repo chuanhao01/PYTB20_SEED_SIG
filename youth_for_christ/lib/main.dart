@@ -12,7 +12,7 @@ void main() {
     statusBarColor: Colors.transparent,
   ));
   runApp(MaterialApp(debugShowCheckedModeBanner: false, routes: {
-    "/": (context) => Loading(),
+    "/": (context) => Events(),
     "/login": (context) => Login(),
 //    "/settings": (context) => Settings(),
     "/description": (context) => Description(),

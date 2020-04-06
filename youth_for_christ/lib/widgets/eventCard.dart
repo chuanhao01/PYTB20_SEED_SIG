@@ -28,7 +28,9 @@ class EventCard extends StatelessWidget {
                       "attended": attended,
                     })));
             Scaffold.of(context).showSnackBar(_snackbar);
-          } catch (e) {}
+          } catch (e) {
+            print("hello");
+          }
         },
           title: Text(title),
           subtitle: Text(

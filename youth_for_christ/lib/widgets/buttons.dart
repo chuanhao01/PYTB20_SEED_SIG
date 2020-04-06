@@ -3,7 +3,8 @@ import "package:flutter/material.dart";
 class PrimaryButton extends StatelessWidget {
   Function onPressed;
   String text;
-  PrimaryButton({this.onPressed, this.text});
+  bool disabled;
+  PrimaryButton({this.onPressed, this.text,this.disabled});
 
   Widget build(BuildContext context) {
     return Container(
@@ -14,7 +15,8 @@ class PrimaryButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         color: Colors.blueAccent,
-        onPressed: onPressed,
+        disabledColor: Colors.blueAccent[100],
+        onPressed: disabled? null: onPressed,
         child: Text(
           text,
           style: TextStyle(color: Colors.white, fontSize: 18),
