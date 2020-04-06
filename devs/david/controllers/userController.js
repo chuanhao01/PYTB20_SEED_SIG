@@ -7,6 +7,8 @@
 // Import libraries that are required
 // const utils = require("../utils/index");
 const utils = require("../../../main/client_back_end/utils/index");
+const { body, param, validationResult } = require("express-validator");
+const sanitizeHtml = require("sanitize-html");
 
 // Import the model needed for CRUD of DB
 // const model = require("../db/index");
@@ -179,114 +181,141 @@ const userController = {
         });
 
         // API endpoint to login using email
-        app.post("/api/login", function (req, res) {
-            const email = req.body.email.toLowerCase();
-            return new Promise((resolve) => {
-                resolve(
-                    model.users.checkUserEmail(email)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
+        app.post("/api/login",
+            [
+                body("email")
+                    // always sanitise inputs to remove all tags if present (XSS Prevention)
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isEmail()
+                    .withMessage("Email is not in correct format"),
+            ],
+            function (req, res) {
+                // do the validation
+                const validationErrors = validationResult(req);
+                // if validation contains any errors, 
+                // throw error to stop it from doing model calls
+                if (!validationErrors.isEmpty()) {
+                    console.log(validationErrors);
+                    res.status(422).send(
+                        {
+                            "Error": "Unprocessable Entity"
+                        }
+                    );
+                    throw validationErrors;
+                }
+                // if validation / sanitization has no errors, start promise chain
+                const email = req.body.email.toLowerCase();
+                return new Promise((resolve) => {
+                    resolve(
+                        model.users.checkUserEmail(email)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+                    );
+                })
+                    .then(
+                        function (emailExists) {
+                            // Logic flow based on if email exists
+                            return new Promise((resolve, reject) => {
+                                if (emailExists) {
+                                    // email exists and the user can login
+                                    resolve(true);
+                                }
+                                else {
+                                    reject('User email does not exists');
+                                }
+                            })
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
                                     }
                                 );
-                                throw err;
-                            }
-                        )
-                );
-            })
-                .then(
-                    function (emailExists) {
-                        // Logic flow based on if email exists
-                        return new Promise((resolve, reject) => {
-                            if (emailExists) {
-                                // email exists and the user can login
-                                resolve(true);
-                            }
-                            else {
-                                reject('User email does not exists');
-                            }
-                        })
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function () {
-                        // Get the user_id by email
-                        return model.users.getUserIdByEmail(email)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function (user) {
-                        // We got the user_id by email, parse cause mysql gives in arr
-                        const user_id = user[0].user_id;
-                        // Send the email with link here
-                        return utils.jwtToken.createToken(user_id)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function (token) {
-                        // Token generation is successful
-                        return utils.email.send(email, `http://localhost:8081/api/login/${token}`)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function () {
-                        // Successful in sending the emails
-                        res.status(200).send();
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                );
-        });
+                        }
+                    )
+                    .then(
+                        function () {
+                            // Get the user_id by email
+                            return model.users.getUserIdByEmail(email)
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+                                    }
+                                );
+                        }
+                    )
+                    .then(
+                        function (user) {
+                            // We got the user_id by email, parse cause mysql gives in arr
+                            const user_id = user[0].user_id;
+                            // Send the email with link here
+                            return utils.jwtToken.createToken(user_id)
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+                                    }
+                                );
+                        }
+                    )
+                    .then(
+                        function (token) {
+                            // Token generation is successful
+                            return utils.email.send(email, `http://localhost:8081/api/login/${token}`)
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+                                    }
+                                );
+                        }
+                    )
+                    .then(
+                        function () {
+                            // Successful in sending the emails
+                            res.status(200).send();
+                        }
+                    )
+                    .catch(
+                        function (err) {
+                            console.log(err);
+                        }
+                    );
+            });
 
         // API endpoint to view user by id
         app.get("/api/users/u", function (req, res) {
