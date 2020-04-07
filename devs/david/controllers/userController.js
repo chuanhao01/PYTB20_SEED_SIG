@@ -454,107 +454,133 @@ const userController = {
         });
 
         // API endpoint to view user by id (ADMIN)
-        app.get("/api/users/:user_id", function (req, res) {
-            // user id
-            const user_id = req.params.user_id;
+        app.get("/api/users/:user_id",
+            [
+                param("user_id")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isUUID()
+                    .withMessage("Invalid UUID"),
+            ],
+            function (req, res) {
+                // do the validation
+                const validationErrors = validationResult(req);
+                // if validation contains any errors, 
+                // throw error to stop it from doing model calls
+                if (!validationErrors.isEmpty()) {
+                    console.log(validationErrors);
+                    res.status(422).send(
+                        {
+                            "Error": "Unprocessable Entity"
+                        }
+                    );
+                    throw validationErrors;
+                }
+                // if validation / sanitization has no errors, start promise chain
+                // user id
+                const user_id = req.params.user_id;
 
-            // need to check if user exists first
-            return new Promise((resolve) => {
-                resolve(
-                    model.users.checkIfUserExistsByUserId(user_id)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
+                // need to check if user exists first
+                return new Promise((resolve) => {
+                    resolve(
+                        model.users.checkIfUserExistsByUserId(user_id)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+
+                                }
+                            )
+                    )
+                })
+                    // if user exists, resolve
+                    // if not, reject
+                    .then(
+                        function (userExists) {
+                            return new Promise((resolve, reject) => {
+                                if (userExists) {
+                                    resolve(true);
+                                } else {
+                                    reject("User does not exist");
+                                }
+                            })
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+
+                                    }
+                                )
+                        }
+                    )
+                    // call the db method to view user by id in database
+                    .then(
+                        function () {
+                            return model.users.getUserDataByUserId(user_id)
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+
+                                    }
+                                )
+                        }
+                    )
+                    .then(
+                        function (userData) {
+                            return new Promise((resolve, reject) => {
+                                if (userData.length == 1) {
+                                    resolve(userData[0]);
+                                } else {
+                                    reject("Unexpected user");
+
+                                }
+
+                            })
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
                                     }
                                 );
-                                throw err;
-
-                            }
-                        )
-                )
-            })
-                // if user exists, resolve
-                // if not, reject
-                .then(
-                    function (userExists) {
-                        return new Promise((resolve, reject) => {
-                            if (userExists) {
-                                resolve(true);
-                            } else {
-                                reject("User does not exist");
-                            }
-                        })
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-
-                                }
-                            )
-                    }
-                )
-                // call the db method to view user by id in database
-                .then(
-                    function () {
-                        return model.users.getUserDataByUserId(user_id)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-
-                                }
-                            )
-                    }
-                )
-                .then(
-                    function (userData) {
-                        return new Promise((resolve, reject) => {
-                            if (userData.length == 1) {
-                                resolve(userData[0]);
-                            } else {
-                                reject("Unexpected user");
-
-                            }
-
-                        })
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function (user) {
-                        // if request successful, send the user data
-                        res.status(200).send(user);
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                )
-        });
+                        }
+                    )
+                    .then(
+                        function (user) {
+                            // if request successful, send the user data
+                            res.status(200).send(user);
+                        }
+                    )
+                    .catch(
+                        function (err) {
+                            console.log(err);
+                        }
+                    )
+            });
 
         // API endpoint to view users (participants) of a specific event (SHIFT THIS TO SIGNUP CONTROLLER)
         app.get("/api/events/:event_id/users", function (req, res) {
