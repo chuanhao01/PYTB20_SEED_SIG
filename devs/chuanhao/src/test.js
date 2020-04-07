@@ -1,5 +1,5 @@
 const db = require('./db/index');
-const utils = require('./utils/index');
+const utils = require('../test_server/utils');
 
 // var my_user_id;
 // db.users.createNewUser('t0123456i', utils.parseTime.convertTimeStamp('1965-1-1'), 'bob the builder', '+65 12345678', 'bobthebuilder@yeswecan.com')
@@ -117,3 +117,5 @@ let event_id = '0ccd156b-7cef-4e4e-9302-ebffb3a1b08b';
 // let user1 = 'f26fec43-9c2f-4724-bac1-6aff1dd2cc02';
 // db.users.checkIfUserExistsByUserId(user1).then(check => console.log(check));
 // db.signups.getAllSignUpsForEventByEventId(event1).then(data => console.log(data));
+
+utils.jwtToken.decodeAccessToken('').then(data => console.log(data));

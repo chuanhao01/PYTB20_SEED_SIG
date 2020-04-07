@@ -7,6 +7,8 @@ const utils = require('../utils/index');
 const whitelisted_paths = [
     '/api/users',
     '/api/login',
+    '/api/logout',
+    '/api/refresh_token',
 ];
 
 function pathAuth(req, res, next){
@@ -18,7 +20,7 @@ function pathAuth(req, res, next){
     else{
         if(req.user === undefined || req.user === null){
             // If they are going to other paths and they are not logged in
-            res.status(403).send();
+            res.redirect('/api/logout');
         }
         else{
             next();
