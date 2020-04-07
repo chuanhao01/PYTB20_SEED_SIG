@@ -465,41 +465,79 @@ const signupController = {
         });
 
         // API endpoint to update signup info by signup id (ADMIN)
-        app.put("/api/signups/:signup_id", function (req, res) {
-            // signup id
-            const signup_id = req.params.signup_id;
+        app.put("/api/signups/:signup_id",
+            [
+                param("signup_id")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isUUID()
+                    .withMessage("Invalid UUID"),
+                body("status")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isInt({
+                        min: 0,
+                        max: 1
+                    })
+                    .withMessage("Status is not a integer of either 0 or 1"),
+            ],
+            function (req, res) {
+                // do the validation
+                const validationErrors = validationResult(req);
+                // if validation contains any errors, 
+                // throw error to stop it from doing model calls
+                if (!validationErrors.isEmpty()) {
+                    console.log(validationErrors);
+                    res.status(422).send(
+                        {
+                            "Error": "Unprocessable Entity"
+                        }
+                    );
+                    throw validationErrors;
+                }
+                // if validation / sanitization has no errors, start promise chain
+                // signup id
+                const signup_id = req.params.signup_id;
 
-            // status
-            const status = parseInt(req.body.status);
+                // status
+                const status = parseInt(req.body.status);
 
-            return new Promise((resolve) => {
-                resolve(
-                    model.signups.updateSignupDataBySignupId(signup_id, status)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
-                                    }
-                                );
-                                throw err;
+                return new Promise((resolve) => {
+                    resolve(
+                        model.signups.updateSignupDataBySignupId(signup_id, status)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
 
-                            }
-                        )
-                )
-            })
-                .then(
-                    function () {
-                        res.status(204).send();
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                )
-        });
+                                }
+                            )
+                    )
+                })
+                    .then(
+                        function () {
+                            res.status(204).send();
+                        }
+                    )
+                    .catch(
+                        function (err) {
+                            console.log(err);
+                        }
+                    )
+            });
     }
 };
 
