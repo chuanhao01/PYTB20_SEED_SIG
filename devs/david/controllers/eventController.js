@@ -7,6 +7,8 @@
 // Import libraries that are required
 // const utils = require("../utils/index");
 const utils = require("../../../main/client_back_end/utils/index");
+const { body, param, validationResult } = require("express-validator");
+const sanitizeHtml = require("sanitize-html");
 
 // Import the model needed for CRUD of DB
 // const model = require("../db/index");
@@ -48,51 +50,95 @@ const eventController = {
          * Check if event exists
          */
         // API endpoint to create new event (ADMIN)
-        app.post("/api/events", function (req, res) {
-            // get all of the required fields to add new event
+        app.post("/api/events",
+            [
+                body("title")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .trim().not().isEmpty()
+                    .withMessage("Title is empty"),
+                body("description")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .trim().not().isEmpty()
+                    .withMessage("Description is empty"),
+                body("event_date")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isISO8601()
+                    .withMessage("Date is not in YYYY-MM-DD ISO8601 format"),
+            ],
+            function (req, res) {
+                // do the validation
+                const validationErrors = validationResult(req);
+                // if validation contains any errors, 
+                // throw error to stop it from doing model calls
+                if (!validationErrors.isEmpty()) {
+                    console.log(validationErrors);
+                    res.status(422).send(
+                        {
+                            "Error": "Unprocessable Entity"
+                        }
+                    );
+                    throw validationErrors;
+                }
+                // if validation / sanitization has no errors, start promise chain
+                // get all of the required fields to add new event
 
-            // title of event
-            const title = req.body.title.toLowerCase();
+                // title of event
+                const title = req.body.title.toLowerCase();
 
-            // description of event
-            const description = req.body.description.toLowerCase();
+                // description of event
+                const description = req.body.description.toLowerCase();
 
-            // date of event (date format)
-            const event_date = utils.parseTime.convertTimeStamp(req.body.event_date);
+                // date of event (date format)
+                const event_date = utils.parseTime.convertTimeStamp(req.body.event_date);
 
-            // call the db method to create event
-            return new Promise((resolve) => {
-                resolve(
-                    model.events.createNewEvent(title, description, event_date)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
-                                    }
-                                );
-                                throw err;
-                            }
-                        )
+                // call the db method to create event
+                return new Promise((resolve) => {
+                    resolve(
+                        model.events.createNewEvent(title, description, event_date)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
 
-                )
-            })
-                .then(
-                    function (event_id) {
-                        res.status(201).send(
-                            {
-                                "event_id": event_id
-                            }
-                        );
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                )
-        });
+                    )
+                })
+                    .then(
+                        function (event_id) {
+                            res.status(201).send(
+                                {
+                                    "event_id": event_id
+                                }
+                            );
+                        }
+                    )
+                    .catch(
+                        function (err) {
+                            console.log(err);
+                        }
+                    )
+            });
 
         // API endpoint to view all events (ADMIN + USER)
         app.get("/api/events", function (req, res) {
