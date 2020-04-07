@@ -698,101 +698,187 @@ const userController = {
             });
 
         // API endpoint to update user by id (ADMIN)
-        app.put("/api/users/:user_id", function (req, res) {
-            // user id
-            const user_id = req.user.user_id;
+        app.put("/api/users/:user_id",
+            // always sanitise inputs to remove all tags if present (XSS Prevention)
+            [
+                param("user_id")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isUUID()
+                    .withMessage("Invalid UUID"),
+                body("nric")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .custom(value => {
+                        return /^[sftg]\d{7}[a-z]|^[SFTG]\d{7}[A-Z]/.test(value);
+                    })
+                    .withMessage("NRIC is not in correct format"),
+                body("dob")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isISO8601()
+                    .withMessage("Date is not in YYYY-MM-DD ISO8601 format"),
+                body("fullname")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .trim().not().isEmpty()
+                    .withMessage("Name is empty"),
+                body("contact_num")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isMobilePhone("en-SG", { strictMode: true })
+                    .withMessage("Mobile number is not of correct SG format"),
+                body("email")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isEmail()
+                    .withMessage("Email is not in correct format"),
+                body("PDPA")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isInt({
+                        min: 0,
+                        max: 1
+                    })
+                    .withMessage("PDPA is not a integer of either 0 or 1"),
+            ],
+            function (req, res) {
+                // do the validation
+                const validationErrors = validationResult(req);
+                // if validation contains any errors, 
+                // throw error to stop it from doing model calls
+                if (!validationErrors.isEmpty()) {
+                    console.log(validationErrors);
+                    res.status(422).send(
+                        {
+                            "Error": "Unprocessable Entity"
+                        }
+                    );
+                    throw validationErrors;
+                }
+                // if validation / sanitization has no errors, start promise chain
+                // user id
+                const user_id = req.user.user_id;
 
-            // nric of user
-            const nric = req.body.nric.toLowerCase();
+                // nric of user
+                const nric = req.body.nric.toLowerCase();
 
-            // date of birth of user (date format)
-            const dob = utils.parseTime.convertTimeStamp(req.body.dob);
+                // date of birth of user (date format)
+                const dob = utils.parseTime.convertTimeStamp(req.body.dob);
 
-            // fullname of user
-            const fullname = req.body.fullname.toLowerCase();
+                // fullname of user
+                const fullname = req.body.fullname.toLowerCase();
 
-            // contact number of user
-            const contact_num = req.body.contact_num;
+                // contact number of user
+                const contact_num = req.body.contact_num;
 
-            // email of user
-            const email = req.body.email.toLowerCase();
+                // email of user
+                const email = req.body.email.toLowerCase();
 
-            // PDPA
-            const PDPA = parseInt(req.body.PDPA);
+                // PDPA
+                const PDPA = parseInt(req.body.PDPA);
 
-            // need to check if user exists first
-            return new Promise((resolve) => {
-                resolve(
-                    model.users.checkIfUserExistsByUserId(user_id)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
+                // need to check if user exists first
+                return new Promise((resolve) => {
+                    resolve(
+                        model.users.checkIfUserExistsByUserId(user_id)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+
+                                }
+                            )
+                    )
+                })
+                    // if user exists, resolve
+                    // if not, reject
+                    .then(
+                        function (userExists) {
+                            return new Promise((resolve, reject) => {
+                                if (userExists) {
+                                    resolve(true);
+                                } else {
+                                    reject("User does not exist");
+                                }
+                            })
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+
                                     }
-                                );
-                                throw err;
-
-                            }
-                        )
-                )
-            })
-                // if user exists, resolve
-                // if not, reject
-                .then(
-                    function (userExists) {
-                        return new Promise((resolve, reject) => {
-                            if (userExists) {
-                                resolve(true);
-                            } else {
-                                reject("User does not exist");
-                            }
-                        })
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-
-                                }
-                            )
-                    }
-                )
-                // call the db method to update user by id in database
-                .then(
-                    function () {
-                        return model.users.updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email, PDPA)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            )
+                                )
+                        }
+                    )
+                    // call the db method to update user by id in database
+                    .then(
+                        function () {
+                            return model.users.updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email, PDPA)
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+                                    }
+                                )
 
 
-                    }
-                )
-                .then(
-                    function () {
-                        res.status(204).send();
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                )
-        });
+                        }
+                    )
+                    .then(
+                        function () {
+                            res.status(204).send();
+                        }
+                    )
+                    .catch(
+                        function (err) {
+                            console.log(err);
+                        }
+                    )
+            });
     }
 }
 
