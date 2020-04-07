@@ -173,104 +173,129 @@ const eventController = {
         });
 
         // API endpoint to view events by id (ADMIN + USER)
-        app.get("/api/events/:event_id", function (req, res) {
+        app.get("/api/events/:event_id",
+            [
+                param("event_id")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isUUID()
+                    .withMessage("Invalid UUID"),
+            ],
+            function (req, res) {
+                // do the validation
+                const validationErrors = validationResult(req);
+                // if validation contains any errors, 
+                // throw error to stop it from doing model calls
+                if (!validationErrors.isEmpty()) {
+                    console.log(validationErrors);
+                    res.status(422).send(
+                        {
+                            "Error": "Unprocessable Entity"
+                        }
+                    );
+                    throw validationErrors;
+                }
+                // if validation / sanitization has no errors, start promise chain
+                const event_id = req.params.event_id;
+                // check if the event exists first
+                new Promise((resolve) => {
+                    resolve(
+                        model.events.checkIfEventExist(event_id)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+                    )
+                })
+                    // if event exists, resolve
+                    // if not, reject
+                    .then(
+                        function (eventExists) {
+                            return new Promise((resolve, reject) => {
+                                if (eventExists) {
+                                    resolve(true);
+                                } else {
+                                    reject("Event does not exists");
+                                }
+                            })
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+                                    }
+                                )
+                        }
+                    )
+                    // if event exists, call the db method to view events by id
+                    .then(
+                        function () {
+                            return model.events.getEventDataByEventId(event_id)
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+                                    }
+                                )
 
-            const event_id = req.params.event_id;
-            // check if the event exists first
-            new Promise((resolve) => {
-                resolve(
-                    model.events.checkIfEventExist(event_id)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
+                        }
+                    )
+                    .then(
+                        function (eventData) {
+                            return new Promise((resolve, reject) => {
+                                if (eventData.length == 1) {
+                                    resolve(eventData[0]);
+                                } else {
+                                    reject("Unexpected event");
+
+                                }
+
+                            })
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
                                     }
                                 );
-                                throw err;
-                            }
-                        )
-                )
-            })
-                // if event exists, resolve
-                // if not, reject
-                .then(
-                    function (eventExists) {
-                        return new Promise((resolve, reject) => {
-                            if (eventExists) {
-                                resolve(true);
-                            } else {
-                                reject("Event does not exists");
-                            }
-                        })
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            )
-                    }
-                )
-                // if event exists, call the db method to view events by id
-                .then(
-                    function () {
-                        return model.events.getEventDataByEventId(event_id)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            )
+                        }
+                    )
+                    .then(
+                        function (event) {
+                            res.status(200).send(event);
+                        }
+                    )
+                    .catch(
+                        function (err) {
+                            console.log(err);
+                        }
+                    );
 
-                    }
-                )
-                .then(
-                    function (eventData) {
-                        return new Promise((resolve, reject) => {
-                            if (eventData.length == 1) {
-                                resolve(eventData[0]);
-                            } else {
-                                reject("Unexpected event");
-
-                            }
-
-                        })
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function (event) {
-                        res.status(200).send(event);
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                );
-
-        });
+            });
 
         // API endpoint to to update an event
         app.put("/api/events/:event_id",
