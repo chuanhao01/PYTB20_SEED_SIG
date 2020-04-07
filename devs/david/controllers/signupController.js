@@ -460,37 +460,38 @@ const signupController = {
             });
 
         // API endpoint to get signup info by signup id
-        app.get("/api/signups/:signup_id", function (req, res) {
-            // signup id
-            const signup_id = req.params.signup_id;
-            return new Promise((resolve) => {
-                resolve(
-                    model.signups.getSignupInfoBySignupId(signup_id)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
-                                    }
-                                );
-                                throw err;
-
-                            }
-                        )
-                )
-            })
-                .then(
-                    function (signup) {
-                        return new Promise((resolve, reject) => {
-                            if (signup.length == 1) {
-                                resolve(signup[0]);
-                            } else {
-                                reject("Unexpected signup");
-
-                            }
-
-                        })
+        app.get("/api/signups/:signup_id",
+            [
+                param("signup_id")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isUUID()
+                    .withMessage("Invalid UUID"),
+            ],
+            function (req, res) {
+                // do the validation
+                const validationErrors = validationResult(req);
+                // if validation contains any errors, 
+                // throw error to stop it from doing model calls
+                if (!validationErrors.isEmpty()) {
+                    console.log(validationErrors);
+                    res.status(422).send(
+                        {
+                            "Error": "Unprocessable Entity"
+                        }
+                    );
+                    throw validationErrors;
+                }
+                // if validation / sanitization has no errors, start promise chain
+                // signup id
+                const signup_id = req.params.signup_id;
+                return new Promise((resolve) => {
+                    resolve(
+                        model.signups.getSignupInfoBySignupId(signup_id)
                             .catch(
                                 function (err) {
                                     console.log(err);
@@ -500,21 +501,46 @@ const signupController = {
                                         }
                                     );
                                     throw err;
+
                                 }
-                            );
-                    }
-                )
-                .then(
-                    function (signup) {
-                        res.status(200).send(signup);
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                )
-        });
+                            )
+                    )
+                })
+                    .then(
+                        function (signup) {
+                            return new Promise((resolve, reject) => {
+                                if (signup.length == 1) {
+                                    resolve(signup[0]);
+                                } else {
+                                    reject("Unexpected signup");
+
+                                }
+
+                            })
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+                                    }
+                                );
+                        }
+                    )
+                    .then(
+                        function (signup) {
+                            res.status(200).send(signup);
+                        }
+                    )
+                    .catch(
+                        function (err) {
+                            console.log(err);
+                        }
+                    )
+            });
 
         // API endpoint to update signup info by signup id (ADMIN)
         app.put("/api/signups/:signup_id",
