@@ -55,9 +55,9 @@ module.exports = {
      * @param {String} token
      * @returns {Promise} [user_id]
      */
-    decodeAccessToken(token){
+    decodeAccessToken(access_token){
         return new Promise((resolve, reject) => {
-            jwt.verify(token, key, { algorithm: 'HS512' }, function (err, decoded) {
+            jwt.verify(access_token, key, { algorithm: 'HS512' }, function (err, decoded) {
                 if (err) {
                     reject(err);
                 }
