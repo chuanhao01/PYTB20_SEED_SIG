@@ -22,130 +22,207 @@ const userController = {
         // e.g: app.get ("/api/...", function(req, res) {});
 
         // API endpoint to create new account
-        app.post("/api/users", function (req, res) {
-            // nric of user
-            const nric = req.body.nric.toLowerCase();
+        app.post("/api/users",
+            // always sanitise inputs to remove all tags if present (XSS Prevention)
+            [
+                body("nric")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .custom(value => {
+                        return /^[sftg]\d{7}[a-z]|^[SFTG]\d{7}[A-Z]/.test(value);
+                    })
+                    .withMessage("NRIC is not in correct format"),
+                body("dob")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isISO8601()
+                    .withMessage("Date is not in YYYY-MM-DD ISO8601 format"),
+                body("fullname")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .trim().not().isEmpty()
+                    .withMessage("Name is empty"),
+                body("contact_num")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isMobilePhone("en-SG", { strictMode: true })
+                    .withMessage("Mobile number is not of correct SG format"),
+                body("email")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isEmail()
+                    .withMessage("Email is not in correct format"),
+                body("PDPA")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isInt({
+                        min: 0,
+                        max: 1
+                    })
+                    .withMessage("PDPA is not a integer of either 0 or 1"),
+            ],
+            function (req, res) {
+                // do the validation
+                const validationErrors = validationResult(req);
+                // if validation contains any errors, 
+                // throw error to stop it from doing model calls
+                if (!validationErrors.isEmpty()) {
+                    console.log(validationErrors);
+                    res.status(422).send(
+                        {
+                            "Error": "Unprocessable Entity"
+                        }
+                    );
+                    throw validationErrors;
+                }
+                // if validation / sanitization has no errors, start promise chain
+                // nric of user
+                const nric = req.body.nric.toLowerCase();
 
-            // date of birth of user (date format)
-            const dob = utils.parseTime.convertTimeStamp(req.body.dob);
+                // date of birth of user (date format)
+                const dob = utils.parseTime.convertTimeStamp(req.body.dob);
 
-            // fullname of user
-            const fullname = req.body.fullname.toLowerCase();
+                // fullname of user
+                const fullname = req.body.fullname.toLowerCase();
 
-            // contact number of user
-            const contact_num = req.body.contact_num;
+                // contact number of user
+                const contact_num = req.body.contact_num;
 
-            // email of user
-            const email = req.body.email.toLowerCase();
+                // email of user
+                const email = req.body.email.toLowerCase();
 
-            // PDPA
-            const PDPA = parseInt(req.body.PDPA);
+                // PDPA
+                const PDPA = parseInt(req.body.PDPA);
 
-            // REMEMBER TO MAKE ALL STRINGS TO LOWERCASE
+                // REMEMBER TO MAKE ALL STRINGS TO LOWERCASE
 
-            console.log(nric, dob, fullname, contact_num, email, PDPA);
+                console.log(nric, dob, fullname, contact_num, email, PDPA);
 
-            // call the db method to add user to database
-            new Promise((resolve) => {
-                resolve(
-                    // first need to see if email already exists
-                    model.users.checkUserEmail(email)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
+                // call the db method to add user to database
+                new Promise((resolve) => {
+                    resolve(
+                        // first need to see if email already exists
+                        model.users.checkUserEmail(email)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+                                }
+                            )
+                    );
+                })
+                    .then(
+                        // this function takes in the bool from check user email
+                        function (emailExists) {
+                            return new Promise((resolve, reject) => {
+                                if (!emailExists) {
+                                    resolve(true);
+                                }
+                                reject("Email already exists");
+                            })
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
                                     }
                                 );
-                                throw err;
-                            }
-                        )
-                );
-            })
-                .then(
-                    // this function takes in the bool from check user email
-                    function (emailExists) {
-                        return new Promise((resolve, reject) => {
-                            if (!emailExists) {
-                                resolve(true);
-                            }
-                            reject("Email already exists");
-                        })
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function () {
-                        return model.users.createNewUser(nric, dob, fullname, contact_num, email, PDPA)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function (user_id) {
-                        // Generates the token based on the id
-                        return utils.jwtToken.createToken(user_id)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function (jwt_token) {
-                        // Send the token to the email with a link
-                        return utils.email.send(email, `http://localhost:8081/api/login/${jwt_token}`)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function () {
-                        res.status(201).send();
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                );
+                        }
+                    )
+                    .then(
+                        function () {
+                            return model.users.createNewUser(nric, dob, fullname, contact_num, email, PDPA)
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+                                    }
+                                );
+                        }
+                    )
+                    .then(
+                        function (user_id) {
+                            // Generates the token based on the id
+                            return utils.jwtToken.createToken(user_id)
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                    }
+                                );
+                        }
+                    )
+                    .then(
+                        function (jwt_token) {
+                            // Send the token to the email with a link
+                            return utils.email.send(email, `http://localhost:8081/api/login/${jwt_token}`)
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                    }
+                                );
+                        }
+                    )
+                    .then(
+                        function () {
+                            res.status(201).send();
+                        }
+                    )
+                    .catch(
+                        function (err) {
+                            console.log(err);
+                        }
+                    );
 
 
-        });
+            });
 
         // API endpoint to login and create the cookie and redirect
         app.get("/api/login/:token", function (req, res) {
