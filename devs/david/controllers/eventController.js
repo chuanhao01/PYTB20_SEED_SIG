@@ -467,80 +467,106 @@ const eventController = {
         });
 
         // API endpoint for closing event
-        app.post("/api/events/:event_id", function (req, res) {
-            // event id
-            const event_id = req.params.event_id;
-            // need to check if event is open
-            new Promise((resolve) => {
-                resolve(
-                    model.events.checkEventIsOpen(event_id)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
+        app.post("/api/events/:event_id",
+            [
+                param("event_id")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isUUID()
+                    .withMessage("Invalid UUID"),
+            ],
+            function (req, res) {
+                // do the validation
+                const validationErrors = validationResult(req);
+                // if validation contains any errors, 
+                // throw error to stop it from doing model calls
+                if (!validationErrors.isEmpty()) {
+                    console.log(validationErrors);
+                    res.status(422).send(
+                        {
+                            "Error": "Unprocessable Entity"
+                        }
+                    );
+                    throw validationErrors;
+                }
+                // if validation / sanitization has no errors, start promise chain
+                // event id
+                const event_id = req.params.event_id;
+                // need to check if event is open
+                new Promise((resolve) => {
+                    resolve(
+                        model.events.checkEventIsOpen(event_id)
+                            .catch(
+                                function (err) {
+                                    console.log(err);
+                                    res.status(500).send(
+                                        {
+                                            "Error": "Internal Server Error"
+                                        }
+                                    );
+                                    throw err;
+
+                                }
+                            )
+                    )
+                })
+                    // if event is open, resolve
+                    // if not, reject
+                    .then(
+                        function (eventIsOpen) {
+                            return new Promise((resolve, reject) => {
+                                if (eventIsOpen) {
+                                    resolve(true);
+                                } else {
+                                    reject("Event is already close");
+                                }
+                            })
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
                                     }
-                                );
-                                throw err;
+                                )
+                        }
+                    )
+                    .then(
+                        function () {
+                            return model.events.closeEventAndSignups(event_id)
+                                .catch(
+                                    function (err) {
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                        throw err;
+                                    }
+                                )
 
-                            }
-                        )
-                )
-            })
-                // if event is open, resolve
-                // if not, reject
-                .then(
-                    function (eventIsOpen) {
-                        return new Promise((resolve, reject) => {
-                            if (eventIsOpen) {
-                                resolve(true);
-                            } else {
-                                reject("Event is already close");
-                            }
-                        })
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            )
-                    }
-                )
-                .then(
-                    function () {
-                        return model.events.closeEventAndSignups(event_id)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            )
+                        }
+                    )
+                    .then(
+                        function () {
+                            res.status(204).send();
+                        }
+                    )
+                    .catch(
+                        function (err) {
+                            console.log(err);
+                        }
+                    )
 
-                    }
-                )
-                .then(
-                    function () {
-                        res.status(204).send();
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                )
-
-        });
+            });
     }
 };
 
