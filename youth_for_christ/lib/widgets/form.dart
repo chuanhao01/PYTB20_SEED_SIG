@@ -1,15 +1,18 @@
 import "package:flutter/material.dart";
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import "package:youthforchrist/services/storage.dart";
 import 'package:youthforchrist/widgets/buttons.dart';
 import "package:youthforchrist/widgets/textfield.dart";
 import "package:youthforchrist/widgets/date.dart";
+import "package:youthforchrist/services/networkboi.dart";
 
 class Formy extends StatefulWidget {
   DateTime bday;
   bool profile;
   Map<String, String> initialValue;
   Formy({this.bday,this.profile,this.initialValue});
+  HttpSlave slave = new HttpSlave();
   @override
   _FormyState createState() => _FormyState();
 }
@@ -40,13 +43,25 @@ class _FormyState extends State<Formy> {
         details[element] = everything[i];
         i++;
       });
-      _storage.edit(details);
+      String url = widget.profile? "/api/users/u": "/api/users ";
+      Response response =  widget.profile? await widget.slave.getMethod("put")(url,details) : await widget.slave.getMethod("post")(url,details);
+
       if (widget.profile){
-        Map<String, String> details = await _storage.getDetails();
-        Navigator.pushReplacementNamed(context, "/profile",arguments: details);
+        if (response.statusCode == 204){
+          Navigator.pushReplacementNamed(context, "/profile",arguments: details);
+        }
+        else{
+          Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured while processing the data")));
+        }
+
       }
       else{
-        Navigator.pushReplacementNamed(context, "/login");
+        if (response.statusCode == 204){
+          Navigator.pushReplacementNamed(context, "/login");
+        }
+        else{
+          Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured while processing the data")));
+        }
       }
 
     }
