@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import "package:youthforchrist/services/storage.dart";
 import 'package:youthforchrist/widgets/buttons.dart';
 import "package:youthforchrist/widgets/textfield.dart";
@@ -28,6 +29,15 @@ class _FormyState extends State<Formy> {
   SecureStorage _storage = new SecureStorage();
 
   register()async{
+    ProgressDialog loading = new ProgressDialog(context);
+    loading.style(
+      message: widget.profile? "Updating profile":"Registering",
+      borderRadius: 8.0,
+      backgroundColor: Colors.white,
+      progressWidget: CircularProgressIndicator(),
+      elevation: 10.0,
+      insetAnimCurve: Curves.easeInOut,
+    );
     if (_form.currentState.validate()) {
       _email.text = widget.profile? widget.initialValue["email"]: _email.text;
       List<String> everything = [
@@ -44,8 +54,9 @@ class _FormyState extends State<Formy> {
         i++;
       });
       String url = widget.profile? "/api/users/u": "/api/users ";
+      loading.show();
       Response response =  widget.profile? await widget.slave.getMethod("put")(url,details) : await widget.slave.getMethod("post")(url,details);
-
+      loading.hide();
       if (widget.profile){
         if (response.statusCode == 204){
           Navigator.pushReplacementNamed(context, "/profile",arguments: details);

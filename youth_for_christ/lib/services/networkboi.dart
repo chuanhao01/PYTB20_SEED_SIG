@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
-
 import "package:http/http.dart" as http;
 
 class HttpSlave {
@@ -15,7 +14,7 @@ class HttpSlave {
     return method[purpose];
   }
 
-  Future<http.Response> _post(String url, data) {
+  Future<http.Response> _post(String url, Map<String, String>data) {
     return http.post(url,
         headers: <String, String>{
           "Content-Type": "application/json ; charset=UTF-8"
@@ -31,7 +30,7 @@ class HttpSlave {
     return http.delete(url);
   }
 
-  Future<http.Response> _put(String url, data) {
+  Future<http.Response> _put(String url, Map<String, String>data) {
     return http.put(url,
         headers: <String, String>{
           "Content-Type": "application/json ; charset=UTF-8"
