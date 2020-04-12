@@ -6,11 +6,9 @@ class EventCard extends StatelessWidget {
   String title;
   DateTime date;
   String description;
-  String location;
-  bool attended;
   Map<String, String> username = {};
   EventCard(
-      {this.title, this.date, this.description, this.location, this.attended});
+      {this.title, this.date, this.description});
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
@@ -24,8 +22,6 @@ class EventCard extends StatelessWidget {
                       "title": title,
                       "date": date,
                       "description": description,
-                      "location": location,
-                      "attended": attended,
                     })));
             Scaffold.of(context).showSnackBar(_snackbar);
           } catch (e) {
@@ -34,7 +30,7 @@ class EventCard extends StatelessWidget {
         },
           title: Text(title),
           subtitle: Text(
-          "${DateFormat.yMMMd("en-SG").format(date).toString()}@$location"),
+          "${DateFormat.yMMMd("en-SG").format(date).toString()}"),
     ));
   }
 }

@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import "package:flutter/material.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:youthforchrist/services/storage.dart';
 import 'package:youthforchrist/widgets/buttons.dart';
-
+import "package:youthforchrist/services/networkboi.dart";
+import "package:http/http.dart" as http;
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
@@ -15,31 +19,64 @@ class _LoginState extends State<Login> {
   TextEditingController _mail = TextEditingController();
   bool disableButton = true;
   SecureStorage _storage = new SecureStorage();
+  HttpSlave slave = new HttpSlave();
   @override
 
-  login()async{
-    String username = _mail.text;
-    if(_email.currentState.validate()) {
-      Map<String, String> details = await _storage.getDetails();
-      if(details["email"] == username){
-        Navigator.pushReplacementNamed(context, "/events",arguments: details);
-      }
-      else{
-        showDialog(
-            context: context,
-            barrierDismissible: true,
-            child: AlertDialog(
-                title: Text("Warning"),
-                content: Text("Wrong email!"),
-                actions: <Widget>[
-                  FlatButton(
-                    onPressed: (){Navigator.of(context,rootNavigator: true).pop("dialog");},
-                    child: Text("Ok"),
-                  )
-                ]));
-      }
+  Future<List> getEvents()async{
+    ProgressDialog loading = new ProgressDialog(context);
+    loading.style(
+      message: "Loading events",
+      borderRadius: 8.0,
+      backgroundColor: Colors.white,
+      progressWidget: CircularProgressIndicator(),
+      elevation: 10.0,
+      insetAnimCurve: Curves.easeInOut,
 
+    );
+    loading.show();
+    http.Response response = await slave.getMethod("get")("http://192.168.1.7:8000/api/events");
+    loading.hide();
+    if(response.statusCode == 500){
+      return null;
     }
+    else if(response.statusCode == 200){
+      return jsonDecode(response.body);
+    }
+  }
+
+
+
+  login()async{
+    List details = await getEvents();
+    if(details == null){
+      Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured")));
+    }
+    else{
+      Navigator.pushReplacementNamed(context, "/events",arguments: details);
+    }
+
+
+//    if(_email.currentState.validate()) {
+//      Map<String, String> details = await _storage.getDetails();
+//      if(details["email"] == username){
+//        Navigator.pushReplacementNamed(context, "/events",arguments: details);
+//      }
+//      else{
+//        showDialog(
+//            context: context,
+//            barrierDismissible: true,
+//            child: AlertDialog(
+//                title: Text("Warning"),
+//                content: Text("Wrong email!"),
+//                actions: <Widget>[
+//                  FlatButton(
+//                    onPressed: (){Navigator.of(context,rootNavigator: true).pop("dialog");},
+//                    child: Text("Ok"),
+//                  )
+//                ]));
+//      }
+//
+//    }
   }
 
   Widget build(BuildContext context) {
