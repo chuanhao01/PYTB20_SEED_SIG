@@ -90,7 +90,7 @@ class _EventsState extends State<Events> {
               alignment: Alignment.bottomLeft,
               child: ListTile(
                 onTap: ()async{
-                  Navigator.pushNamed(context, "/settings",arguments: details);
+                  Navigator.pushNamed(context, "/settings");
                 },
                 leading: Icon(
                     Icons.settings

@@ -37,6 +37,7 @@ class _FormyState extends State<Formy> {
       progressWidget: CircularProgressIndicator(),
       elevation: 10.0,
       insetAnimCurve: Curves.easeInOut,
+
     );
     if (_form.currentState.validate()) {
       _email.text = widget.profile? widget.initialValue["email"]: _email.text;
@@ -53,10 +54,9 @@ class _FormyState extends State<Formy> {
         details[element] = everything[i];
         i++;
       });
-      String url = widget.profile? "/api/users/u": "/api/users ";
+      String url = widget.profile? "http://192.168.1.7:8000/api/users/u": "http://192.168.1.7:8000/api/users";
       loading.show();
-      Response response =  widget.profile? await widget.slave.getMethod("put")(url,details) : await widget.slave.getMethod("post")(url,details);
-      loading.hide();
+      Response response = widget.profile? await widget.slave.getMethod("put")(url,details) : await widget.slave.getMethod("post")(url,details);
       if (widget.profile){
         if (response.statusCode == 204){
           Navigator.pushReplacementNamed(context, "/profile",arguments: details);
@@ -67,14 +67,14 @@ class _FormyState extends State<Formy> {
 
       }
       else{
-        if (response.statusCode == 204){
+        if (response.statusCode == 201){
           Navigator.pushReplacementNamed(context, "/login");
         }
         else{
           Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured while processing the data")));
         }
       }
-
+      loading.hide();
     }
   }
   Function validator (bool nric,bool email) {

@@ -1,7 +1,7 @@
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
 
 class SecureStorage extends FlutterSecureStorage{
-  final List<String> personal = ["nric","bday","full name","phone number","email"];
+  final List<String> personal = ["nric","bday","fullname","contact_num","email"];
   Map <String, String> details = {};
   String detail;
 
