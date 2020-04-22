@@ -239,7 +239,7 @@ const userController = {
                 }
                 // if validation / sanitization has no errors, start promise chain
                 // user id
-                const user_id = req.user.user_id;
+                const user_id = req.params.user_id;
 
                 // nric of user
                 const nric = req.body.nric.toLowerCase();
