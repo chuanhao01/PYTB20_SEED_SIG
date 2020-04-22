@@ -6,13 +6,61 @@ const model = require("../../src/db");
 
 // Middleware function here
 function userAuth(req, res, next){
-    const refresh_token = req.cookies.refresh_token;
     const access_token = req.cookies.access_token;
+    const refresh_token = req.cookies.refresh_token;
     if(access_token || refresh_token){
         // Check the access_token first
         return new Promise((resolve) => {
-            resolve(
-                utils
+            utils.jwtToken.decodeAccessToken(access_token)
+            .then(
+                function(user_id){
+                    // If the access token had no errors, resolve it down
+                    resolve(user_id);
+                }
+            )
+            .catch(
+                function(err){
+                    // If there was an error, resolve the refresh token
+                    console.log(err);
+                    resolve(
+                        model.accounts.getUserByRefreshToken(refresh_token)
+                            .then(
+                                function(user){
+                                    return new Promise((resolve, reject) => {
+                                        if(user.length == 1){
+                                            const user_id = user[0].user_id;
+                                            utils.jwtToken.createAccessToken(user_id)
+                                                .then(
+                                                    function(access_token){
+                                                        // If access token can be generated again
+                                                        res.cookie('access_token', access_token, { httpOnly: true });
+                                                        resolve(user_id);
+                                                    }
+                                                )
+                                                .catch(
+                                                    function(err){
+                                                        // Any error, throw it
+                                                        console.log(err);
+                                                        reject(err);
+                                                    }
+                                                );
+                                        }
+                                        else{
+                                            reject('Refresh token not found');
+                                        }
+                                    });
+                                }
+                            )
+                            .catch(
+                                function(err){
+                                    // Somewhere it faild
+                                    console.log(err);
+                                    req.user = null;
+                                    throw err;
+                                }
+                            )
+                    );
+                }
             );
         })
             .then(
@@ -33,28 +81,13 @@ function userAuth(req, res, next){
                     if(user.length === 1){
                         // User exists, set the req.user
                         req.user = user[0];
-                        return utils.jwtToken.refreshToken(token)
-                            .catch(
-                                function(err){
-                                    // Error in validating token, req.user = null
-                                    console.log(err);
-                                    req.user = null;
-                                    throw err;
-                                }
-                            );
+                        next();
                     }
                     else{
                         console.log('Error finding user');
                         req.user = null;
-                        throw('Error finding user');
+                        throw 'Error finding user';
                     }
-                }
-            )
-            .then(
-                function(new_token){
-                    // Refresh their token
-                    res.status(302).cookie("token", new_token, { httpOnly: true });
-                    next();
                 }
             )
             .catch(

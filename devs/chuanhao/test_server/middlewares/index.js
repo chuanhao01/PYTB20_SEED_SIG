@@ -13,8 +13,8 @@ const setHeaders = require('./setHeaders');
 const customMiddlewares = {
     init(app) {
         app.use(setHeaders);
-        // app.use(userAuth);
-        // app.use(pathAuth);
+        app.use(userAuth);
+        app.use(pathAuth);
     },
 };
 
