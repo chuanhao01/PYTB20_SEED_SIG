@@ -22,17 +22,18 @@ const usersdb = {
      * @param {string} fullname
      * @param {string} contact_num
      * @param {string} email
+     * @param {int} PDPA 
      * @returns {promise} [user_id]
      */
-    createNewUser(nric, dob, fullname, contact_num, email){
+    createNewUser(nric, dob, fullname, contact_num, email, PDPA){
         return new Promise((resolve, reject) => {
             const user_id = uuid();
             this.pool.query(`
             INSERT INTO USERS
-            (nric, dob, fullname, contact_num, email, user_id, deleted)
-            values
-            (?, ?, ?, ?, ?, ?, ?)
-            `, [nric, dob, fullname, contact_num, email, user_id, 0], function(err, data){
+            (nric, dob, fullname, contact_num, email, PDPA, user_id, deleted)
+            VALUES
+            (?, ?, ?, ?, ?, ?, ?, ?)
+            `, [nric, dob, fullname, contact_num, email, PDPA, user_id, 0], function(err, data){
                 if(err){
                     reject(err);
                 }
@@ -76,15 +77,16 @@ const usersdb = {
      * @param {string} fullname
      * @param {string} contact_num
      * @param {string} email
+     * @param {int} PDAP
      * @returns {promise} [mysql data]
      */
-    updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email){
+    updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email, PDPA){
         return new Promise((resolve, reject) => {
             this.pool.query(`
             UPDATE USERS
-            SET nric = ?, dob = ?, fullname = ?, contact_num = ?, email = ?
+            SET nric = ?, dob = ?, fullname = ?, contact_num = ?, email = ?, PDPA = ?
             WHERE ((user_id = ?) AND (deleted = 0))
-            `, [nric, dob, fullname, contact_num, email, user_id], function(err, data){
+            `, [nric, dob, fullname, contact_num, email, PDPA, user_id], function(err, data){
                 if(err){
                     reject(err);
                 }
@@ -145,7 +147,35 @@ const usersdb = {
                 }
             });
         });
-    }
+    },
+
+    // For editing user's data
+    /**
+     * Checks if the user exists by user id
+     * True if the user exists
+     * False otherwise
+     *
+     * @param {String} user_id
+     * @returns {Promise} [bool]
+     */
+    checkIfUserExistsByUserId(user_id){
+        return new Promise((resolve, reject) => {
+            this.pool.query(`
+            SELECT * FROM USERS
+            WHERE ((user_id = ?) AND (deleted = 0)) 
+            `, [user_id], function(err, data){
+                if(err){
+                    reject(err);
+                }
+                if(data.length == 1){
+                    resolve(true);
+                }
+                else{
+                    resolve(false);
+                }
+            });
+        });
+    },
 };
 
 module.exports = usersdb;
