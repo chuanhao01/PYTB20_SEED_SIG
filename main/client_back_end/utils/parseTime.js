@@ -1,6 +1,7 @@
 /*
 This utils class is mainly for parsing dates in JS for MySQL
 */
+
 // Importing libs needed
 const moment = require('moment');
 

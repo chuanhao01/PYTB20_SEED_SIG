@@ -3,31 +3,108 @@ const fs = require("fs");
 const path = require("path");
 const key = fs.readFileSync(path.resolve(__dirname + "/../creds/jwt/key.txt"));
 
-const payload = {
-    user: this.username,
-    iat: this.iat,
-    exp: this.exp
-};
+const maths = require('./maths');
 
 module.exports = {
     /**
-     * Creates token to recognise the user on log in
-     * @param {string} email email of the user
-     * @param {function (Error,string)} callback function to call after creating the token
+     * Creates the access_token for the user with the user_id
+     * 
+     * @param {string} user_id
+     * @returns {Promise} [jwt token]
      */
-    createToken(user_id){
+    createAccessToken(user_id){
         return new Promise((resolve, reject) => {
-            let initialTime = Date.now();
-            let expiryTime = initialTime + 30 * 60 * 1000; // expiry is set to 15 mins for now
-            payload.iat = initialTime;
-            payload.exp = expiryTime;
-            payload.user_id = user_id;
-            jwt.sign(payload, key, { algorithm: 'HS512' }, (err, token) => {
+            let payload = {
+                iat: maths.getJwtTime(Date.now()),
+                exp: maths.getJwtTime(Date.now() + 15 * 60 * 1000),
+                user_id : user_id,
+            }
+            jwt.sign(payload, key, { algorithm: 'HS512' }, function(err, token){
                 if(err){
                     reject(err);
                 }
-                else {
+                else{
                     resolve(token);
+                }
+            });
+        });
+    },
+    /**
+     * Returns a refresh jwt token
+     *
+     * @returns {Promise} [jwt token]
+     */
+    createRefreshToken(){
+        return new Promise((resolve, reject) => {
+            let payload = {
+                iat: maths.getJwtTime(Date.now())
+            };
+            jwt.sign(payload, key, { algorithm: 'HS512' }, function(err, token){
+                if(err){
+                    reject(err);
+                }
+                else{
+                    resolve(token);
+                }
+            });
+        });
+    },
+    /**
+     * Decodes and returns the user_id in the access_token
+     *
+     * @param {String} token
+     * @returns {Promise} [user_id]
+     */
+    decodeAccessToken(access_token){
+        return new Promise((resolve, reject) => {
+            jwt.verify(access_token, key, { algorithm: 'HS512' }, function (err, decoded) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(decoded.user_id);
+                }
+            });
+        });
+    },
+    /**
+     * Bool to check if token is correct
+     *
+     * @param {String} token
+     * @returns {Promise} [bool]
+     */
+    verifyToken(token){
+        return new Promise((resolve, reject) => {
+            jwt.verify(token, key, { algorithm: 'HS512' }, function(err, decoded){
+                if(err){
+                    reject(err);
+                }
+                else{
+                    if(decoded){
+                        resolve(true);
+                    }
+                    else{
+                        // If there is any other errors
+                        resolve(false);
+                    }
+                }
+            });
+        });
+    },
+    /**
+     * Decodes and returns the decoded object, else error
+     *
+     * @param {String} token
+     * @returns {Promise} [decoded]
+     */
+    decodeToken(token){
+        return new Promise((resolve, reject) => {
+            jwt.verify(token, key, { algorithm: 'HS512' }, function (err, decoded) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(decoded);
                 }
             });
         });
@@ -68,16 +145,4 @@ module.exports = {
             });
         });
     },
-    decodeToken(token){
-        return new Promise((resolve, reject) => {
-            jwt.verify(token, key, { algorithm: 'HS512' }, function (err, decoded) {
-                if (err) {
-                    reject(err);
-                }
-                else {
-                    resolve(decoded.user_id);
-                }
-            });
-        });
-    }
 };
