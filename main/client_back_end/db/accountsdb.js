@@ -3,7 +3,7 @@
  */
 
 //  Getting the utils in the model
-const utils = require('../../test_server/utils');
+const utils = require('../utils');
 
 // Main obj getting exported
 const accountsdb = {

@@ -8,7 +8,7 @@
 const utils = require("../utils/index");
 
 // Import the model needed for CRUD of DB
-const model = require("../../src/db/index");
+const model = require("../db/index");
 
 // user controller object
 const userController = {

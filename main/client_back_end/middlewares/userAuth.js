@@ -2,7 +2,7 @@
 
 // Importing utils libs
 const utils = require('../utils/index');
-const model = require("../../src/db");
+const model = require("../db");
 
 // Middleware function here
 function userAuth(req, res, next){
