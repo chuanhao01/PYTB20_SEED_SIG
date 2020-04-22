@@ -6,14 +6,12 @@
 
 // Import libraries that are required
 // const utils = require("../utils/index");
-const utils = require("../../../../main/client_back_end/utils/index");
+const utils = require("../utils/index");
 const { body, param, validationResult } = require("express-validator");
 const sanitizeHtml = require("sanitize-html");
 
 // Import the model needed for CRUD of DB
-// const model = require("../db/index");
-// const model = require("../../../main/client_back_end/db/index");
-const model = require("../../../chuanhao/src/db/index");
+const model = require("../db/index");
 
 // signup controller object
 const signupController = {

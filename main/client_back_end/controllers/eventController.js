@@ -6,14 +6,12 @@
 
 // Import libraries that are required
 // const utils = require("../utils/index");
-const utils = require("../../../../main/client_back_end/utils/index");
+const utils = require("../utils/index");
 const { body, param, validationResult } = require("express-validator");
 const sanitizeHtml = require("sanitize-html");
 
 // Import the model needed for CRUD of DB
-// const model = require("../db/index");
-// const model = require("../../../main/client_back_end/db/index");
-const model = require("../../../chuanhao/src/db/index");
+const model = require("../db/index");
 
 // event controller object
 const eventController = {
@@ -126,7 +124,7 @@ const eventController = {
                                     throw err;
                                 }
                             )
-                    )
+                    );
                 })
                     // if event exists, resolve
                     // if not, reject
@@ -149,7 +147,7 @@ const eventController = {
                                         );
                                         throw err;
                                     }
-                                )
+                                );
                         }
                     )
                     // if event exists, call the db method to view events by id
@@ -166,7 +164,7 @@ const eventController = {
                                         );
                                         throw err;
                                     }
-                                )
+                                );
 
                         }
                     )
@@ -228,7 +226,7 @@ const eventController = {
 
                             }
                         )
-                )
+                );
             })
                 .then(
                     function (events) {
@@ -239,7 +237,7 @@ const eventController = {
                     function (err) {
                         console.log(err);
                     }
-                )
+                );
         });
 
         // API endpoint to view current events the user HAS NOT signed up for
@@ -263,7 +261,7 @@ const eventController = {
 
                             }
                         )
-                )
+                );
             })
                 .then(
                     function (events) {
@@ -274,7 +272,7 @@ const eventController = {
                     function (err) {
                         console.log(err);
                     }
-                )
+                );
         });
 
         // API endpoint to view events user has participated in
@@ -298,7 +296,7 @@ const eventController = {
 
                             }
                         )
-                )
+                );
             })
                 .then(
                     function (events) {
@@ -309,7 +307,7 @@ const eventController = {
                     function (err) {
                         console.log(err);
                     }
-                )
+                );
         });
 
     }
