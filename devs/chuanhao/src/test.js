@@ -1,6 +1,5 @@
 const db = require('./db/index');
-const utils = require('./utils/index');
-const validator = require('validator');
+const utils = require('../test_server/utils');
 
 // var my_user_id;
 // db.users.createNewUser('t0123456i', utils.parseTime.convertTimeStamp('1965-1-1'), 'bob the builder', '+65 12345678', 'bobthebuilder@yeswecan.com')
@@ -18,7 +17,7 @@ const validator = require('validator');
 //     )
 //     .then(
 //         function(user_id){
-//             return db.users.updateUserInfoByUserId(user_id, 'nani', utils.parseTime.convertTimeStamp(Date.now()), 'dab the bober', '+65 12345678', 'fuckyou@fuck.com'); 
+//             return db.users.updateUserInfoByUserId(user_id, 'nani', utils.parseTime.convertTimeStamp(Date.now()), 'dab the bober', '+65 12345678', 'fuckyou@fuck.com', 0); 
 //         }
 //     )
 //     .then(
@@ -62,8 +61,8 @@ const validator = require('validator');
 //         }
 //     );
 
-// let user_id = 'efc4747d-6d87-4179-b7a1-cea4e689bb7b';
-// let event_id = 'eb4b133b-0a29-476f-923e-6bc03c912058';
+let user_id = 'd2df403f-f424-48cb-9757-55293770a518';
+let event_id = '0ccd156b-7cef-4e4e-9302-ebffb3a1b08b';
 // let email = 'hello@hello.com';
 
 // db.users.checkUserEmail(email)
@@ -93,6 +92,7 @@ const validator = require('validator');
 //         console.log(data);
 //     }
 // );
+
 // db.signups.createSignup(event_id, user_id)
 // .then(
 //     function(signup_id){
@@ -100,5 +100,22 @@ const validator = require('validator');
 //     }
 // );
 
+// db.signups.getEventsUserSignUp(user_id)
+// .then(
+//     function(data){
+//         console.log(data);
+//     }
+// );
+
 // let date = '2019-02';
 // console.log(utils.parseTime.convertTimeStamp(date));
+
+// let event1 = '33e335ec-6611-4f0d-9f84-75c09963a35f';
+// let event2 = 'a1d9a30f-a22c-4bd3-8721-3de379f8831c';
+// db.events.checkEventIsOpen(event1).then(check => console.log(check));
+
+// let user1 = 'f26fec43-9c2f-4724-bac1-6aff1dd2cc02';
+// db.users.checkIfUserExistsByUserId(user1).then(check => console.log(check));
+// db.signups.getAllSignUpsForEventByEventId(event1).then(data => console.log(data));
+
+utils.jwtToken.decodeAccessToken('').then(data => console.log(data));
