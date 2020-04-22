@@ -6,14 +6,14 @@
 
 // Import libraries that are required
 // const utils = require("../utils/index");
-const utils = require("../../../main/client_back_end/utils/index");
+const utils = require("../../../../main/client_back_end/utils/index");
 const { body, param, validationResult } = require("express-validator");
 const sanitizeHtml = require("sanitize-html");
 
 // Import the model needed for CRUD of DB
 // const model = require("../db/index");
 // const model = require("../../../main/client_back_end/db/index");
-const model = require("../../chuanhao/src/db/index");
+const model = require("../../../chuanhao/src/db/index");
 
 // event controller object
 const eventController = {
@@ -140,7 +140,7 @@ const eventController = {
                     )
             });
 
-        // API endpoint to view all events (ADMIN + USER)
+        // API endpoint to view all events (ADMIN)
         app.get("/api/events", function (req, res) {
             // call the db method to view all events in database
             new Promise((resolve) => {
@@ -172,7 +172,7 @@ const eventController = {
 
         });
 
-        // API endpoint to view events by id (ADMIN + USER)
+        // API endpoint to view events by id (ADMIN)
         app.get("/api/events/:event_id",
             [
                 param("event_id")
@@ -450,111 +450,6 @@ const eventController = {
                     )
 
             });
-
-        // API endpoint to view current events user has signed up for
-        app.get("/api/events/signed_up/u", function (req, res) {
-            // user id
-            const user_id = req.user.user_id;
-
-            // call the db method to view events of user
-            return new Promise((resolve) => {
-                resolve(
-                    model.events.getEventsUserSignUp(user_id)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
-                                    }
-                                );
-                                throw err;
-
-                            }
-                        )
-                )
-            })
-                .then(
-                    function (events) {
-                        res.status(200).send(events);
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                )
-        });
-
-        // API endpoint to view current events the user HAS NOT signed up for
-        app.get("/api/events/not_signed_up/u", function (req, res) {
-            // user id
-            const user_id = req.user.user_id;
-
-            // call the db method to view events user HAS NOT signed up for
-            return new Promise((resolve) => {
-                resolve(
-                    model.events.getEventsUserHasNotSignUp(user_id)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
-                                    }
-                                );
-                                throw err;
-
-                            }
-                        )
-                )
-            })
-                .then(
-                    function (events) {
-                        res.status(200).send(events);
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                )
-        });
-
-        // API endpoint to view events user has participated in
-        app.get("/api/events/participated/u", function (req, res) {
-            // user id
-            const user_id = req.user.user_id;
-
-            // call the db method to view events user has participated in
-            return new Promise((resolve) => {
-                resolve(
-                    model.events.getEventsUserParticipated(user_id)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
-                                    }
-                                );
-                                throw err;
-
-                            }
-                        )
-                )
-            })
-                .then(
-                    function (events) {
-                        res.status(200).send(events);
-                    }
-                )
-                .catch(
-                    function (err) {
-                        console.log(err);
-                    }
-                )
-        });
 
         // API endpoint for closing event
         app.post("/api/events/:event_id",
