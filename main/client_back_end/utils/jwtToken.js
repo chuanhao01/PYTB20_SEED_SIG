@@ -18,7 +18,7 @@ module.exports = {
                 iat: maths.getJwtTime(Date.now()),
                 exp: maths.getJwtTime(Date.now() + 15 * 60 * 1000),
                 user_id : user_id,
-            }
+            };
             jwt.sign(payload, key, { algorithm: 'HS512' }, function(err, token){
                 if(err){
                     reject(err);
@@ -105,42 +105,6 @@ module.exports = {
                 }
                 else {
                     resolve(decoded);
-                }
-            });
-        });
-    },
-    /**
-     * Validates token of user
-     * @param {string} token token received by the user
-     * @param {function(Error,string,string)} callback function to call after validating the token
-     */
-    refreshToken(token){
-        return new Promise((resolve, reject) => {
-            jwt.verify(token, key, { algorithm: 'HS512' }, function (err, decoded) {
-                if (err) {
-                    reject(err);
-                }
-                else {
-                    let currentTime = Date.now();
-                    if ((currentTime - decoded.iat) / (decoded.exp - decoded.iat) > 0.5) {
-                        // If the token is about halfway through, get new_payload then sign it
-                        const new_payload = decoded;
-                        new_payload.iat = currentTime;
-                        new_payload.exp = currentTime + 30 * 60 * 1000;
-                        jwt.sign(new_payload, key, { algorithm: 'HS512' }, function(err, new_token){
-                            if(err){
-                                reject(err);
-                            }
-                            else{
-                                // New token is generated
-                                resolve(new_token);
-                            }
-                        });
-                    }
-                    else {
-                        resolve(token);
-                    }
-
                 }
             });
         });
