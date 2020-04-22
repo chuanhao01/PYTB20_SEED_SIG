@@ -8,7 +8,7 @@
 const utils = require("../utils/index");
 
 // Import the model needed for CRUD of DB
-const model = require("../db/index");
+const model = require("../../src/db/index");
 
 // user controller object
 const userController = {
@@ -32,6 +32,9 @@ const userController = {
 
             // email of user
             const email = req.body.email.toLowerCase();
+
+            //PDPA
+            const PDPA = parseInt(req.body.pdpa);
 
             // REMEMBER TO MAKE ALL STRINGS TO LOWERCASE
 
@@ -79,7 +82,7 @@ const userController = {
                 )
                 .then(
                     function () {
-                        return model.users.createNewUser(nric, dob, fullname, contact_num, email)
+                        return model.users.createNewUser(nric, dob, fullname, contact_num, email, PDPA)
                             .catch(
                                 function (err) {
                                     console.log(err);
@@ -95,8 +98,8 @@ const userController = {
                 )
                 .then(
                     function(user_id){
-                        // Generates the token based on the id
-                        return utils.jwtToken.createToken(user_id)
+                        // Gen the refresh_token and create it in the database
+                        return model.accounts.createRefreshToken(user_id)
                             .catch(
                                 function(err){
                                     console.log(err);
@@ -105,14 +108,15 @@ const userController = {
                                             "Error": "Internal Server Error"
                                         }
                                     );
+                                    throw err;
                                 }
                             );
                     }
                 )
                 .then(
-                    function(jwt_token){
+                    function(refresh_token){
                         // Send the token to the email with a link
-                        return utils.email.send(email, `http://localhost:8081/api/login/${jwt_token}`)
+                        return utils.email.send(email, `http://localhost:8081/api/refresh_token/${refresh_token}`)
                             .catch(
                                 function(err){
                                     console.log(err);
@@ -121,6 +125,7 @@ const userController = {
                                             "Error": "Internal Server Error"
                                         }
                                     );
+                                    throw err;
                                 }
                             );
                     }
@@ -135,41 +140,6 @@ const userController = {
                         console.log(err);
                     }
                 );
-
-
-        });
-
-        // API endpoint to login and create the cookie and redirect
-        app.get("/api/login/:token", function(req, res){
-            // this is to mainly set up the cookie in the browser
-            const token = req.params.token;
-            return new Promise((resolve) => {
-                // Checks the token
-                resolve(
-                    utils.jwtToken.refreshToken(token)
-                        .catch(
-                            function(err){
-                                console.log(err);
-                                // Add in redirect PLEASE HEREREREREEREREREREERERERERERERERE
-                                // res.status(500).redirect('');
-                                res.status(500).send();
-                            }
-                        )
-                );
-            })
-                .then(
-                    function(new_token){
-                        // Token was valid and new_token was generated
-                        // redirect her alsoasdadasdasdasdasdasdadasdasdasda
-                        res.status(302).cookie("token", new_token, { httpOnly: true }).redirect("http://localhost:8080");
-                        // res.status(302).cookie("token", new_token, { httpOnly: true }).send();
-                    }
-                )
-                .catch(
-                    function(err){
-                        console.log(err);
-                    }
-                );
         });
 
         // API endpoint to login using email
@@ -177,34 +147,35 @@ const userController = {
             const email = req.body.email.toLowerCase();
             return new Promise((resolve) => {
                 resolve(
-                    model.users.checkUserEmail(email)
-                        .catch(
-                            function (err) {
-                                console.log(err);
-                                res.status(500).send(
-                                    {
-                                        "Error": "Internal Server Error"
-                                    }
-                                );
-                                throw err;
-                            }
-                        )
+                    // Checking the email if it has a refresh token and at the same time getting it
+                    model.accounts.getRefreshTokenByUserEmail(email)
+                    .catch(
+                        function(err){
+                            console.log(err);
+                            res.status(500).send(
+                                {
+                                    "Error": "Internal Server Error"
+                                }
+                            );
+                            throw err;
+                        }
+                    )
                 );
             })
                 .then(
-                    function(emailExists){
-                        // Logic flow based on if email exists
+                    function(refresh_token_data){
                         return new Promise((resolve, reject) => {
-                            if(emailExists){
-                                // email exists and the user can login
-                                resolve(true);
+                            if(refresh_token_data.length == 1){
+                                // There is only one user there exists with the email and it has a refresh token
+                                resolve(refresh_token_data[0].refresh_token);
                             }
                             else{
-                                reject('User email does not exists');
+                                // If the refresh_token does not exists or somehow 2 datapoints are returned
+                                reject('Email refresh token error');
                             }
                         })
                             .catch(
-                                function (err) {
+                                function(err){
                                     console.log(err);
                                     res.status(500).send(
                                         {
@@ -217,45 +188,9 @@ const userController = {
                     }
                 )
                 .then(
-                    function(){
-                        // Get the user_id by email
-                        return model.users.getUserIdByEmail(email)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function(user){
-                        // We got the user_id by email, parse cause mysql gives in arr
-                        const user_id = user[0].user_id;
-                        // Send the email with link here
-                        return utils.jwtToken.createToken(user_id)
-                            .catch(
-                                function (err) {
-                                    console.log(err);
-                                    res.status(500).send(
-                                        {
-                                            "Error": "Internal Server Error"
-                                        }
-                                    );
-                                    throw err;
-                                }
-                            );
-                    }
-                )
-                .then(
-                    function(token){
+                    function(refresh_token){
                         // Token generation is successful
-                        return utils.email.send(email, `http://localhost:8081/api/login/${token}`)
+                        return utils.email.send(email, `http://localhost:8081/api/refresh_token/${refresh_token}`)
                             .catch(
                                 function (err) {
                                     console.log(err);
@@ -282,37 +217,85 @@ const userController = {
                 );
         });
 
-        // API endpoint to view all users
-        app.get("/api/users/", function (req, res) {
-            // call the db method to view all users in database
-            res.status(200).send({
-                "users": "all"
-            });
+        // API endpoint to login and create the cookie and redirect
+        // If it fails, redirects to logout
+        app.get("/api/refresh_token/:refresh_token", function(req, res){
+            // this is to mainly set up the cookie in the browser
+            const refresh_token = req.params.refresh_token;
+            return new Promise((resolve) => {
+                // Checks get the refresh_token data from the db, also checks if the refresh token exists
+                resolve(
+                    model.accounts.getUserByRefreshToken(refresh_token)
+                        .catch(
+                            function(err){
+                                console.log(err);
+                                res.status(500).redirect('/api/logout');
+                                throw err;
+                            }
+                        )
+                );
+            })
+                .then(
+                    function(refresh_data){
+                        // Checking if the refresh_token is correct
+                        return new Promise((resolve, reject) => {
+                            if(refresh_data.length == 1){
+                                // The user with the refresh token exists
+                                resolve(refresh_data[0]);
+                            }
+                            else{
+                                reject('Refresh token is not valid');
+                            }
+                        })
+                            .catch(
+                                function(err){
+                                    console.log(err);
+                                    res.status(500).redirect('/api/logout');
+                                    throw err;
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function(user){
+                        return utils.jwtToken.createAccessToken(user.user_id)
+                            .catch(
+                                function(err){
+                                    console.log(err);
+                                    res.status(500).redirect('/api/logout');
+                                    throw err;
+                                }
+                            );
+                    }
+                )
+                .then(
+                    function(access_token){
+                        // Token was valid and new_token was generated
+                        // redirect her alsoasdadasdasdasdasdasdadasdasdasda
+                        // res.status(302).cookie("token", new_token, { httpOnly: true }).redirect("http://localhost:8080");
+                        res
+                        .status(302)
+                        .cookie("access_token", access_token, { httpOnly: true })
+                        .cookie('refresh_token', refresh_token, { httpOnly: true })
+                        .send();
+                    }
+                )
+                .catch(
+                    function(err){
+                        console.log(err);
+                    }
+                );
         });
 
-        // API endpoint to view user by id
-        app.get("/api/users/:user_id/", function (req, res) {
-            // user id
-            const user_id = req.params.user_id;
-
-            // call the db method to view user by id in database
-            res.status(200).send({
-                "user_id": user_id
-            });
+        // Adding in logout endpotin
+        app.get('/api/logout', function(req, res){
+            res
+            .clearCookie('access_token')
+            .clearCookie('refresh_token')
+            .send();
         });
 
-        // API endpoint to view users (participants) of a specific event
-        app.get("/api/events/:event_id/users/", function (req, res) {
-            // event id
-            const event_id = req.params.event_id;
-
-            // call the db method to get all users of the specified event
-            res.status(200).send({
-                "event_id": event_id
-            });
-
-        });
     }
-}
+};
 
 module.exports = userController;
