@@ -1,6 +1,7 @@
 /*
 This utils class is mainly for parsing dates in JS for MySQL
 */
+
 // Importing libs needed
 const moment = require('moment');
 
@@ -14,7 +15,7 @@ const parseTime = {
      * @returns {string} [is in timestamp format YYYY-MM-DD hh:mm:ss]
      */
     convertTimeStamp(js_date){
-        return moment(js_date).format('YYYY-MM-DD hh:mm:ss');
+        return moment(js_date).format('YYYY-MM-DD');
     }
 };
 
