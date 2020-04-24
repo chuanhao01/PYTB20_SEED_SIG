@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
 import EventFilter from "@/components/EventFilter.vue";
 import moment from "moment";
 
@@ -61,12 +61,12 @@ export default {
   computed: {
     ...mapState({
       allEvents: state => state.events.allEvents
-    }),
-    ...mapGetters({
-      allEvents: "events/getAllEvents",
-      filteredEvents: "events/getFilteredEvents",
-      event: "events/getEvent"
     })
+    // ...mapGetters({
+    //   allEvents: "events/getAllEvents",
+    //   filteredEvents: "events/getFilteredEvents",
+    //   event: "events/getEvent"
+    // })
   },
   methods: {
     ...mapActions("events", {

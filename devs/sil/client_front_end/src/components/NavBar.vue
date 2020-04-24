@@ -13,10 +13,10 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn flat>
+      <v-btn text>
         <router-link to="/login">Login</router-link>
       </v-btn>
-      <v-btn flat>
+      <v-btn text>
         <router-link to="/register">Register</router-link>
       </v-btn>
     </v-toolbar-items>

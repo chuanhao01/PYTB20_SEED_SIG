@@ -1,6 +1,6 @@
 <template>
   <div class="eventFilter">
-    <button
+    <!-- <button
       class="btn btn-secondary px-3 py-2 text-center mr-3 mb-3"
       id="filter-all-btn"
       :class="{ 'btn btn-primary text-white': status === 'all' }"
@@ -23,28 +23,50 @@
       @click="handleStatusFilter('!signed-up')"
     >
       Not Signed Up
-    </button>
+    </button>-->
+    <v-btn-toggle v-model="status" tile group>
+      <v-btn value="all" @click="getAllEvents()">All Events</v-btn>
+      <v-btn value="signed-up" @click="getSignedUpEvents()">Signed Up</v-btn>
+      <v-btn value="!signed-up" @click="getNotSignedUpEvents()">
+        Not Signed Up
+      </v-btn>
+    </v-btn-toggle>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   name: "EventFilter",
-  computed: {
-    ...mapState({
-      status: state => state.events.filter.status
-    })
+  data() {
+    return {
+      status: 'all'
+    };
   },
-  created() {},
+  // computed: {
+  //   ...mapState({
+  //     status: state => state.events.filter.status
+  //   })
+  // },
+  created() {
+    this.getAllEvents();
+  },
   methods: {
     ...mapActions("events", {
-      filterStatus: "filterStatus"
-    }),
-    handleStatusFilter(status) {
-      this.filterStatus(status);
-    }
+      getAllEvents: "getAllEvents",
+      getSignedUpEvents: "getSignedUpEvents",
+      getNotSignedUpEvents: "getNotSignedUpEvents"
+    })
+    // getAllEvents() {
+    //   this.getAllEvents();
+    // },
+    // getSignedUpEvents() {
+    //   this.getSignedUpEvents();
+    // },
+    // getNotSignedUpEvents() {
+    //   this.getNotSignedUpEvents();
+    // }
   }
 };
 </script>
