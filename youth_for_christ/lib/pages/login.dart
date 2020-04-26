@@ -52,7 +52,7 @@ class _LoginState extends State<Login> {
       Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured")));
     }
     else{
-      Navigator.pushReplacementNamed(context, "/events",arguments: details);
+      Navigator.pushReplacementNamed(context, "/events",arguments: {"details":details,"email":_mail.text});
     }
 
 

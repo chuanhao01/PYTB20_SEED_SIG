@@ -6,9 +6,10 @@ class EventCard extends StatelessWidget {
   String title;
   DateTime date;
   String description;
+  int id;
   Map<String, String> username = {};
   EventCard(
-      {this.title, this.date, this.description});
+      {this.title, this.date, this.description,this.id});
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
@@ -19,9 +20,11 @@ class EventCard extends StatelessWidget {
                 MaterialPageRoute(
                     builder: (context) => Description(),
                     settings: RouteSettings(arguments: {
+                      "id": id,
                       "title": title,
                       "date": date,
                       "description": description,
+                      "attended":false
                     })));
             Scaffold.of(context).showSnackBar(_snackbar);
           } catch (e) {

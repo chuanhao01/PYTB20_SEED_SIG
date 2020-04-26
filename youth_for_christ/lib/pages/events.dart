@@ -10,8 +10,8 @@ class Events extends StatefulWidget {
 
 class _EventsState extends State<Events> {
   HttpSlave slave  = new HttpSlave();
-  Map<String, String> username;
-  List details;
+  String username;
+  Map<String, dynamic> details;
   List<EventCard> events;
   @override
   void initState(){
@@ -24,12 +24,12 @@ class _EventsState extends State<Events> {
   Widget build(BuildContext context) {
     details = details != null ? details: ModalRoute.of(context).settings.arguments;
     List<EventCard> events = [];
-    details.forEach((element) {
-      events.add(EventCard(title: element.title,date: DateTime(element.date),description: element.description,));
+    details["details"].forEach((element) {
+      events.add(EventCard(id:element["id"],title: element["title"],date: DateTime.fromMillisecondsSinceEpoch(element["event_date"]*1000),description: element["description"],));
     });
     username = username != null
         ? username
-        : ModalRoute.of(context).settings.arguments;
+        : details["email"];
     return  Scaffold(
       appBar: AppBar(
         title: Text("Events"),
@@ -47,7 +47,7 @@ class _EventsState extends State<Events> {
               child: Align(
                   alignment: FractionalOffset.bottomLeft,
                   child: Text(
-                      username["full name"],
+                      username,
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.w500,

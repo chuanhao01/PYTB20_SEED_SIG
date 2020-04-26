@@ -70,6 +70,9 @@ class _FormyState extends State<Formy> {
         if (response.statusCode == 201){
           Navigator.pushReplacementNamed(context, "/login");
         }
+        else if(response.statusCode == 401){
+          Scaffold.of(context).showSnackBar(new SnackBar(content: Text("Email already exists!!")));
+        }
         else{
           Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured while processing the data")));
         }
