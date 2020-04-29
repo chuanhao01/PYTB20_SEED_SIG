@@ -37,7 +37,7 @@ class HttpSlave {
     );
   }
 
-  Future<http.Response> _put(String url, Map<String, String> data) {
+  Future<http.Response> _put(String url, Map<String, String> data) async{
     return http.put(url,
         headers: <String, String>{
           "Content-Type": "application/json ; charset=UTF-8"

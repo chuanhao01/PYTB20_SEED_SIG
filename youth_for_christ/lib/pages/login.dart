@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import "package:flutter/material.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
+import 'package:http/http.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:youthforchrist/services/storage.dart';
 import 'package:youthforchrist/widgets/buttons.dart';
@@ -47,36 +48,38 @@ class _LoginState extends State<Login> {
 
 
   login()async{
-    List details = await getEvents();
-    if(details == null){
-      Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured")));
-    }
-    else{
-      Navigator.pushReplacementNamed(context, "/events",arguments: {"details":details,"email":_mail.text});
-    }
-
-
-//    if(_email.currentState.validate()) {
-//      Map<String, String> details = await _storage.getDetails();
-//      if(details["email"] == username){
-//        Navigator.pushReplacementNamed(context, "/events",arguments: details);
-//      }
-//      else{
-//        showDialog(
-//            context: context,
-//            barrierDismissible: true,
-//            child: AlertDialog(
-//                title: Text("Warning"),
-//                content: Text("Wrong email!"),
-//                actions: <Widget>[
-//                  FlatButton(
-//                    onPressed: (){Navigator.of(context,rootNavigator: true).pop("dialog");},
-//                    child: Text("Ok"),
-//                  )
-//                ]));
-//      }
-//
+//    List details = await getEvents();
+//    if(details == null){
+//      Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured")));
 //    }
+//    else{
+//      Navigator.pushReplacementNamed(context, "/events",arguments: {"details":details,"email":_mail.text});
+//    }
+
+
+    if(_email.currentState.validate()) {
+      String user = _mail.text;
+      _email.currentState.reset();
+      Response response = await slave.getMethod("post")("http://192.168.1.7:8000/api/login",{"email":user});
+      if(response.statusCode == 200){
+          Navigator.pushReplacementNamed(context, "/success");
+      }
+      else{
+        showDialog(
+            context: context,
+            barrierDismissible: true,
+            child: AlertDialog(
+                title: Text("Warning"),
+                content: Text("Wrong email!"),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: (){Navigator.of(context,rootNavigator: true).pop("dialog");},
+                    child: Text("Ok"),
+                  )
+                ]));
+      }
+
+    }
   }
 
   Widget build(BuildContext context) {
@@ -129,11 +132,13 @@ class _LoginState extends State<Login> {
                         decoration: InputDecoration(
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)), labelText: "Email:"),
                         validator: (value){
-                          _email.currentState.reset();
                           if (value.isEmpty) {
                             return "Please fill in this field!";
                           } else if (!regex.hasMatch(value)) {
                             return "Please enter a valid email address!";
+                          }
+                          else{
+
                           }
                           return null;
                         },
