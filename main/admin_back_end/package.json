@@ -17,11 +17,12 @@
     "express-validator": "^6.4.0",
     "googleapis": "^48.0.0",
     "js-base64": "^2.5.2",
+    "json2csv": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.2",
-    "sanitize-html": "^1.23.0",
+    "sanitize-html": "^1.22.1",
     "uuid": "^7.0.2"
   }
 }

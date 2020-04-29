@@ -1,47 +1,30 @@
 /**
- * File: signupController.js
+ * File: userController.js
  * -----------------------
- * Controller for handling APIs pertaining to the signups (for events)
+ * Controller for handling APIs pertaining to the user
  */
 
 // Import libraries that are required
 // const utils = require("../utils/index");
-const utils = require("../utils/index");
+const utils = require("../../../../main/client_back_end/utils/index");
 const { body, param, validationResult } = require("express-validator");
 const sanitizeHtml = require("sanitize-html");
 
 // Import the model needed for CRUD of DB
-const model = require("../db/index");
+// const model = require("../db/index");
+// const model = require("../../../main/client_back_end/db/index");
+const model = require("../../../chuanhao/src/db/index");
 
-// signup controller object
-const signupController = {
+// user controller object
+const userController = {
     init(app) {
         // place all the endpoints here...
         // e.g: app.get ("/api/...", function(req, res) {});
-        /**
-         * @todo 
-         * model.signups.createSignup
-         * Need to check if event is open
-         * Need to check if user HAS NOT signed up for event
-         * Then create signup
-         * 
-         * model.signups.deleteUserSignUpForEvent
-         * Need to check if event is open
-         * Need to check if user HAS signed up for event
-         * Then leave signup
-         * 
-         * model.signups.getAllSignUpsForEventByEventId
-         * Need to check if event exists first
-         * 
-         * model.signups.getSignupInfoBySignupId
-         * 
-         * model.signups.updateSignupDataBySignupId
-         */
 
-        // API endpoint to sign up for an event
-        app.post("/api/events/:event_id/signups",
+        // API endpoint to view user by id (ADMIN)
+        app.get("/api/users/:user_id",
             [
-                param("event_id")
+                param("user_id")
                     .customSanitizer(value => {
                         return sanitizeHtml(value, {
                             allowedTags: [],
@@ -66,15 +49,13 @@ const signupController = {
                     throw validationErrors;
                 }
                 // if validation / sanitization has no errors, start promise chain
-                // get all of the required fields to sign up for event
-                const event_id = req.params.event_id;
+                // user id
+                const user_id = req.params.user_id;
 
-                const user_id = req.user.user_id;
-
-                new Promise((resolve) => {
-                    // Need to check if event is open
+                // need to check if user exists first
+                return new Promise((resolve) => {
                     resolve(
-                        model.events.checkEventIsOpen(event_id)
+                        model.users.checkIfUserExistsByUserId(user_id)
                             .catch(
                                 function (err) {
                                     console.log(err);
@@ -86,19 +67,18 @@ const signupController = {
                                     throw err;
 
                                 }
-
                             )
-
                     )
                 })
-
+                    // if user exists, resolve
+                    // if not, reject
                     .then(
-                        function (eventIsOpen) {
+                        function (userExists) {
                             return new Promise((resolve, reject) => {
-                                if (eventIsOpen) {
+                                if (userExists) {
                                     resolve(true);
                                 } else {
-                                    reject("Event is not open");
+                                    reject("User does not exist");
                                 }
                             })
                                 .catch(
@@ -112,15 +92,13 @@ const signupController = {
                                         throw err;
 
                                     }
-
                                 )
                         }
-
                     )
+                    // call the db method to view user by id in database
                     .then(
-                        // Need to check if user HAS NOT signed up for event
                         function () {
-                            return model.events.checkUserSignUpEvent(event_id, user_id)
+                            return model.users.getUserDataByUserId(user_id)
                                 .catch(
                                     function (err) {
                                         console.log(err);
@@ -132,18 +110,19 @@ const signupController = {
                                         throw err;
 
                                     }
-
                                 )
                         }
                     )
                     .then(
-                        function (userSignedUp) {
+                        function (userData) {
                             return new Promise((resolve, reject) => {
-                                if (!userSignedUp) {
-                                    resolve(true);
+                                if (userData.length == 1) {
+                                    resolve(userData[0]);
                                 } else {
-                                    reject("User has already signed up for event");
+                                    reject("Unexpected user");
+
                                 }
+
                             })
                                 .catch(
                                     function (err) {
@@ -154,52 +133,28 @@ const signupController = {
                                             }
                                         );
                                         throw err;
-
                                     }
-
-                                )
+                                );
                         }
                     )
                     .then(
-                        // call the db method to sign user up for event
-                        function () {
-                            return model.signups.createSignup(event_id, user_id)
-                                .catch(
-                                    function (err) {
-                                        console.log(err);
-                                        res.status(500).send(
-                                            {
-                                                "Error": "Internal Server Error"
-                                            }
-                                        );
-                                        throw err;
-
-                                    }
-                                )
+                        function (user) {
+                            // if request successful, send the user data
+                            res.status(200).send(user);
                         }
-
-                    )
-                    .then(
-                        function (signup_id) {
-                            res.status(201).send(
-                                {
-                                    "signup_id": signup_id
-                                }
-                            );
-                        }
-
                     )
                     .catch(
                         function (err) {
                             console.log(err);
                         }
-                    );
+                    )
             });
 
-        // API endpoint to leave an event
-        app.delete("/api/events/:event_id/signups",
+        // API endpoint to update user by id (ADMIN)
+        app.put("/api/users/:user_id",
+            // always sanitise inputs to remove all tags if present (XSS Prevention)
             [
-                param("event_id")
+                param("user_id")
                     .customSanitizer(value => {
                         return sanitizeHtml(value, {
                             allowedTags: [],
@@ -208,6 +163,65 @@ const signupController = {
                     })
                     .isUUID()
                     .withMessage("Invalid UUID"),
+                body("nric")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .custom(value => {
+                        return /^[sftg]\d{7}[a-z]|^[SFTG]\d{7}[A-Z]/.test(value);
+                    })
+                    .withMessage("NRIC is not in correct format"),
+                body("dob")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isISO8601()
+                    .withMessage("Date is not in YYYY-MM-DD ISO8601 format"),
+                body("fullname")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .trim().not().isEmpty()
+                    .withMessage("Name is empty"),
+                body("contact_num")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isMobilePhone("en-SG", { strictMode: true })
+                    .withMessage("Mobile number is not of correct SG format"),
+                body("email")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isEmail()
+                    .withMessage("Email is not in correct format"),
+                body("PDPA")
+                    .customSanitizer(value => {
+                        return sanitizeHtml(value, {
+                            allowedTags: [],
+                            allowedAttributes: {}
+                        });
+                    })
+                    .isInt({
+                        min: 0,
+                        max: 1
+                    })
+                    .withMessage("PDPA is not a integer of either 0 or 1"),
             ],
             function (req, res) {
                 // do the validation
@@ -224,15 +238,31 @@ const signupController = {
                     throw validationErrors;
                 }
                 // if validation / sanitization has no errors, start promise chain
-                // get all of the required fields to sign up for event
-                const event_id = req.params.event_id;
+                // user id
+                const user_id = req.params.user_id;
 
-                const user_id = req.user.user_id;
+                // nric of user
+                const nric = req.body.nric.toLowerCase();
 
-                new Promise((resolve) => {
-                    // Need to check if event is open
+                // date of birth of user (date format)
+                const dob = utils.parseTime.convertTimeStamp(req.body.dob);
+
+                // fullname of user
+                const fullname = req.body.fullname.toLowerCase();
+
+                // contact number of user
+                const contact_num = req.body.contact_num;
+
+                // email of user
+                const email = req.body.email.toLowerCase();
+
+                // PDPA
+                const PDPA = parseInt(req.body.PDPA);
+
+                // need to check if user exists first
+                return new Promise((resolve) => {
                     resolve(
-                        model.events.checkEventIsOpen(event_id)
+                        model.users.checkIfUserExistsByUserId(user_id)
                             .catch(
                                 function (err) {
                                     console.log(err);
@@ -244,19 +274,18 @@ const signupController = {
                                     throw err;
 
                                 }
-
                             )
-
                     )
                 })
-
+                    // if user exists, resolve
+                    // if not, reject
                     .then(
-                        function (eventIsOpen) {
+                        function (userExists) {
                             return new Promise((resolve, reject) => {
-                                if (eventIsOpen) {
+                                if (userExists) {
                                     resolve(true);
                                 } else {
-                                    reject("Event is not open");
+                                    reject("User does not exist");
                                 }
                             })
                                 .catch(
@@ -270,15 +299,13 @@ const signupController = {
                                         throw err;
 
                                     }
-
                                 )
                         }
-
                     )
+                    // call the db method to update user by id in database
                     .then(
-                        // Need to check if user HAS signed up for event
                         function () {
-                            return model.events.checkUserSignUpEvent(event_id, user_id)
+                            return model.users.updateUserInfoByUserId(user_id, nric, dob, fullname, contact_num, email, PDPA)
                                 .catch(
                                     function (err) {
                                         console.log(err);
@@ -288,70 +315,24 @@ const signupController = {
                                             }
                                         );
                                         throw err;
-
-                                    }
-
-                                )
-                        }
-                    )
-                    .then(
-                        function (userSignedUp) {
-                            return new Promise((resolve, reject) => {
-                                if (userSignedUp) {
-                                    resolve(true);
-                                } else {
-                                    reject("User has not signed up for event");
-                                }
-                            })
-                                .catch(
-                                    function (err) {
-                                        console.log(err);
-                                        res.status(500).send(
-                                            {
-                                                "Error": "Internal Server Error"
-                                            }
-                                        );
-                                        throw err;
-
-                                    }
-
-                                )
-                        }
-                    )
-                    .then(
-                        // call the db method to "delete" user from event only if user signed up
-                        function () {
-                            return model.signups.deleteUserSignUpForEvent(event_id, user_id)
-                                .catch(
-                                    function (err) {
-                                        console.log(err);
-                                        res.status(500).send(
-                                            {
-                                                "Error": "Internal Server Error"
-                                            }
-                                        );
-                                        throw err;
-
                                     }
                                 )
-                        }
 
+
+                        }
                     )
                     .then(
                         function () {
                             res.status(204).send();
                         }
-
                     )
                     .catch(
                         function (err) {
                             console.log(err);
                         }
-                    );
-
+                    )
             });
-
     }
-};
+}
 
-module.exports = signupController;
+module.exports = userController;
