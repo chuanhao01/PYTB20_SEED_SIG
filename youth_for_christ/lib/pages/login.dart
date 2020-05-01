@@ -19,7 +19,6 @@ class _LoginState extends State<Login> {
   final  _email = GlobalKey<FormState>();
   TextEditingController _mail = TextEditingController();
   bool disableButton = true;
-  SecureStorage _storage = new SecureStorage();
   HttpSlave slave = new HttpSlave();
   @override
 
@@ -37,12 +36,18 @@ class _LoginState extends State<Login> {
     loading.show();
     http.Response response = await slave.getMethod("get")("http://192.168.1.7:8000/api/events");
     loading.hide();
-    if(response.statusCode == 500){
-      return null;
+    if(response != null){
+      if(response.statusCode == 500){
+        return null;
+      }
+      else if(response.statusCode == 200){
+        return jsonDecode(response.body);
+      }
     }
-    else if(response.statusCode == 200){
-      return jsonDecode(response.body);
+    else{
+      return  null;
     }
+
   }
 
 

@@ -1,28 +1,27 @@
 import "package:flutter/material.dart";
 import "package:flutter_spinkit/flutter_spinkit.dart";
-
+import "package:dart_ping/dart_ping.dart";
+import "package:youthforchrist/services/networkboi.dart";
 class Loading extends StatefulWidget {
   @override
   _LoadingState createState() => _LoadingState();
 }
 
-void getData(context){
-  Future.delayed(
-    Duration(seconds: 2),
-      (){
-      Navigator.pushReplacementNamed(context, "/login");
-      }
-  );
+void pingServer(context)async{
+  bool bang = await HttpSlave().isAlive();
+  if (bang){
+    Navigator.of(context).pushReplacementNamed("/login");
+  }
 }
 class _LoadingState extends State<Loading> {
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getData(context);
   }
   @override
   Widget build(BuildContext context) {
+    pingServer(context);
     return Scaffold(
         backgroundColor: Colors.white,
         body: Center(

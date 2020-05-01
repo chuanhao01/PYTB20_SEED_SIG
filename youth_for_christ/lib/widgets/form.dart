@@ -58,6 +58,9 @@ class _FormyState extends State<Formy> {
       loading.show();
       Response response = widget.profile? await widget.slave.getMethod("put")(url,details) : await widget.slave.getMethod("post")(url,details);
       if (widget.profile){
+        if(response == null){
+          Scaffold.of(context).showSnackBar(new SnackBar(content: Text("Cannot connect to server! Please check your internet connection!")));
+        }
         if (response.statusCode == 204){
           Navigator.pushReplacementNamed(context, "/profile",arguments: details);
         }
@@ -67,6 +70,9 @@ class _FormyState extends State<Formy> {
 
       }
       else{
+        if(response == null){
+          Scaffold.of(context).showSnackBar(new SnackBar(content: Text("Cannot connect to server! Please check your internet connection!")));
+        }
         if (response.statusCode == 201){
           Navigator.pushReplacementNamed(context, "/login");
         }
@@ -127,14 +133,14 @@ class _FormyState extends State<Formy> {
               controller: _nric,
               initialValue: widget.profile? widget.initialValue["nric"]:"",
             ),
-            DateOrPhone(controller: _date,phone: false,initialValue: widget.profile? widget.initialValue["bday"]: DateFormat.yMd("en-SG").format(DateTime.now()).toString(),),
+            DateOrPhone(controller: _date,phone: false,initialValue: widget.profile? widget.initialValue["dob"]: DateFormat.yMd("en-SG").format(DateTime.now()).toString(),),
             TextForm(
               label: "Full name: ",
               validator: validator(false, false),
               controller: _fullName,
-              initialValue: widget.profile? widget.initialValue["full name"]:"",
+              initialValue: widget.profile? widget.initialValue["fullname"]:"",
             ),
-            DateOrPhone(controller: _phonenumber, phone: true,initialValue: widget.profile? widget.initialValue["phone number"]:"",),
+            DateOrPhone(controller: _phonenumber, phone: true,initialValue: widget.profile? widget.initialValue["contact_num"]:"",),
             widget.profile? SizedBox():TextForm(label: "Email: ", validator: validator(false, true),controller: _email,initialValue: widget.profile? widget.initialValue["email"]:"",),
             widget.profile? PrimaryButton(onPressed: register,text: "Save Changes",disabled: false,):PrimaryButton(onPressed: register,text: "Sign Up!",disabled: false,),
 

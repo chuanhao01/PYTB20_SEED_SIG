@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import "package:flutter/material.dart";
+import 'package:http/http.dart';
 import 'package:youthforchrist/services/storage.dart';
 import "package:youthforchrist/widgets/eventCard.dart";
 import 'package:intl/date_symbol_data_local.dart';
@@ -57,7 +60,28 @@ class _EventsState extends State<Events> {
             ),
             ListTile(
               onTap: ()async{
-                Navigator.pushNamed(context, "/profile");
+                Response response = await slave.getMethod("get")("http://192.168.1.7/api/users/u");
+                if (response == null){
+                  final SnackBar snackBar = SnackBar(
+                    content: Text(
+                        "Connection timeout, please check your internet connection!"),
+                    action: SnackBarAction(
+                      label: "Undo",
+                      onPressed: () {
+                        print("Hello world!");
+                      },
+                    ),
+                    duration: Duration(seconds: 1, milliseconds: 500),
+                  );
+                  Navigator.of(context, rootNavigator: true)
+                      .pop("dialog");
+                  Scaffold.of(context).showSnackBar(snackBar);
+                }
+                else if(response.statusCode == 200){
+                  Map<String, String> data = jsonDecode(response.body);
+                  Navigator.pushNamed(context, "/profile",arguments: data);
+                }
+
               },
               leading: Icon(
                 Icons.account_circle

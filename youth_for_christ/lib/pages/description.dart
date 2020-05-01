@@ -9,6 +9,7 @@ class Description extends StatelessWidget {
   GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
   Map data = {};
   HttpSlave slave = new HttpSlave();
+
   Function ShowDialog(context, bool signedUp) {
     if (signedUp) {
       return (String value) {
@@ -31,23 +32,10 @@ class Description extends StatelessWidget {
                     onPressed: () async {
                       Response response = await slave.getMethod("delete")(
                           "http://192.168.1.7:8000/api/events/${data["id"]}/signups");
-                      if (response.statusCode == 204) {
+                      if (response == null) {
                         final SnackBar snackBar = SnackBar(
-                          content: Text("Deregister complete!"),
-                          action: SnackBarAction(
-                            label: "Undo",
-                            onPressed: () {
-                              print("Hello world!");
-                            },
-                          ),
-                          duration: Duration(seconds: 1, milliseconds: 500),
-                        );
-                        Navigator.of(context, rootNavigator: true)
-                            .pop("dialog");
-                        Navigator.pop(context, snackBar);
-                      } else {
-                        final SnackBar snackBar = SnackBar(
-                          content: Text("Deregister complete!"),
+                          content: Text(
+                              "Connection timeout, please check your internet connection!"),
                           action: SnackBarAction(
                             label: "Undo",
                             onPressed: () {
@@ -59,6 +47,36 @@ class Description extends StatelessWidget {
                         Navigator.of(context, rootNavigator: true)
                             .pop("dialog");
                         Scaffold.of(context).showSnackBar(snackBar);
+                      } else {
+                        if (response.statusCode == 204) {
+                          final SnackBar snackBar = SnackBar(
+                            content: Text("Deregister complete!"),
+                            action: SnackBarAction(
+                              label: "Undo",
+                              onPressed: () {
+                                print("Hello world!");
+                              },
+                            ),
+                            duration: Duration(seconds: 1, milliseconds: 500),
+                          );
+                          Navigator.of(context, rootNavigator: true)
+                              .pop("dialog");
+                          Navigator.pop(context, snackBar);
+                        } else {
+                          final SnackBar snackBar = SnackBar(
+                            content: Text("An error occured"),
+                            action: SnackBarAction(
+                              label: "Undo",
+                              onPressed: () {
+                                print("Hello world!");
+                              },
+                            ),
+                            duration: Duration(seconds: 1, milliseconds: 500),
+                          );
+                          Navigator.of(context, rootNavigator: true)
+                              .pop("dialog");
+                          Scaffold.of(context).showSnackBar(snackBar);
+                        }
                       }
                     },
                   )
@@ -88,23 +106,10 @@ class Description extends StatelessWidget {
                       Response response = await slave.getMethod("post")(
                           "http://192.168.1.7:8000/api/events/${data["id"]}/signups",
                           {"user": "Hello"});
-                      if (response.statusCode == 201) {
+                      if (response == null) {
                         final SnackBar snackBar = SnackBar(
-                          content: Text("Sign up complete!"),
-                          action: SnackBarAction(
-                            label: "Undo",
-                            onPressed: () {
-                              print("Hello world!");
-                            },
-                          ),
-                          duration: Duration(seconds: 1, milliseconds: 500),
-                        );
-                        Navigator.of(context, rootNavigator: true)
-                            .pop("dialog");
-                        Navigator.pop(context, snackBar);
-                      } else {
-                        final SnackBar snackBar = SnackBar(
-                          content: Text("Deregister complete!"),
+                          content: Text(
+                              "Connection timeout, please check your internet connection!"),
                           action: SnackBarAction(
                             label: "Undo",
                             onPressed: () {
@@ -116,6 +121,36 @@ class Description extends StatelessWidget {
                         Navigator.of(context, rootNavigator: true)
                             .pop("dialog");
                         Scaffold.of(context).showSnackBar(snackBar);
+                      } else {
+                        if (response.statusCode == 201) {
+                          final SnackBar snackBar = SnackBar(
+                            content: Text("Sign up complete!"),
+                            action: SnackBarAction(
+                              label: "Undo",
+                              onPressed: () {
+                                print("Hello world!");
+                              },
+                            ),
+                            duration: Duration(seconds: 1, milliseconds: 500),
+                          );
+                          Navigator.of(context, rootNavigator: true)
+                              .pop("dialog");
+                          Navigator.pop(context, snackBar);
+                        } else {
+                          final SnackBar snackBar = SnackBar(
+                            content: Text("An error occured"),
+                            action: SnackBarAction(
+                              label: "Undo",
+                              onPressed: () {
+                                print("Hello world!");
+                              },
+                            ),
+                            duration: Duration(seconds: 1, milliseconds: 500),
+                          );
+                          Navigator.of(context, rootNavigator: true)
+                              .pop("dialog");
+                          Scaffold.of(context).showSnackBar(snackBar);
+                        }
                       }
                     },
                   )
