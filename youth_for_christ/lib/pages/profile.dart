@@ -7,7 +7,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
-    Map<String, String> data = ModalRoute.of(context).settings.arguments;
+    Map<String, dynamic> data = ModalRoute.of(context).settings.arguments;
     print(data);
     List<String> keys = data.keys.toList();
     return Scaffold(
@@ -35,7 +35,7 @@ class _ProfileState extends State<Profile> {
                 child: Align(
                     alignment: FractionalOffset.bottomLeft,
                     child: Text(
-                      data["full name"],
+                      data["fullname"],
                       style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.w500,

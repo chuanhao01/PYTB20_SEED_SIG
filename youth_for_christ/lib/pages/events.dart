@@ -60,7 +60,7 @@ class _EventsState extends State<Events> {
             ),
             ListTile(
               onTap: ()async{
-                Response response = await slave.getMethod("get")("http://192.168.1.7/api/users/u");
+                Response response = await slave.getMethod("get")("http://192.168.43.22:8000/api/users/u");
                 if (response == null){
                   final SnackBar snackBar = SnackBar(
                     content: Text(
@@ -78,7 +78,7 @@ class _EventsState extends State<Events> {
                   Scaffold.of(context).showSnackBar(snackBar);
                 }
                 else if(response.statusCode == 200){
-                  Map<String, String> data = jsonDecode(response.body);
+                  Map<String, dynamic> data = jsonDecode(response.body);
                   Navigator.pushNamed(context, "/profile",arguments: data);
                 }
 

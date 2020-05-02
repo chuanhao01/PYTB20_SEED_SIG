@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
 
     );
     loading.show();
-    http.Response response = await slave.getMethod("get")("http://192.168.1.7:8000/api/events");
+    http.Response response = await slave.getMethod("get")("http://192.168.43.22:8000/api/events");
     loading.hide();
     if(response != null){
       if(response.statusCode == 500){
@@ -53,38 +53,38 @@ class _LoginState extends State<Login> {
 
 
   login()async{
-//    List details = await getEvents();
-//    if(details == null){
-//      Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured")));
-//    }
-//    else{
-//      Navigator.pushReplacementNamed(context, "/events",arguments: {"details":details,"email":_mail.text});
-//    }
-
-
-    if(_email.currentState.validate()) {
-      String user = _mail.text;
-      _email.currentState.reset();
-      Response response = await slave.getMethod("post")("http://192.168.1.7:8000/api/login",{"email":user});
-      if(response.statusCode == 200){
-          Navigator.pushReplacementNamed(context, "/success");
-      }
-      else{
-        showDialog(
-            context: context,
-            barrierDismissible: true,
-            child: AlertDialog(
-                title: Text("Warning"),
-                content: Text("Wrong email!"),
-                actions: <Widget>[
-                  FlatButton(
-                    onPressed: (){Navigator.of(context,rootNavigator: true).pop("dialog");},
-                    child: Text("Ok"),
-                  )
-                ]));
-      }
-
+    List details = await getEvents();
+    if(details == null){
+      Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured")));
     }
+    else{
+      Navigator.pushReplacementNamed(context, "/events",arguments: {"details":details,"email":_mail.text});
+    }
+
+
+//    if(_email.currentState.validate()) {
+//      String user = _mail.text;
+//      _email.currentState.reset();
+//      Response response = await slave.getMethod("post")("http://192.168.1.7:8000/api/login",{"email":user});
+//      if(response.statusCode == 200){
+//          Navigator.pushReplacementNamed(context, "/success");
+//      }
+//      else{
+//        showDialog(
+//            context: context,
+//            barrierDismissible: true,
+//            child: AlertDialog(
+//                title: Text("Warning"),
+//                content: Text("Wrong email!"),
+//                actions: <Widget>[
+//                  FlatButton(
+//                    onPressed: (){Navigator.of(context,rootNavigator: true).pop("dialog");},
+//                    child: Text("Ok"),
+//                  )
+//                ]));
+//      }
+//
+//    }
   }
 
   Widget build(BuildContext context) {

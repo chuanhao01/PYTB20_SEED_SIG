@@ -57,10 +57,11 @@ class HttpSlave {
   }
 
   Future<http.Response> _put(String url, Map<String, String> data) async {
+    print(jsonEncode(data));
     return http
         .put(url,
             headers: <String, String>{
-              "Content-Type": "application/json ; charset=UTF-8"
+              "Content-Type": "application/json"
             },
             body: jsonEncode(data))
         .timeout(Duration(seconds: 10), onTimeout: () {

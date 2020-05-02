@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import "package:flutter/material.dart";
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -11,8 +13,8 @@ import "package:youthforchrist/services/networkboi.dart";
 class Formy extends StatefulWidget {
   DateTime bday;
   bool profile;
-  Map<String, String> initialValue;
-  Formy({this.bday,this.profile,this.initialValue});
+  Map<String, dynamic> initialValue;
+  Formy({this.bday, this.profile, this.initialValue});
   HttpSlave slave = new HttpSlave();
   @override
   _FormyState createState() => _FormyState();
@@ -28,19 +30,18 @@ class _FormyState extends State<Formy> {
   GlobalKey<FormState> _form = GlobalKey<FormState>();
   SecureStorage _storage = new SecureStorage();
 
-  register()async{
+  register() async {
     ProgressDialog loading = new ProgressDialog(context);
     loading.style(
-      message: widget.profile? "Updating profile":"Registering",
+      message: widget.profile ? "Updating profile" : "Registering",
       borderRadius: 8.0,
       backgroundColor: Colors.white,
       progressWidget: CircularProgressIndicator(),
       elevation: 10.0,
       insetAnimCurve: Curves.easeInOut,
-
     );
     if (_form.currentState.validate()) {
-      _email.text = widget.profile? widget.initialValue["email"]: _email.text;
+      _email.text = widget.profile ? widget.initialValue["email"] : _email.text;
       List<String> everything = [
         _nric.text,
         _date.text,
@@ -54,64 +55,91 @@ class _FormyState extends State<Formy> {
         details[element] = everything[i];
         i++;
       });
-      String url = widget.profile? "http://192.168.1.7:8000/api/users/u": "http://192.168.1.7:8000/api/users";
+      String url = widget.profile
+          ? "http://192.168.43.22:8000/api/users/u"
+          : "http://192.168.43.22:8000/api/users";
       loading.show();
-      Response response = widget.profile? await widget.slave.getMethod("put")(url,details) : await widget.slave.getMethod("post")(url,details);
-      if (widget.profile){
-        if(response == null){
-          Scaffold.of(context).showSnackBar(new SnackBar(content: Text("Cannot connect to server! Please check your internet connection!")));
+      Response response = widget.profile
+          ? await widget.slave.getMethod("put")(url, details)
+          : await widget.slave.getMethod("post")(url, details);
+      if (widget.profile) {
+        if (response == null) {
+          Scaffold.of(context).showSnackBar(new SnackBar(
+              content: Text(
+                  "Cannot connect to server! Please check your internet connection!")));
         }
-        if (response.statusCode == 204){
-          Navigator.pushReplacementNamed(context, "/profile",arguments: details);
+        if (response.statusCode == 200) {
+          Response response = await widget.slave
+              .getMethod("get")("http://192.168.43.22:8000/api/users/u");
+          if (response == null) {
+            final SnackBar snackBar = SnackBar(
+              content: Text(
+                  "Connection timeout, please check your internet connection!"),
+              action: SnackBarAction(
+                label: "Undo",
+                onPressed: () {
+                  print("Hello world!");
+                },
+              ),
+              duration: Duration(seconds: 1, milliseconds: 500),
+            );
+            Navigator.of(context, rootNavigator: true).pop("dialog");
+            Scaffold.of(context).showSnackBar(snackBar);
+          } else if (response.statusCode == 200) {
+            Map<String, dynamic> data = jsonDecode(response.body);
+            Navigator.pushNamed(context, "/profile", arguments: data);
+          }
+        } else {
+          Scaffold.of(context).showSnackBar(new SnackBar(
+              content: Text("An error occured while processing the data")));
         }
-        else{
-          Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured while processing the data")));
+      } else {
+        if (response == null) {
+          Scaffold.of(context).showSnackBar(new SnackBar(
+              content: Text(
+                  "Cannot connect to server! Please check your internet connection!")));
         }
-
-      }
-      else{
-        if(response == null){
-          Scaffold.of(context).showSnackBar(new SnackBar(content: Text("Cannot connect to server! Please check your internet connection!")));
-        }
-        if (response.statusCode == 201){
+        if (response.statusCode == 201) {
           Navigator.pushReplacementNamed(context, "/login");
-        }
-        else if(response.statusCode == 401){
-          Scaffold.of(context).showSnackBar(new SnackBar(content: Text("Email already exists!!")));
-        }
-        else{
-          Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured while processing the data")));
+        } else if (response.statusCode == 401) {
+          Scaffold.of(context).showSnackBar(
+              new SnackBar(content: Text("Email already exists!!")));
+        } else {
+          Scaffold.of(context).showSnackBar(new SnackBar(
+              content: Text("An error occured while processing the data")));
         }
       }
       loading.hide();
     }
   }
-  Function validator (bool nric,bool email) {
-    if (nric){
-      return (value){
-        if (!RegExp(r"^[stfg]\d{7}[a-z]", caseSensitive: false).hasMatch(value)) {
+
+  Function validator(bool nric, bool email) {
+    if (nric) {
+      return (value) {
+        if (!RegExp(r"^[stfg]\d{7}[a-z]", caseSensitive: false)
+            .hasMatch(value)) {
           return "Please enter a valid NRIC!";
         }
         return null;
       };
-    }
-    else if(email){
-      return (value){
-        if (!RegExp( r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", caseSensitive: false).hasMatch(value)) {
+    } else if (email) {
+      return (value) {
+        if (!RegExp(
+                r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+                caseSensitive: false)
+            .hasMatch(value)) {
           return "Please enter a valid NRIC!";
         }
         return null;
       };
-    }
-    else{
-      return (value){
-        if(value == "") {
+    } else {
+      return (value) {
+        if (value == "") {
           return "Please fill in this field!";
         }
         return null;
       };
     }
-
   }
 
   @override
@@ -129,21 +157,50 @@ class _FormyState extends State<Formy> {
           children: <Widget>[
             TextForm(
               label: "NRIC: ",
-              validator: validator(true,false),
+              validator: validator(true, false),
               controller: _nric,
-              initialValue: widget.profile? widget.initialValue["nric"]:"",
+              initialValue: widget.profile ? widget.initialValue["nric"] : "",
             ),
-            DateOrPhone(controller: _date,phone: false,initialValue: widget.profile? widget.initialValue["dob"]: DateFormat.yMd("en-SG").format(DateTime.now()).toString(),),
+            DateOrPhone(
+              controller: _date,
+              phone: false,
+              initialValue: widget.profile
+                  ? widget.initialValue["dob"]
+                  : DateFormat.yMd("en-SG").format(DateTime.now()).toString(),
+            ),
             TextForm(
               label: "Full name: ",
               validator: validator(false, false),
               controller: _fullName,
-              initialValue: widget.profile? widget.initialValue["fullname"]:"",
+              initialValue:
+                  widget.profile ? widget.initialValue["fullname"] : "",
             ),
-            DateOrPhone(controller: _phonenumber, phone: true,initialValue: widget.profile? widget.initialValue["contact_num"]:"",),
-            widget.profile? SizedBox():TextForm(label: "Email: ", validator: validator(false, true),controller: _email,initialValue: widget.profile? widget.initialValue["email"]:"",),
-            widget.profile? PrimaryButton(onPressed: register,text: "Save Changes",disabled: false,):PrimaryButton(onPressed: register,text: "Sign Up!",disabled: false,),
-
+            DateOrPhone(
+              controller: _phonenumber,
+              phone: true,
+              initialValue:
+                  widget.profile ? widget.initialValue["contact_num"] : "",
+            ),
+            widget.profile
+                ? SizedBox()
+                : TextForm(
+                    label: "Email: ",
+                    validator: validator(false, true),
+                    controller: _email,
+                    initialValue:
+                        widget.profile ? widget.initialValue["email"] : "",
+                  ),
+            widget.profile
+                ? PrimaryButton(
+                    onPressed: register,
+                    text: "Save Changes",
+                    disabled: false,
+                  )
+                : PrimaryButton(
+                    onPressed: register,
+                    text: "Sign Up!",
+                    disabled: false,
+                  ),
           ],
         ));
   }
