@@ -71,6 +71,7 @@ class _FormyState extends State<Formy> {
         if (response.statusCode == 200) {
           Response response = await widget.slave
               .getMethod("get")("http://192.168.43.22:8000/api/users/u");
+          widget.slave.checkCookies(response);
           if (response == null) {
             final SnackBar snackBar = SnackBar(
               content: Text(
@@ -100,6 +101,7 @@ class _FormyState extends State<Formy> {
                   "Cannot connect to server! Please check your internet connection!")));
         }
         if (response.statusCode == 201) {
+          widget.slave.checkCookies(response);
           Navigator.pushReplacementNamed(context, "/login");
         } else if (response.statusCode == 401) {
           Scaffold.of(context).showSnackBar(

@@ -2,7 +2,7 @@ import "package:flutter_secure_storage/flutter_secure_storage.dart";
 
 class SecureStorage extends FlutterSecureStorage{
   final List<String> personal = ["nric","dob","fullname","contact_num","email"];
-  Map <String, String> details = {};
+  final List<String> details = ["cookie","refresh_cookie"];
   String detail;
 
   Future<String> get(String what){
@@ -11,10 +11,8 @@ class SecureStorage extends FlutterSecureStorage{
   Future<Map<String,String>> getDetails(){
       return this.readAll();
   }
-  void edit(Map<String, String> details)async{
-    await details.forEach((key, value) {
-      this.write(key: key, value: value);
-    });
+  void edit(String cookie,String type)async{
+   this.write(key: type, value: cookie);
     this.getDetails();
   }
 

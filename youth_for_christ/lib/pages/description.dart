@@ -49,6 +49,7 @@ class Description extends StatelessWidget {
                         Scaffold.of(context).showSnackBar(snackBar);
                       } else {
                         if (response.statusCode == 204) {
+                          slave.checkCookies(response);
                           final SnackBar snackBar = SnackBar(
                             content: Text("Deregister complete!"),
                             action: SnackBarAction(
@@ -123,6 +124,7 @@ class Description extends StatelessWidget {
                         Scaffold.of(context).showSnackBar(snackBar);
                       } else {
                         if (response.statusCode == 201) {
+                          slave.checkCookies(response);
                           final SnackBar snackBar = SnackBar(
                             content: Text("Sign up complete!"),
                             action: SnackBarAction(

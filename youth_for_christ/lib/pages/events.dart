@@ -78,6 +78,7 @@ class _EventsState extends State<Events> {
                   Scaffold.of(context).showSnackBar(snackBar);
                 }
                 else if(response.statusCode == 200){
+                  slave.checkCookies(response);
                   Map<String, dynamic> data = jsonDecode(response.body);
                   Navigator.pushNamed(context, "/profile",arguments: data);
                 }
