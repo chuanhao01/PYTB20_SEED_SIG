@@ -17,7 +17,7 @@ class Loading extends StatefulWidget {
 
 
 class _LoadingState extends State<Loading> {
-  Future<List> getEvents()async{
+  Future <Map<String, List>> getEvents()async{
     ProgressDialog loading = new ProgressDialog(context);
     HttpSlave slave = new HttpSlave(cookies: true);
     loading.style(
@@ -30,15 +30,17 @@ class _LoadingState extends State<Loading> {
 
     );
     loading.show();
-    Response response = await slave.getMethod("get")("http://192.168.43.22:8000/api/events");
+    Response all  = await slave.getMethod("get")("http://192.168.43.22:8000/api/events");
+    Response yes = await slave.getMethod("get")("http://192.168.43.22:8000/api/events/signed_up/u");
+    Response no = await slave.getMethod("get")("http://192.168.43.22:8000/api/events/not_signed_up/u");
     loading.hide();
-    if(response != null){
-      if(response.statusCode == 500){
+    if(all!=null && yes != null && no != null){
+      if(all.statusCode == 500 || yes.statusCode == 500 || no.statusCode == 500){
         return null;
       }
-      else if(response.statusCode == 200){
-        slave.checkCookies(response);
-        return jsonDecode(response.body);
+      else if(all.statusCode == 200 && yes.statusCode == 200 && no.statusCode == 200){
+        slave.checkCookies(no);
+        return {"all":jsonDecode(all.body),"signed_up": jsonDecode(yes.body),"not_signed_up":jsonDecode(no.body)};
       }
     }
     else{
@@ -53,7 +55,7 @@ class _LoadingState extends State<Loading> {
       try{
         storage.get("access_token");
         storage.get("refresh_token");
-        List details = await getEvents();
+        Map<String, List> details = await getEvents();
         if(details == null){
           Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured")));
         }

@@ -7,9 +7,10 @@ class EventCard extends StatelessWidget {
   DateTime date;
   String description;
   int id;
+  bool attended;
   Map<String, String> username = {};
   EventCard(
-      {this.title, this.date, this.description,this.id});
+      {this.title, this.date, this.description,this.attended,this.id});
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
@@ -24,7 +25,7 @@ class EventCard extends StatelessWidget {
                       "title": title,
                       "date": date,
                       "description": description,
-                      "attended":false
+                      "attended":attended
                     })));
             Scaffold.of(context).showSnackBar(_snackbar);
           } catch (e) {

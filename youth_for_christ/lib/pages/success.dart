@@ -16,46 +16,12 @@ class _SuccessState extends State<Success> {
   TextEditingController _snacks = new TextEditingController();
   HttpSlave slave = new HttpSlave();
 
-  Future<List> getEvents()async{
-    ProgressDialog loading = new ProgressDialog(context);
-    loading.style(
-      message: "Loading events",
-      borderRadius: 8.0,
-      backgroundColor: Colors.white,
-      progressWidget: CircularProgressIndicator(),
-      elevation: 10.0,
-      insetAnimCurve: Curves.easeInOut,
-
-    );
-    loading.show();
-    Response response = await slave.getMethod("get")("http://192.168.43.22:8000/api/events");
-    loading.hide();
-    if(response != null){
-      if(response.statusCode == 500){
-        return null;
-      }
-      else if(response.statusCode == 200){
-        return jsonDecode(response.body);
-      }
-    }
-    else{
-      return  null;
-    }
-
-  }
-
   void login()async{
     String text = _snacks.text;
     Response response = slave.getMethod("get")(text);
     if(response.statusCode == 200){
-
-      List details = await getEvents();
-      if(details == null){
-        Scaffold.of(context).showSnackBar(new SnackBar(content: Text("An error occured")));
-      }
-      else{
-        Navigator.pushReplacementNamed(context, "/events",arguments: {"details":details,"email":""});
-      }
+      slave.checkCookies(response);
+      Navigator.of(context).pushReplacementNamed("/");
     }
   }
 

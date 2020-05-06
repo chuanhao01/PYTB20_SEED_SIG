@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import "package:flutter/material.dart";
 import 'package:http/http.dart';
+import 'package:search_page/search_page.dart';
 import 'package:youthforchrist/services/storage.dart';
 import "package:youthforchrist/widgets/eventCard.dart";
 import 'package:intl/date_symbol_data_local.dart';
@@ -14,7 +15,8 @@ class Events extends StatefulWidget {
 class _EventsState extends State<Events> {
   HttpSlave slave  = new HttpSlave();
   String username;
-  Map<String, dynamic> details;
+  String mode = "all";
+  Map<String, List> details;
   List<EventCard> events;
   @override
   void initState(){
@@ -26,9 +28,11 @@ class _EventsState extends State<Events> {
   @override
   Widget build(BuildContext context) {
     details = details != null ? details: ModalRoute.of(context).settings.arguments;
+    List eventsList = details[mode];
     List<EventCard> events = [];
-    details["details"].forEach((element) {
-      events.add(EventCard(id:element["id"],title: element["title"],date: DateTime.fromMillisecondsSinceEpoch(element["event_date"]*1000),description: element["description"],));
+    eventsList.forEach((element) {
+      events.add(EventCard(id:element["id"],title: element["title"],date: DateTime.fromMillisecondsSinceEpoch(element["event_date"]*1000),description: element["description"],attended: details["yes"].indexOf(element) != -1,));
+
     });
     username = username != null
         ? username
@@ -37,6 +41,47 @@ class _EventsState extends State<Events> {
       appBar: AppBar(
         title: Text("Events"),
         backgroundColor: Colors.blueAccent[700],
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.search), onPressed:(){ showSearch(context: this.context, delegate: SearchPage(builder: (event)=> event, filter: (event)=>[event.title], items: events, searchLabel: "Search Events!", failure: Center(child: Text("No results found. Please check your spelling and try again"),)));}),
+          PopupMenuButton(icon: Icon(Icons.filter_list),itemBuilder: (context)=>[
+            PopupMenuItem(child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Radio(value: "all", groupValue: mode,activeColor: Colors.blueAccent[700], onChanged: (value)=>{
+                  setState((){
+                    mode = value;
+                  })
+                  
+                }),
+                SizedBox(width: 10,),
+                Text("View all events!")
+            ],)),
+             PopupMenuItem(child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Radio(value: "yes", groupValue: mode,activeColor: Colors.blueAccent[700], onChanged: (value)=>{
+                  setState((){
+                    mode = value;
+                  })
+                  
+                }),
+                SizedBox(width: 10,),
+                Text("View resgistered events!")
+            ],)),
+             PopupMenuItem(child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Radio(value: "no", groupValue: mode,activeColor: Colors.blueAccent[700], onChanged: (value)=>{
+                  setState((){
+                    mode = value;
+                  })
+                  
+                }),
+                SizedBox(width: 10,),
+                Text("View Unresgistered events!")
+            ],))
+          ],)
+        ],
       ),
       drawer: Drawer(
         elevation: 15.0,
