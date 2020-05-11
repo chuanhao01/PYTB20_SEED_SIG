@@ -132,9 +132,29 @@ const signupController = {
                     )
                     .then(
                         function (signups) {
-                            res.status(200).send(signups);
+                            return utils.csv.generateCsv(signups)
+                                .catch(
+                                    function(err){
+                                        console.log(err);
+                                        res.status(500).send(
+                                            {
+                                                "Error": "Internal Server Error"
+                                            }
+                                        );
+                                    }
+                                );
                         }
 
+                    )
+                    .then(
+                        function(filePath){
+                            res.download(filePath, 'signups.csv', function(err){
+                                if(err){
+                                    throw(err);
+                                }
+                                utils.csv.deleteCsvFile(filePath);
+                            });
+                        }
                     )
                     .catch(
                         function (err) {

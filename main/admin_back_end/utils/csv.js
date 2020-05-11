@@ -11,12 +11,14 @@ const csv = {
     generateCsv(data){
         let csv_data = jsonCsvParser.parse(data);
         return new Promise((resolve, reject) => {
-            let file_path = `./data_files/${uuid()}.csv`;
+            const id = uuid();
+            let file_path = `./data_files/${id}.csv`;
+            let full_path = `/home/chuanhao01/home/Github/PYTB20_SEED_SIG/main/admin_back_end/data_files/${id}.csv`;
             fs.writeFile(file_path, csv_data, function(err){
                 if(err){
                     reject(err);
                 }
-                resolve(file_path);
+                resolve(full_path);
             });
         });
     },
