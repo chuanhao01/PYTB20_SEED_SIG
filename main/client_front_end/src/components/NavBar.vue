@@ -51,6 +51,9 @@ import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
   name: "NavBar",
+  created () {
+    
+  },
   computed: {
     ...mapState({
       account: state => state.account
