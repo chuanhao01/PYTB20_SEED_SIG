@@ -1,62 +1,28 @@
 import { authHeader } from "../_helpers";
 import { userService } from "./user.service";
+import axios from 'axios';
 // import { eventService } from "./event.service";
 
 export const signupService = {
   // getAllSignUps,
-  getSignUpsByEventId,
   createSignUp,
-  updateSignUp,
   deleteSignUp
 };
 
-// function getAllSignUps() {
-//   const requestOptions = {
-//     method: "GET",
-//     headers: authHeader()
-//   };
-
-//   return fetch(`${process.env.VUE_APP_API_URL}/events`, requestOptions).then(
-//     userService.handleResponse
-//   );
-// }
-
-function getSignUpsByEventId(event_id) {
-  const requestOptions = {
-    method: "GET",
-    headers: authHeader()
-  };
-
-  return fetch(
-    `${process.env.VUE_APP_API_URL}/events/${event_id}/signups`,
-    requestOptions
-  ).then(userService.handleResponse);
-}
-
 function createSignUp(event_id) {
-  const requestOptions = {
-    method: "POST",
-    headers: authHeader(),
-    body: JSON.stringify(event_id)
-  };
-
-  return fetch(
-    `${process.env.VUE_APP_API_URL}/events/${event_id}/signups`,
-    requestOptions
-  ).then(handleResponse);
-}
-
-function updateSignUp(user_id, event_id) {
-  const requestOptions = {
-    method: "PUT",
-    headers: { ...authHeader(), "Content-Type": "application/json" },
-    body: JSON.stringify(user_id, event_id)
-  };
-
-  return fetch(
-    `${process.env.VUE_APP_API_URL}/events/${event_id}/signups`,
-    requestOptions
-  ).then(handleResponse);
+  return axios
+    .post(`/api/events/${event_id}/signups`)
+    .then(result => {
+      /* eslint-disable */
+      console.log(result);
+      /* eslint-disable */
+      console.log("volunteer success");
+      return result;
+    })
+    .catch(error => {
+      /* eslint-disable */
+      console.error(error);
+    });
 }
 
 function deleteSignUp(user_id, event_id) {

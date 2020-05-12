@@ -1,14 +1,14 @@
 <template>
-  <div class="event mx-auto">
-    <div class="row">
+  <div class="event mx-auto mt-5">
+    <div class="row mt-5 pt-5">
       <!-- title + description + pics -->
-      <div class="col-md-8 col-12 border mr-2 p-3 order-2 order-md-1">
+      <div class="col-md-8 col-12 border mr-2 mt-5 p-3 order-2 order-md-1">
         <h1>{{ event.items.title }}</h1>
         <p>{{ event.items.description }}</p>
       </div>
       <!-- title + time + signup button -->
-      <div class="col-md-3 col-12 border p-3 order-1 order-md-2">
-        <h1>{{ event.items.title }}</h1>
+      <div class="col-md-3 col-12 border mt-5 p-3 order-1 order-md-2">
+        <h1>{{ event.title }}</h1>
         <span>
           <!-- icon by https://fontawesome.com/ -->
           <svg
@@ -71,7 +71,7 @@ export default {
     ...mapActions("events", {
       getEventById: "getEventById"
     }),
-    ...mapActions("signups", {
+    ...mapActions("events", {
       volunteer: "createSignUp"
     })
   }
