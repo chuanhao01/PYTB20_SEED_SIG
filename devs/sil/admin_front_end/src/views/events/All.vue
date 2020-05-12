@@ -42,7 +42,22 @@
 </template>
 
 <script>
-export default {};
+export default {
+  name: "All Events",
+  data: function(){
+    return{
+      events: {
+        event: {
+          event_id: "",
+          title: "",
+          description: "",
+          event_date: "",
+          status: 0
+          }
+      }
+    }
+  }
+};
 </script>
 
 <style>

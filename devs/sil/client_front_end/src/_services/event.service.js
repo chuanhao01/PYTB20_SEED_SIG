@@ -10,7 +10,7 @@ export const eventService = {
 
 function getAllEvents() {
   return axios
-    .get("api/events", { withCredentials: true })
+    .get("api/events")
     .then(handleResponse)
     /* eslint-disable */
     .catch(e => console.log(e));
