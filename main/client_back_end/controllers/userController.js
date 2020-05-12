@@ -255,9 +255,9 @@ const userController = {
                             .catch(
                                 function (err) {
                                     console.log(err);
-                                    res.status(500).send(
+                                    res.status(403).send(
                                         {
-                                            "Error": "Internal Server Error"
+                                            "Error": "Email is already in use"
                                         }
                                     );
                                     throw err;
