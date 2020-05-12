@@ -9,7 +9,7 @@ export const userService = {
 
 function login(email) {
   return axios
-    .post("http://localhost:8081/api/login", { email: email })
+    .post("/api/login", { email: email })
     .then(result => {
       console.log(result);
       console.log("login success");
@@ -27,7 +27,7 @@ function logout() {
 
 function register(user) {
   return axios
-    .post("http://localhost:8081/api/users", user)
+    .post("/api/users", user)
     .then(result => {
       console.log("register success");
       return result;

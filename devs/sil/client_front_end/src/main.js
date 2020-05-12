@@ -67,7 +67,7 @@ Vue.component("ValidationProvider", ValidationProvider);
 
 Vue.config.productionTip = false;
 
-axios.defaults.baseUrl = "http://localhost:8081";
+axios.defaults.baseURL = "http://34.87.12.64:8081";
 
 new Vue({
   router,

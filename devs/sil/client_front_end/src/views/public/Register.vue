@@ -21,13 +21,7 @@
               :error-messages="errors"
             >
               <template v-slot:activator="{ on }">
-                <v-text-field
-                  required
-                  v-model="user.dob"
-                  label="Date of Birth"
-                  readonly
-                  v-on="on"
-                ></v-text-field>
+                <v-text-field required v-model="user.dob" label="Date of Birth" readonly v-on="on"></v-text-field>
               </template>
               <v-date-picker
                 ref="picker"
@@ -50,7 +44,7 @@
           </ValidationProvider>
 
           <!-- contact_num -->
-          <ValidationProvider v-slot="{ errors }" name="Contact Number" rules="required|digits:8">
+          <ValidationProvider v-slot="{ errors }" name="Contact Number" rules="required">
             <v-text-field
               v-model="user.contact_num"
               :error-messages="errors"
@@ -64,8 +58,8 @@
             <v-text-field v-model="user.email" :error-messages="errors" label="E-mail" required></v-text-field>
           </ValidationProvider>
 
-          <!-- pdpa -->
-          <ValidationProvider v-slot="{ errors }" name="pdpa" rules="required">
+          <!-- PDPA -->
+          <ValidationProvider v-slot="{ errors }" name="PDPA" rules="required">
             <v-checkbox v-model="checkbox" :error-messages="errors" :label="`PDPA: ${checkbox}`"></v-checkbox>
           </ValidationProvider>
 
@@ -87,7 +81,7 @@ export default {
         fullname: "",
         contact_num: "",
         email: "",
-        pdpa: this.checkbox ? 1 : 0
+        PDPA: 1
       },
       submitted: false,
       menu: false,
