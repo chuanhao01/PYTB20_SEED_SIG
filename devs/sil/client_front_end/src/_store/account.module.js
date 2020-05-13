@@ -52,7 +52,7 @@ const mutations = {
     state.user = user;
   },
   loginSuccess(state, user) {
-    // state.status = { loggedin: true };
+    state.status = { loggedin: true };
     state.user = user;
   },
   loginFailure(state) {

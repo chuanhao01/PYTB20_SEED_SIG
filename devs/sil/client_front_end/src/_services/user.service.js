@@ -2,9 +2,9 @@ import axios from "axios";
 
 export const userService = {
   login,
-  logout,
   register,
-  getUser
+  getUser,
+  updateUser
 };
 
 function login(email) {
@@ -18,11 +18,6 @@ function login(email) {
     .catch(error => {
       console.error(error);
     });
-}
-
-function logout() {
-  // remove user from local storage to log user out
-  localStorage.removeItem("user");
 }
 
 function register(user) {
@@ -39,5 +34,27 @@ function register(user) {
 }
 
 function getUser() {
-  console.log("hello");
+  return axios
+    .get("/api/users/u")
+    .then(result => {
+      console.log(result);
+      return result;
+    })
+    .catch(error => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    });
+}
+
+function updateUser(user) {
+  return axios
+    .put("/api/users/u", user)
+    .then(result => {
+      console.log(result);
+      return result;
+    })
+    .catch(error => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    });
 }

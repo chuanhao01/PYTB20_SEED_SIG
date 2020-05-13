@@ -8,7 +8,7 @@
         tag="div"
         class="event col-lg-3 col-md-4 col-6 mb-3"
         v-for="event in allEvents.items"
-        :key="event.eventid"
+        :key="event.event_id"
       >
         <div class="card">
           <div class="container">

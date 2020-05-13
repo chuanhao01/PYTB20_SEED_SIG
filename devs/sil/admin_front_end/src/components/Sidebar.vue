@@ -24,12 +24,6 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/events/all">All Events</router-link>
             </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/events/current">Current Events</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/events/past">Past Events</router-link>
-            </li>
           </ul>
         </div>
       </li>

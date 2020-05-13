@@ -40,10 +40,12 @@ const mutations = {
     state.user = { loading: true };
   },
   updateUserSuccess(state, user) {
-    state.user = { items: user };
+    user;
+    state.user = {};
   },
   updateUserFailure(state, error) {
-    state.user = { error };
+    error;
+    state.user = {};
   }
 };
 

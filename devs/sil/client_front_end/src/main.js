@@ -4,7 +4,7 @@ import axios from "axios";
 import { store } from "./_store";
 import { router } from "./_helpers";
 
-// style
+// style 
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import vuetify from "./plugins/vuetify";

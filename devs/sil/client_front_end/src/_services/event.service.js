@@ -4,13 +4,39 @@ import axios from "axios";
 
 export const eventService = {
   getAllEvents,
+  getSignedUpEvents,
+  getNotSignedUpEvents,
+  getParticipatedEvents,
   getEventById,
-  filterEvents
 };
 
 function getAllEvents() {
   return axios
-    .get("api/events")
+    .get("/api/events")
+    .then(handleResponse)
+    /* eslint-disable */
+    .catch(e => console.log(e));
+}
+
+function getSignedUpEvents() {
+  return axios
+    .get("/api/events/signed_up/u")
+    .then(handleResponse)
+    /* eslint-disable */
+    .catch(e => console.log(e));
+}
+
+function getNotSignedUpEvents() {
+  return axios
+    .get("/api/events/not_signed_up/u")
+    .then(handleResponse)
+    /* eslint-disable */
+    .catch(e => console.log(e));
+}
+
+function getParticipatedEvents() {
+  return axios
+    .get("/api/events//participated/u")
     .then(handleResponse)
     /* eslint-disable */
     .catch(e => console.log(e));
@@ -18,24 +44,10 @@ function getAllEvents() {
 
 function getEventById(event_id) {
   return axios
-    .get(`api/events/${event_id}`)
+    .get(`/api/events/${event_id}`)
     .then(handleResponse)
     /* eslint-disable */
     .catch(e => console.log(e));
-}
-
-function filterEvents(filter, events) {
-  let filteredList = [...events];
-
-  // Filter status
-  if (filter.status !== "all") {
-    const filtered = filteredList.filter(
-      event => event.status === filter.status
-    );
-    filteredList = filtered;
-  }
-
-  return filteredList;
 }
 
 function handleResponse(response) {

@@ -32,9 +32,16 @@
         <button
           class="btn btn-primary w-100 mt-3 d-md-block d-none"
           @click="volunteer(event.items.event_id)"
-          :class="{ 'btn-secondary': event.items.signed_up }"
+          :class="{ 'd-none': event.items.signed_up }"
         >
           Volunteer!
+        </button>
+        <button
+          class="btn btn-primary w-100 mt-3 d-md-block d-none"
+          @click="volunteer(event.items.event_id)"
+          :class="{ 'd-none': !event.items.signed_up }"
+        >
+          Unvolunteer!
         </button>
       </div>
     </div>
@@ -42,7 +49,7 @@
       <div class="col-12 d-md-none d-flex w-100 h-100">
         <button
           class="btn btn-primary w-100 mt-3 d-md-none d-block mb-3"
-          @click="volunteer(event.items.event_id)"
+          @click="unvolunteer(event.items.event_id)"
           :class="{ 'btn-secondary': event.items.signed_up }"
         >
           Volunteer!
@@ -72,7 +79,8 @@ export default {
       getEventById: "getEventById"
     }),
     ...mapActions("events", {
-      volunteer: "createSignUp"
+      volunteer: "createSignUp",
+      unvolunteer: "deleteSignup"
     })
   }
 };

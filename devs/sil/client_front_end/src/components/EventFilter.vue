@@ -30,6 +30,9 @@
       <v-btn value="!signed-up" @click="getNotSignedUpEvents()">
         Not Signed Up
       </v-btn>
+      <v-btn value="!signed-up" @click="getParticipatedEvents()">
+        Participated
+      </v-btn>
     </v-btn-toggle>
   </div>
 </template>
@@ -56,17 +59,9 @@ export default {
     ...mapActions("events", {
       getAllEvents: "getAllEvents",
       getSignedUpEvents: "getSignedUpEvents",
-      getNotSignedUpEvents: "getNotSignedUpEvents"
+      getNotSignedUpEvents: "getNotSignedUpEvents",
+      getParticipatedEvents: "getParticipatedEvents",
     })
-    // getAllEvents() {
-    //   this.getAllEvents();
-    // },
-    // getSignedUpEvents() {
-    //   this.getSignedUpEvents();
-    // },
-    // getNotSignedUpEvents() {
-    //   this.getNotSignedUpEvents();
-    // }
   }
 };
 </script>

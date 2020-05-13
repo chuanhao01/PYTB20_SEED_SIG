@@ -124,6 +124,8 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "all events" */ '../views/volunteers/Profile.vue')
   },
 
+  // { path: "*", redirect: "/" }
+
 ]
 
 const router = new VueRouter({
