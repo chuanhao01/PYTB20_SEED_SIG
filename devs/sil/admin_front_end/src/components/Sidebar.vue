@@ -33,12 +33,12 @@
           </ul>
         </div>
       </li>
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <router-link class="nav-link" to="/volunteers">
           <span class="menu-title">Volunteers</span>
           <i class="mdi mdi-contacts menu-icon"></i>
         </router-link>
-      </li>
+      </li> -->
       <li class="nav-item sidebar-actions">
         <router-link to="/events/create" class="nav-link">
           <button class="btn btn-block btn-lg btn-gradient-info mt-4">+ Add Events</button>

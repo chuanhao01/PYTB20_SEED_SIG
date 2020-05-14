@@ -3,7 +3,7 @@
     <div class="content-wrapper">
       <h1>Data</h1>
       <div class="row">
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 grid-margin stretch-card">
           <div class="card card-statistics">
             <div class="card-body">
               <div class="clearfix">
@@ -24,7 +24,7 @@
           </div>
         </div>
 
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 grid-margin stretch-card">
           <div class="card card-statistics">
             <div class="card-body">
               <div class="clearfix">
@@ -45,7 +45,7 @@
           </div>
         </div>
 
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 grid-margin stretch-card">
           <div class="card card-statistics">
             <div class="card-body">
               <div class="clearfix">
@@ -66,7 +66,7 @@
           </div>
         </div>
 
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+<!--         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 grid-margin stretch-card">
           <div class="card card-statistics">
             <div class="card-body">
               <div class="clearfix">
@@ -85,7 +85,7 @@
               </p>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       <h2 class="mt-4">Events</h2>
       <!-- card -->
