@@ -20,18 +20,22 @@
             <div class="card-body">
               <h4 class="card-title">{{ event.title }}</h4>
               <p class="card-description">
-                <i class="mdi mdi-calendar"></i> {{ moment(event.event_date).format("YYYY-MM-DD") }}
+                <i class="mdi mdi-calendar"></i>
+                {{ moment(event.event_date).format("YYYY-MM-DD") }}
               </p>
               <p>{{ event.description }}</p>
-              <router-link
+              <button
                 class="btn btn-lg btn-gradient-info mt-4 mr-4"
-                :to="'/event/' + event.event_id + '/participants'"
-              >View Participants</router-link>
+                @click="getSignUpByEventId(event.event_id)"
+              >Export Participants Data</button>
               <router-link
                 class="btn btn-lg btn-gradient-info mt-4 mr-4"
                 :to="'/event/' + event.event_id + '/edit'"
               >Edit Event</router-link>
-              <button @click="showModal(event, 'close')" class="btn btn-lg btn-gradient-danger mt-4 mr-4">Close Registration</button>
+              <button
+                @click="showModal(event, 'close')"
+                class="btn btn-lg btn-gradient-danger mt-4 mr-4"
+              >Close Registration</button>
               <!-- <button @click="showModal(event, 'delete')" class="btn btn-lg btn-gradient-danger mt-4 mr-4">Delete Event</button> -->
             </div>
           </div>
@@ -45,12 +49,10 @@
 import { mapState, mapActions } from "vuex";
 import moment from "moment";
 
-
 export default {
   name: "Event",
   data: function() {
-    return {
-    };
+    return {};
   },
   created() {
     if (!this.event.length) {
@@ -68,6 +70,9 @@ export default {
     ...mapActions("events", {
       closeEvent: "closeEvent",
       getEventById: "getEventById"
+    }),
+    ...mapActions("signups", {
+      getSignUpByEventId: "getSignUpByEventId"
     }),
     moment: function() {
       return moment();
@@ -95,10 +100,9 @@ export default {
         }
       }).then(result => {
         if (result) {
-          if (action === 'close') {
+          if (action === "close") {
             this.closeEvent(this.event.event_id);
-          } 
-          else if (action === 'delete'){
+          } else if (action === "delete") {
             // delete event
           }
           this.$swal({
@@ -111,8 +115,7 @@ export default {
     },
     moment: function() {
       return moment();
-    },
-
+    }
   }
 };
 </script>

@@ -70,30 +70,30 @@ Vue.use(VueRouter)
 
   /* Fake event */
 
-  {
-    path: '/event/a',
-    name: 'Fake Event',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "all events" */ '../views/events/Event.vue')
-  },
-  {
-    path: '/event/a/edit',
-    name: 'Fake Event Edit',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "all events" */ '../views/events/Edit.vue')
-  },
-  {
-    path: '/event/a/participants',
-    name: 'Fake Event participants',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "all events" */ '../views/events/Participants.vue')
-  },
+  // {
+  //   path: '/event/a',
+  //   name: 'Fake Event',
+  //   // route level code-splitting
+  //   // this generates a separate chunk (about.[hash].js) for this route
+  //   // which is lazy-loaded when the route is visited.
+  //   component: () => import(/* webpackChunkName: "all events" */ '../views/events/Event.vue')
+  // },
+  // {
+  //   path: '/event/a/edit',
+  //   name: 'Fake Event Edit',
+  //   // route level code-splitting
+  //   // this generates a separate chunk (about.[hash].js) for this route
+  //   // which is lazy-loaded when the route is visited.
+  //   component: () => import(/* webpackChunkName: "all events" */ '../views/events/Edit.vue')
+  // },
+  // {
+  //   path: '/event/a/participants',
+  //   name: 'Fake Event participants',
+  //   // route level code-splitting
+  //   // this generates a separate chunk (about.[hash].js) for this route
+  //   // which is lazy-loaded when the route is visited.
+  //   component: () => import(/* webpackChunkName: "all events" */ '../views/events/Participants.vue')
+  // },
 
   /* Volunteers */
   {
@@ -115,14 +115,14 @@ Vue.use(VueRouter)
   
 
   /* fake volunteer */
-  {
-    path: '/volunteer/12',
-    name: 'View Volunteer',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "all events" */ '../views/volunteers/Profile.vue')
-  },
+  // {
+  //   path: '/volunteer/12',
+  //   name: 'View Volunteer',
+  //   // route level code-splitting
+  //   // this generates a separate chunk (about.[hash].js) for this route
+  //   // which is lazy-loaded when the route is visited.
+  //   component: () => import(/* webpackChunkName: "all events" */ '../views/volunteers/Profile.vue')
+  // },
 
   // { path: "*", redirect: "/" }
 

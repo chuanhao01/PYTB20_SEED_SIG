@@ -119,7 +119,7 @@ function count(data) {
         event.status == 1
     ).length
 
-    let total = data.length
+    let totalEvent = data.length
 
-    return { currentCount, pastCount, total }
+    return { currentCount, pastCount, totalEvent }
 }

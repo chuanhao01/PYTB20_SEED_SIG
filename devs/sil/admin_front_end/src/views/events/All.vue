@@ -1,7 +1,7 @@
 <template>
   <div class="main-panel">
     <div class="content-wrapper">
-      <h1>Events</h1>
+      <h1>All Events</h1>
 
       <event-box></event-box>
     </div>

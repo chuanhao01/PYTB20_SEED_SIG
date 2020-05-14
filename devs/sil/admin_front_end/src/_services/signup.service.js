@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { saveAs } from 'file-saver';
 
 export const signUpService = {
   getSignUpById,
@@ -37,10 +38,11 @@ function updateSignUp(signup) {
 
 function getSignUpByEventId(event_id) {
   return axios
-    .get(`/api/events/${event_id}/signups`)
+    .get(`/api/events/${event_id}/signups`, { responseType: 'blob' })
     .then(result => {
       /* eslint-disable */
       console.log(result.data);
+      saveAs(result.data, `${Date.now()}-${event_id}.csv`);
       return result.data;
     })
     .catch(error => {

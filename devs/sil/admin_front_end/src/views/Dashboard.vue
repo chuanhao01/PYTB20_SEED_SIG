@@ -13,7 +13,7 @@
                 <div class="float-right">
                   <p class="mb-0 text-right">Total Events</p>
                   <div class="fluid-container">
-                    <h3 class="font-weight-medium text-right mb-0">{{eventCount.items.total}}</h3>
+                    <h3 class="font-weight-medium text-right mb-0">{{eventCount.items.totalEvent}}</h3>
                   </div>
                 </div>
               </div>
