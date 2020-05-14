@@ -9,28 +9,28 @@
       </router-link>
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-stretch">
-      <button
+<!--       <button
         class="navbar-toggler navbar-toggler align-self-center"
         type="button"
         data-toggle="minimize"
       >
         <span class="mdi mdi-menu"></span>
-      </button>
-      <ul class="navbar-nav navbar-nav-right">
+      </button> -->
+      <!-- <ul class="navbar-nav navbar-nav-right"> -->
         <!-- full screen -->
-        <li class="nav-item d-none d-lg-block full-screen-link">
+<!--         <li class="nav-item d-none d-lg-block full-screen-link">
           <a class="nav-link">
             <i class="mdi mdi-fullscreen" id="fullscreen-button"></i>
           </a>
         </li>
-      </ul>
-      <button
+      </ul> -->
+<!--       <button
         class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
         type="button"
         data-toggle="offcanvas"
       >
         <span class="mdi mdi-menu"></span>
-      </button>
+      </button> -->
     </div>
   </nav>
 </template>

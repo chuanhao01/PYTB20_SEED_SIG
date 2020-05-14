@@ -19,6 +19,34 @@ const actions = {
       error => commit("getAllEventsFailure", error)
     );
   },
+
+  getSignedUpEvents({ commit }) {
+    commit("getSignedUpEventsRequest");
+
+    eventService.getSignedUpEvents().then(
+      events => commit("getSignedUpEventsSuccess", events),
+      error => commit("getSignedUpEventsFailure", error)
+    );
+  },
+  
+  getNotSignedUpEvents({ commit }) {
+    commit("getNotSignedUpEventsRequest");
+
+    eventService.getNotSignedUpEvents().then(
+      events => commit("getNotSignedUpEventsSuccess", events),
+      error => commit("getNotSignedUpEventsFailure", error)
+    );
+  },
+  
+  getParticipatedEvents({ commit }) {
+    commit("getParticipatedEventsRequest");
+
+    eventService.getParticipatedEvents().then(
+      events => commit("getParticipatedEventsSuccess", events),
+      error => commit("getParticipatedEventsFailure", error)
+    );
+  },
+
   getEventById({ commit }, event_id) {
     commit("getEventByIdRequest");
 
@@ -27,22 +55,32 @@ const actions = {
       error => commit("getEventByIdFailure", error)
     );
   },
+
   createSignUp({ commit }, event_id) {
-    commit("signupRequest", event_id);
+    commit("createSignupRequest", event_id);
 
     signupService.createSignUp(event_id).then(
       event_id => {
-        commit("signupSuccess", event_id);
+        commit("createSignupSuccess", event_id);
       },
       error => {
-        commit("signupFailure", error);
+        commit("createSignupFailure", error);
       }
     );
   },
-  filterStatus({ commit, dispatch }, status) {
-    commit("setFilterStatus", status);
-    dispatch("filterEvents");
-  }
+
+  deleteSignUp({ commit }, event_id) {
+    commit("deleteSignupRequest", event_id);
+
+    signupService.deleteSignUp(event_id).then(
+      event_id => {
+        commit("deleteSignupSuccess", event_id);
+      },
+      error => {
+        commit("deleteSignupFailure", error);
+      }
+    );
+  },
 };
 
 const mutations = {
@@ -55,6 +93,38 @@ const mutations = {
   getAllEventsFailure(state, error) {
     state.allEvents = { error };
   },
+
+  getSignedUpEventsRequest(state) {
+    state.allEvents = { loading: true };
+  },
+  getSignedUpEventsSuccess(state, events) {
+    state.allEvents = { items: events };
+  },
+  getSignedUpEventsFailure(state, error) {
+    state.allEvents = { error };
+  },
+
+  getNotSignedUpEventsRequest(state) {
+    state.allEvents = { loading: true };
+  },
+  getNotSignedUpEventsSuccess(state, events) {
+    state.allEvents = { items: events };
+  },
+  getNotSignedUpEventsFailure(state, error) {
+    state.allEvents = { error };
+  },
+
+  getParticipatedEventsRequest(state) {
+    state.allEvents = { loading: true };
+  },
+  getParticipatedEventsSuccess(state, events) {
+    state.allEvents = { items: events };
+  },
+  getParticipatedEventsFailure(state, error) {
+    state.allEvents = { error };
+  },
+
+  
   getEventByIdRequest(state) {
     state.event = { loading: true };
   },
@@ -64,29 +134,34 @@ const mutations = {
   getEventByIdFailure(state, error) {
     state.event = { error };
   },
-  signupRequest(state, event_id) {
+
+  createSignupRequest(state, event_id) {
     event_id;
     state.status = { signingup: true };
   },
-  signupSuccess(state, event_id) {
+  createSignupSuccess(state, event_id) {
     event_id;
     state.status = {};
   },
-  signupFailure(state, error) {
+  createSignupFailure(state, error) {
     error;
     state.status = {};
   },
-  setFilteredEvents(state, events) {
-    state.filteredEvents = events;
+
+  deleteSignupRequest(state, event_id) {
+    event_id;
+    state.status = { deletingSignup: true };
   },
-  setFilterStatus(state, status) {
-    state.filter.status = status;
+  deleteSignupSuccess(state, event_id) {
+    event_id;
+    state.status = {};
   },
-  filterEvents(state) {
-    const events = [...state.events];
-    state.filteredEvents = events;
-    state.filteredEvents = eventService.filterEvents(state.filter, events);
-  }
+  deleteSignupFailure(state, error) {
+    error;
+    state.status = {};
+  },
+
+
 };
 
 // const getters = {
