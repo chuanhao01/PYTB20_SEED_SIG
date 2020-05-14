@@ -29,6 +29,7 @@
                 href="#"
                 data-toggle="dropdown"
                 aria-expanded="false"
+                v-if="event.status !== 1"
               ></a>
               <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
                 <router-link class="dropdown-item" :to="'/event/' + event.event_id + '/edit'">
@@ -104,7 +105,12 @@ export default {
           this.$swal({
             title: "Event Closed",
             text: `You successfully closed ${event.title}`,
-            icon: "success"
+            icon: "success",
+            value:"ok"
+          }).then(result2 => {
+            if (result2) {
+              location.reload()
+            }
           });
         }
       });

@@ -25,17 +25,13 @@
               </p>
               <p>{{ event.description }}</p>
               <button
-                class="btn btn-lg btn-gradient-info mt-4 mr-4"
+                class="btn btn-lg btn-gradient-success mt-4 mr-4"
                 @click="getSignUpByEventId(event.event_id)"
               >Export Participants Data</button>
               <router-link
                 class="btn btn-lg btn-gradient-info mt-4 mr-4"
                 :to="'/event/' + event.event_id + '/edit'"
               >Edit Event</router-link>
-              <button
-                @click="showModal(event, 'close')"
-                class="btn btn-lg btn-gradient-danger mt-4 mr-4"
-              >Close Registration</button>
               <!-- <button @click="showModal(event, 'delete')" class="btn btn-lg btn-gradient-danger mt-4 mr-4">Delete Event</button> -->
             </div>
           </div>
