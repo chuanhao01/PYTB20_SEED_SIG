@@ -11,8 +11,8 @@ function getSignUpById(signup_id) {
     .get(`/api/signups/${signup_id}`)
     .then(result => {
       /* eslint-disable */
-      console.log(result);
-      return result;
+      console.log(result.data);
+      return result.data;
     })
     .catch(error => {
       /* eslint-disable */
@@ -25,9 +25,9 @@ function updateSignUp(signup) {
     .put(`/api/signups/${signup.signup_id}`, signup)
     .then(result => {
       /* eslint-disable */
-      console.log(result);
+      console.log(result.data);
       console.log("update success");
-      return result;
+      return result.data;
     })
     .catch(error => {
       /* eslint-disable */
@@ -35,13 +35,13 @@ function updateSignUp(signup) {
     });
 }
 
-function getSignUpByEventId(signup_id) {
+function getSignUpByEventId(event_id) {
   return axios
-    .get(`/api/signups/${signup_id}`)
+    .get(`/api/events/${event_id}/signups`)
     .then(result => {
       /* eslint-disable */
-      console.log(result);
-      return result;
+      console.log(result.data);
+      return result.data;
     })
     .catch(error => {
       /* eslint-disable */

@@ -16,14 +16,14 @@
       >
         <span class="mdi mdi-menu"></span>
       </button> -->
-      <ul class="navbar-nav navbar-nav-right">
+      <!-- <ul class="navbar-nav navbar-nav-right"> -->
         <!-- full screen -->
-        <li class="nav-item d-none d-lg-block full-screen-link">
+<!--         <li class="nav-item d-none d-lg-block full-screen-link">
           <a class="nav-link">
             <i class="mdi mdi-fullscreen" id="fullscreen-button"></i>
           </a>
         </li>
-      </ul>
+      </ul> -->
 <!--       <button
         class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
         type="button"

@@ -86,7 +86,7 @@
                 <button type="submit" class="btn btn-gradient-info mr-2">Save Changes</button>
                 <input class="btn btn-light" type="button" value="Cancel" onclick="history.go(-1)" />
               </form>
-              <p class="pt-4" v-if="eventUpdated">Event Updated Successfully.</p>
+              <!-- <p class="pt-4" v-if="eventUpdated">Event Updated Successfully.</p> -->
             </div>
           </div>
         </div>
@@ -103,9 +103,7 @@ import router from "../../router";
 export default {
   name: "Event",
   data: function() {
-    return {
-      eventUpdated: null
-    };
+    return {};
   },
   created() {
     if (!this.event.length) {
@@ -119,7 +117,7 @@ export default {
     }),
     date: {
       get: function() {
-        return (this.event.event_date = moment(event.event_date).format(
+        return (this.event.event_date = moment(this.event.event_date).format(
           "YYYY-MM-DD"
         ));
       },
@@ -141,7 +139,7 @@ export default {
     },
     showModal(event) {
       this.$swal({
-        title: `Are you sure you want to close ${event.title}?`,
+        title: `Are you sure you want to update ${event.title}?`,
         // text: "You won't be able to revert this!",
         icon: "warning",
         buttons: {
@@ -162,20 +160,17 @@ export default {
         }
       }).then(result => {
         if (result) {
-          this.closeEvent(event.event_id);
+          this.updateEvent(event);
           this.$swal({
-            title: "Event Closed",
-            text: `You successfully closed ${event.title}`,
+            title: "Event Updated",
+            text: `You successfully updated ${event.title}`,
             icon: "success"
           });
         }
       });
     },
     onSubmit(event) {
-      // event.event_date = this.date;
-      this.updateEvent(event).then(result => {
-        alert("Event Updated Successfully")
-      }).then(router.push(`/event/${this.event.event_id}`))
+      this.showModal(event);
     }
   }
 };

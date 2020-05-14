@@ -12,7 +12,7 @@
         </form>
       </div>
       <div class="page-header">
-        <h3 class="page-title">Event 1 Participants</h3>
+        <h3 class="page-title">Participants</h3>
       </div>
       <div class="row">
         <div class="col-lg-12 grid-margin stretch-card">
@@ -30,12 +30,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>A1234567I</td>
-                    <td>1 Jan 2000</td>
-                    <td>Name</td>
-                    <td>+65 8123 4567</td>
-                    <td>meow@abc.com</td>
+                  <tr v-for="signup in signUps" :key="signup.signup_id">
+                    <td>{{signup.nric}}</td>
+                    <td>{{signup.dob}}</td>
+                    <td>{{signup.fullname}}</td>
+                    <!-- <td>{{signup.contact_num}}</td> -->
+                    <!-- <td>{{signup.email}}</td> -->
                     <td class="text-success">Yes</td>
                   </tr>
                   <tr>
@@ -64,7 +64,7 @@
                   </tr>
                 </tbody>
               </table>
-                <button class="btn btn-gradient-info mt-4" onclick="#">Export as CSV</button>
+              <button class="btn btn-gradient-info mt-4" onclick="#">Export as CSV</button>
             </div>
           </div>
         </div>
@@ -74,7 +74,30 @@
 </template>
 
 <script>
-export default {};
+import { mapState, mapActions } from "vuex";
+
+export default {
+  name: "Participants",
+  data: () => {
+    return {
+      // signUps:{}
+    };
+  },
+  created() {
+    this.getSignUpByEventId(this.$route.params.eventId);
+  },
+  computed: {
+    ...mapState({
+      signUps: state => state.events.signUps,
+      signUp: state => state.events.signUp
+    })
+  },
+  methods: {
+    ...mapActions("signups", {
+      getSignUpByEventId: "getSignUpByEventId"
+    })
+  }
+};
 </script>
 
 <style>

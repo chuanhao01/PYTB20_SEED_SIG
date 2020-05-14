@@ -4,16 +4,26 @@ import { router } from "../router";
 
 const state = {
   allEvents: {},
-  event: {}
+  event: {},
+  eventCount: {}
 };
 
 const actions = {
-  getAllEvents({ commit }) {
+  getAllEvents({ commit }, path) {
     commit("getAllEventsRequest");
 
-    eventService.getAllEvents().then(
+    eventService.getAllEvents(path).then(
       events => commit("getAllEventsSuccess", events),
       error => commit("getAllEventsFailure", error)
+    );
+  },
+
+  countEvents({ commit }, ) {
+    commit("countEventsRequest");
+
+    eventService.countEvents().then(
+      eventCount => commit("countEventsSuccess", eventCount),
+      error => commit("countEventsFailure", error)
     );
   },
 
@@ -84,6 +94,16 @@ const mutations = {
     state.allEvents = { error };
   },
 
+  countEventsRequest(state) {
+    state.eventCount = { loading: true };
+  },
+  countEventsSuccess(state, eventCount) {
+    state.eventCount = { items: eventCount };
+  },
+  countEventsFailure(state, error) {
+    state.eventCount = { error };
+  },
+
   getEventByIdRequest(state) {
     state.event = { loading: true };
   },
@@ -109,15 +129,15 @@ const mutations = {
 
 
   updateEventRequest(state) {
-    state.event = { updating: true };
+    state.result = { updating: true };
   },
-  updateEventSuccess(state, event) {
+  updateEventSuccess(state, result) {
     event;
-    state.event = {};
+    state.result = {result};
   },
   updateEventFailure(state, error) {
     error;
-    state.event = {};
+    state.result = {};
   },
 
   closeEventRequest(state, event_id) {

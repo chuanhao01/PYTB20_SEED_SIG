@@ -29,12 +29,10 @@ const actions = {
     commit("getSignUpByEventIdRequest");
 
     signUpService.getSignUpByEventId(event_id).then(
-      signUp => commit("getSignUpByEventIdSuccess", signUp),
+      signUps => commit("getSignUpByEventIdSuccess", signUps),
       error => commit("getSignUpByEventIdFailure", error)
     );
   },
-
-
 };
 
 const mutations = {
@@ -61,13 +59,13 @@ const mutations = {
   },
   
   getSignUpByEventIdRequest(state) {
-    state.signUp = { loading: true };
+    state.signUps = { loading: true };
   },
-  getSignUpByIdSuccess(state, signUp) {
-    state.signUp = { items: signUp };
+  getSignUpByEventIdSuccess(state, signUps) {
+    state.signUps = { items: signUps };
   },
-  getSignUpByIdFailure(state, error) {
-    state.signUp = { error };
+  getSignUpByEventIdFailure(state, error) {
+    state.signUps = { error };
   },
 };
 
@@ -77,7 +75,7 @@ const mutations = {
 //   }
 // }
 
-const getters = {
+/* const getters = {
   getAllEvents(state) {
     return state.allEvents;
   },
@@ -87,12 +85,12 @@ const getters = {
   getEvent(state) {
     return state.event;
   }
-};
+}; */
 
 export const signups = {
   namespaced: true,
   state,
   actions,
   mutations,
-  getters
+  // getters
 };

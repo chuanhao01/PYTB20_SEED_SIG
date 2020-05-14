@@ -12,7 +12,7 @@
         </form>
       </div>
       <div class="page-header">
-        <h3 class="page-title d-block">{{event.title}}</h3>
+        <h3 class="page-title d-block">View Event</h3>
       </div>
       <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
@@ -32,7 +32,7 @@
                 :to="'/event/' + event.event_id + '/edit'"
               >Edit Event</router-link>
               <button @click="showModal(event, 'close')" class="btn btn-lg btn-gradient-danger mt-4 mr-4">Close Registration</button>
-              <button @click="showModal(event, 'delete')" class="btn btn-lg btn-gradient-danger mt-4 mr-4">Delete Event</button>
+              <!-- <button @click="showModal(event, 'delete')" class="btn btn-lg btn-gradient-danger mt-4 mr-4">Delete Event</button> -->
             </div>
           </div>
         </div>
@@ -50,13 +50,6 @@ export default {
   name: "Event",
   data: function() {
     return {
-      // event: {
-      //   event_id: "asd",
-      //   title: "event abc",
-      //   description: "desc",
-      //   event_date: "02-06-2020",
-      //   status: 0
-      // }
     };
   },
   created() {

@@ -4,6 +4,9 @@ import router from './router'
 import { store } from './_store'
 import axios from 'axios'
 import VueSwal from 'vue-swal'
+import Paginate from 'vuejs-paginate'
+
+Vue.component('paginate', Paginate)
 
 Vue.use(VueSwal);
 

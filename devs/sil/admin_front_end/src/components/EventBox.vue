@@ -54,31 +54,12 @@ import moment from "moment";
 export default {
   name: "EventBox",
   data: function() {
-    return {
-      // allEvents: {
-      //   items: [
-      //     {
-      //       event_id: "asd",
-      //       title: "event abc",
-      //       description: "desc",
-      //       event_date: "02-06-2020",
-      //       status: 0
-      //     },
-      //     {
-      //       event_id: "2",
-      //       title: "event 2",
-      //       description: "description",
-      //       event_date: "02-06-2020",
-      //       status: 0
-      //     }
-      //   ]
-      // }
-    };
+    return {};
   },
   created() {
-    if (!this.allEvents.length) {
-      this.getAllEvents();
-    }
+    this.getEvents(
+      this.$route.path.substring(this.$route.path.lastIndexOf("/") + 1)
+    );
   },
 
   computed: {
@@ -127,6 +108,9 @@ export default {
           });
         }
       });
+    },
+    getEvents(path) {
+      this.getAllEvents(path);
     }
   }
 };
