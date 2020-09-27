@@ -1,5 +1,7 @@
 # PYTB20_SEED_SIG
 
+**This project has been archived as of 27/09/2020**
+
 This was the prototype and project we made while Participating in the prudential Young Trailblazers hackathon.  
 
 The team consists of:  
